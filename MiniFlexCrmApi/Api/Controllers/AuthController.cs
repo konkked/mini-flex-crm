@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MiniFlexCrmApi.Api.Middleware;
 using MiniFlexCrmApi.Api.Models;
+using MiniFlexCrmApi.Auth;
 
 namespace MiniFlexCrmApi.Api.Controllers;
 
@@ -21,7 +22,7 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login(
         [FromRequestContext] RequestContext requestContext,
-        [FromBody] AuthRequest request)
+        [FromBody] LoginRequest request)
     {
         var response = await _authService.LoginAsync(request);
         if (response == null) return Unauthorized(new { message = "Invalid username or password" });
@@ -35,7 +36,7 @@ public class AuthController : ControllerBase
     [HttpPost("signup")]
     public async Task<IActionResult> SignUp(
         [FromRequestContext] RequestContext requestContext,
-        [FromBody] AuthRequest request)
+        [FromBody] SignUpRequest request)
     {
         var response = await _authService.SignUpAsync(request);
         if (response == null) return BadRequest(new { message = "Username already taken" });
@@ -49,9 +50,9 @@ public class AuthController : ControllerBase
     [HttpPost("refresh")]
     public async Task<IActionResult> Refresh(
         [FromRequestContext] RequestContext requestContext,
-        [FromBody] AuthResponse expiredToken)
+        [FromBody] TokenRefreshRequest request)
     {
-        var response = await _authService.RefreshTokenAsync(expiredToken);
+        var response = await _authService.RefreshTokenAsync(request);
         if (response == null) return Unauthorized(new { message = "Invalid or expired refresh token" });
 
         return Ok(response);

@@ -11,8 +11,3 @@ public class ConnectionProvider : IConnectionProvider
     
     public DbConnection Connection => _connection.Value;
 }
-
-public interface IConnectionProvider
-{
-    DbConnection Connection { get; }
-}

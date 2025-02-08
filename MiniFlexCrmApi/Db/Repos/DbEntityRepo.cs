@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.RegularExpressions;
 using Dapper;
 using MiniFlexCrmApi.Db.Models;
@@ -9,7 +10,7 @@ public class DbEntityRepo<T> : IRepo<T> where T : DbEntity
     /// <summary>
     /// Converts PascalCase or camelCase to snake_case for PostgreSQL compatibility.
     /// </summary>
-    private static string ToSnakeCase(string input)
+    protected static string ToSnakeCase(string input)
     {
         return Regex.Replace(input, @"([a-z0-9])([A-Z])", "$1_$2").ToLower();
     }
@@ -24,8 +25,10 @@ public class DbEntityRepo<T> : IRepo<T> where T : DbEntity
     {
         ConnectionProvider = connectionProvider;
         TableName = typeof(T).Name.Replace("DbModel", "").ToLower(); // Ensure table name is lowercase
-        var propertyNames = typeof(T).GetProperties()
-            .Where(p => p.Name.ToLower() != "id")
+        var propertyNames = typeof(T)
+            .GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy) 
+            .Where(p => !p.Name.Equals("id", StringComparison.OrdinalIgnoreCase)) 
+            .Where(p => p.GetCustomAttribute<IgnoreForUpdateAttribute>() == null) 
             .OrderBy(p => p.Name)
             .Select(p => p.Name)
             .ToList();
@@ -39,38 +42,40 @@ public class DbEntityRepo<T> : IRepo<T> where T : DbEntity
         $"SELECT EXISTS(SELECT 1 FROM {TableName} WHERE id = @id)", new { id }
     );
     
-    public IAsyncEnumerable<T> GetSome(int count) => GetNext(0, count);
+    public virtual IAsyncEnumerable<T> GetSome(int count) => GetNext(0, count);
 
-    public async IAsyncEnumerable<T> GetNext(int startId, int count)
+    public virtual async IAsyncEnumerable<T> GetNext(int lastId, int count)
     {
         var results = await ConnectionProvider.Connection.QueryAsync<T>(
-            $"SELECT * FROM {TableName} WHERE id >= @startId ORDER BY id ASC LIMIT @count",
-            new { startId, count }
+            $"SELECT * FROM {TableName} WHERE id > @lastId ORDER BY id ASC LIMIT @count",
+            new { lastId, count }
         );
 
         foreach (var item in results)
             yield return item;
     }
 
-    public async IAsyncEnumerable<T> GetPrevious(int startId, int count)
+    public virtual async IAsyncEnumerable<T> GetPrevious(int lastId, int count)
     {
         var results = await ConnectionProvider.Connection.QueryAsync<T>(
-            $"SELECT * FROM {TableName} WHERE id <= @startId ORDER BY id DESC LIMIT @count",
-            new { startId, count }
+            $"SELECT * FROM {TableName} WHERE id < @lastId ORDER BY id DESC LIMIT @count",
+            new { lastId, count }
         );
 
         foreach (var item in results.Reverse()) // Reverse to maintain ascending order
             yield return item;
     }
 
-    public Task<T?> FindAsync(int id) => ConnectionProvider.Connection.QueryFirstOrDefaultAsync<T>(
+    public virtual Task<T?> FindAsync(int id) => ConnectionProvider.Connection.QueryFirstOrDefaultAsync<T>(
         $"SELECT * FROM {TableName} WHERE id = @id", new { id }
     );
+    public Task<int> UpdateAsync(T entity) =>
+        ConnectionProvider.Connection.ExecuteAsync($@"
+        UPDATE {TableName}
+        SET {_updateClause}
+        WHERE id = @Id
+        AND (@UpdatedTs IS NULL OR updated_ts = @UpdatedTs)", entity);
 
-    public Task<int> UpdateAsync(T entity) => 
-        ConnectionProvider.Connection.ExecuteAsync(
-            $"UPDATE {TableName} SET {_updateClause} WHERE id = @Id", entity
-        );
 
     public Task<int> DeleteAsync(int id) => ConnectionProvider.Connection.ExecuteAsync(
         $"DELETE FROM {TableName} WHERE id = @id", new { id }

@@ -1,28 +1,26 @@
-
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using MiniFlexCrmApi.Api.Models;
-
+using MiniFlexCrmApi.Auth;
+using MiniFlexCrmApi.Db.Repos;
 
 public class JwtAuthorizationMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly IUserRepo _userRepo;
     private readonly string _jwtSecret;
 
-    public JwtAuthorizationMiddleware(RequestDelegate next, IConfiguration configuration)
+    public JwtAuthorizationMiddleware(RequestDelegate next, IConfiguration configuration, IUserRepo userRepo)
     {
         _next = next;
+        _userRepo = userRepo;
         _jwtSecret = configuration["MINIFLEXCRMAPI_JWT_KEY"] 
                      ?? throw new ArgumentNullException("JWT secret key is missing.");
     }
 
     public async Task Invoke(HttpContext context)
     {
-        var requestPath = context.Request.Path.Value?.Trim('/').Split('/');
-        int? tenantId = ExtractTenantIdFromPath(requestPath);
-
         var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Replace("Bearer ", "");
         if (string.IsNullOrEmpty(token))
         {
@@ -30,6 +28,9 @@ public class JwtAuthorizationMiddleware
             await context.Response.WriteAsync("Missing or invalid token.");
             return;
         }
+        
+        var requestPath = context.Request.Path.Value?.Trim('/').Split('/');
+        int? pathTenantId = ExtractTenantIdFromPath(requestPath);
 
         var handler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_jwtSecret);
@@ -45,26 +46,51 @@ public class JwtAuthorizationMiddleware
                 ClockSkew = TimeSpan.Zero
             }, out _);
 
-            var userTenantId = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == "tenant_id")?.Value;
-            var userRole = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+            int? tokenTenantId = null;
+            if (int.TryParse(
+                    claimsPrincipal.FindFirstValue(JwtCustomConstants.ClaimTypes.TenantId),
+                    out var tid))
+            {
+                tokenTenantId = tid;
+            }
 
-            // If the request is for a specific tenant, ensure the user has access
-            if (tenantId.HasValue && userTenantId != tenantId.Value.ToString())
+            if (!tokenTenantId.HasValue)
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                await context.Response.WriteAsync("Invalid token.");
+                return;
+            }
+            
+            // only super user can access tenant apis
+            if (!pathTenantId.HasValue 
+                && context.Request.Path.Value?.StartsWith("/api/tenant/") == true 
+                && tokenTenantId.Value != 0)
             {
                 context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                await context.Response.WriteAsync("You do not have access to this tenant.");
+                await context.Response.WriteAsync("Forbidden.");
+                return;
+            }
+            
+            // if the path tenant id does not match the token tenant id
+            // and the user is not a super user (tenant id of 0) 
+            // then request is unauthorized.
+            if (pathTenantId != tokenTenantId && tokenTenantId != 0)
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                await context.Response.WriteAsync("Unauthorized.");
                 return;
             }
 
-            // Populate RequestContext with the extracted tenant and role
-            var requestContext = new RequestContext
+            if (int.TryParse(claimsPrincipal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value, out var id)
+                && await _userRepo.IsEnabledAsync(id).ConfigureAwait(false))
             {
-                TenantId = userTenantId != null ? int.Parse(userTenantId) : null,
-                Role = userRole
-            };
-            context.Items["RequestContext"] = requestContext;
+                // Store validated claims in HttpContext.User
+                context.User = claimsPrincipal;
+                await _next(context);
+            }
 
-            await _next(context);
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await context.Response.WriteAsync("Invalid token.");
         }
         catch (SecurityTokenExpiredException)
         {
@@ -77,6 +103,7 @@ public class JwtAuthorizationMiddleware
             await context.Response.WriteAsync("Invalid token.");
         }
     }
+    
 
     /// <summary>
     /// Extracts the Tenant ID from the request path dynamically.
@@ -95,4 +122,5 @@ public class JwtAuthorizationMiddleware
         }
         return null;
     }
+    
 }

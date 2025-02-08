@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Diagnostics;
 using MiniFlexCrmApi.Api.Middleware;
+using MiniFlexCrmApi.Api.Services;
 using MiniFlexCrmApi.Db;
 using MiniFlexCrmApi.Db.Repos;
 
@@ -12,6 +13,8 @@ builder.Services.AddControllers(options =>
 
 builder.Services.AddSingleton<IConnectionProvider, ConnectionProvider>();
 builder.Services.AddRepositories();
+builder.Services.AddSwaggerGen();
+builder.Services.AddApiServices();
 
 var app = builder.Build();
 

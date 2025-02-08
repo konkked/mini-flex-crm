@@ -1,6 +1,6 @@
 namespace MiniFlexCrmApi.Db.Models;
 
-public class UserDbModel : DbEntity
+public class UserDbModel : TenantBoundDbEntity
 {
     public string Username { get; set; }
     public string PasswordHash { get; set; }
@@ -9,5 +9,4 @@ public class UserDbModel : DbEntity
     public bool Enabled { get; set; }
     
     public string Role { get; set; }
-    public int TenantId { get; set; }
 }

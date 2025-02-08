@@ -8,8 +8,9 @@ public class RequestContext
     public string ContentType { get; set; }
     public Dictionary<string, string> Headers { get; set; }
     public Dictionary<string, string> Cookies { get; set; }
-    
     public int? TenantId { get; set; }
-    
     public string Role { get; set; }
+    public string? UserId { get; set; }
+    public string? Username { get; set; }
+    public Dictionary<string, string> Claims { get; set; }
 }
