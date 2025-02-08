@@ -2,7 +2,7 @@ using MiniFlexCrmApi.Api.Services;
 
 namespace MiniFlexCrmApi.Api.Models;
 
-public class TenantModel : BaseApiModel
+public record TenantModel : BaseApiModel
 {
-    public string Name { get; set; }
+    public required string Name { get; set; }
 }

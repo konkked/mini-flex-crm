@@ -1,8 +1,15 @@
+using System.Text.Json.Serialization;
+using MiniFlexCrmApi.Api.Serialization;
+
 namespace MiniFlexCrmApi.Api.Models;
 
-public class CustomerModel : TenantBoundBaseModel
+public record CustomerModel : TenantBoundBaseModel
 {
-    public string Name { get; set; }
-    public dynamic Attributes { get; set; }
-    public Dictionary<string,dynamic[]>? Relationships { get; set; }
+    public string? Name { get; set; }
+    
+    [JsonConverter(typeof(AttributesJsonConverter))]
+    public dynamic? Attributes { get; set; }
+    
+    [JsonConverter(typeof(RelationshipsJsonConverter))]
+    public Dictionary<string,dynamic?[]>? Relationships { get; set; }
 }

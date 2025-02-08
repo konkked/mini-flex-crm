@@ -1,6 +1,8 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics;
 using MiniFlexCrmApi.Api.Auth;
 using MiniFlexCrmApi.Api.Context;
+using MiniFlexCrmApi.Api.Serialization;
 using MiniFlexCrmApi.Api.Services;
 using MiniFlexCrmApi.Db;
 using MiniFlexCrmApi.Db.Repos;
@@ -14,9 +16,17 @@ builder.Services.AddLogging(logging =>
 });
 
 builder.Services.AddControllers(options =>
-{
-    options.ModelBinderProviders.Insert(0, new RequestContextModelBinderProvider());
-});
+    {
+        options.ModelBinderProviders.Insert(0, new RequestContextModelBinderProvider());
+    })
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new AttributesJsonConverter());
+        options.JsonSerializerOptions.Converters.Add(new RelationshipsJsonConverter());
+        options.JsonSerializerOptions.WriteIndented = true;
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+    });
 
 builder.Services.AddSingleton<IConnectionProvider, ConnectionProvider>(services => 
     new (services.GetService<IConfiguration>()?.GetConnectionString("DefaultConnection") ?? String.Empty));
@@ -27,7 +37,7 @@ builder.Services.AddApiServices();
 
 var app = builder.Build();
 
-// ✅ **Enable Swagger in All Environments**
+// Enable Swagger in All Environments
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {

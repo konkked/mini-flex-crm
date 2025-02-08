@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using MiniFlexCrmApi.Api.Context;
 using MiniFlexCrmApi.Api.Models;
+using MiniFlexCrmApi.Api.Security;
 using MiniFlexCrmApi.Api.Services;
 
 namespace MiniFlexCrmApi.Api.Controllers;
@@ -30,4 +32,21 @@ public class UserController(IUserService userService) : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(int id) =>
         await userService.DeleteItem(id) ? Ok() : NotFound();
+    
+    [HttpPost("{id}/enable")]
+    [AuthorizeRoles("admin")]
+    public async Task<IActionResult> Enable(
+        [FromRequestContext] RequestContext requestContext,
+        [FromRoute] int id) => 
+        Ok(await userService.TryEnableUserAsync(requestContext.TenantId ?? -1, id)
+            .ConfigureAwait(false));
+    
+    [HttpPost("{id}/disable")]
+    [AuthorizeRoles("admin")]
+    public async Task<IActionResult> Disable(
+        [FromRequestContext] RequestContext requestContext,
+        [FromRoute] int id) => 
+        Ok(await userService.TryDisableUserAsync(requestContext.TenantId ?? -1, id)
+            .ConfigureAwait(false));
+
 }

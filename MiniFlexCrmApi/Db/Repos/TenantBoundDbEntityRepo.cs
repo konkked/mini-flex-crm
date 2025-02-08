@@ -7,9 +7,9 @@ public class TenantBoundDbEntityRepo<T>(IConnectionProvider connectionProvider)
     : DbEntityRepo<T>(connectionProvider), IRepo<T>
     where T : TenantBoundDbEntity
 {
-    public virtual IAsyncEnumerable<T> GetSome(int count) => GetNext(0, count);
+    public override IAsyncEnumerable<T> GetSome(int count) => GetNext(0, count);
 
-    public virtual async IAsyncEnumerable<T> GetNext(int lastId, int count)
+    public override async IAsyncEnumerable<T> GetNext(int lastId, int count)
     {
         var results = await ConnectionProvider.Connection.QueryAsync<T>(
             @$"SELECT t1.*, t2.name as tenant_name
@@ -26,7 +26,7 @@ public class TenantBoundDbEntityRepo<T>(IConnectionProvider connectionProvider)
             yield return item;
     }
 
-    public virtual async IAsyncEnumerable<T> GetPrevious(int lastId, int count)
+    public override async IAsyncEnumerable<T> GetPrevious(int lastId, int count)
     {
         var results = await ConnectionProvider.Connection.QueryAsync<T>(
             @$"SELECT t1.*, t2.name as tenant_name

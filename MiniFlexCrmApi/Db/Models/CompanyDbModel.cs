@@ -2,5 +2,5 @@ namespace MiniFlexCrmApi.Db.Models;
 
 public class CompanyDbModel : TenantBoundDbEntity
 {
-    public string Name { get; set; }
+    public string? Name { get; set; }
 }

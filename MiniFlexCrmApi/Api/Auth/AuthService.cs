@@ -72,15 +72,6 @@ public class AuthService : IAuthService
         return AuthResponseFromUser(user);
     }
 
-    public async Task<bool> TryEnableUser(int callerTenant, int userId)
-    {
-        var user = await _userRepo.FindAsync(userId).ConfigureAwait(false);
-        if (user == null || callerTenant != user.TenantId || callerTenant != 0 || user.Enabled)
-            return false;
-        user.Enabled = true;
-        await _userRepo.UpdateAsync(user).ConfigureAwait(false);
-        return true;
-    }
 
     private AuthResponse? AuthResponseFromUser(UserDbModel user)
     {

@@ -1,6 +1,6 @@
 namespace MiniFlexCrmApi.Api.Services;
 
-public abstract class BaseApiModel
+public abstract record BaseApiModel
 {
     public int Id { get; set; }
 }

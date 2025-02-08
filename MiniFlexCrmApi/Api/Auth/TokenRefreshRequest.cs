@@ -2,5 +2,5 @@ namespace MiniFlexCrmApi.Api.Auth;
 
 public class TokenRefreshRequest
 {
-    public string Token { get; set; }
+    public required string Token { get; set; }
 }

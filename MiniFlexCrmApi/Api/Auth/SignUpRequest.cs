@@ -2,7 +2,7 @@ namespace MiniFlexCrmApi.Api.Auth;
 
 public class SignUpRequest
 {
-    public string Username { get; set; }
-    public string Password { get; set; }
-    public int TenantId { get; set; }
+    public required string Username { get; set; }
+    public required string Password { get; set; }
+    public required int TenantId { get; set; }
 }

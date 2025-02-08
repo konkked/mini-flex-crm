@@ -2,18 +2,22 @@ using Microsoft.AspNetCore.Mvc;
 using MiniFlexCrmApi.Api.Auth;
 using MiniFlexCrmApi.Api.Context;
 using MiniFlexCrmApi.Api.Models;
+using MiniFlexCrmApi.Api.Security;
+using MiniFlexCrmApi.Api.Services;
 
 namespace MiniFlexCrmApi.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/auth")]
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
+    private readonly IUserService _userService;
 
-    public AuthController(IAuthService authService)
+    public AuthController(IAuthService authService, IUserService userService)
     {
         _authService = authService;
+        _userService = userService;
     }
 
     /// <summary>
@@ -57,6 +61,4 @@ public class AuthController : ControllerBase
 
         return Ok(response);
     }
-    
-    
 }

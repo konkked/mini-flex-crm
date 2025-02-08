@@ -1,6 +1,6 @@
 namespace MiniFlexCrmApi.Api.Models;
 
-public class CompanyModel : TenantBoundBaseModel
+public record CompanyModel : TenantBoundBaseModel
 {
-    public string Name { get; set; }
+    public string? Name { get; set; }
 }
