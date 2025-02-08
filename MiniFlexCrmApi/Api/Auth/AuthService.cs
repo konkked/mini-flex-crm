@@ -3,7 +3,7 @@ using System.Text;
 using MiniFlexCrmApi.Db.Models;
 using MiniFlexCrmApi.Db.Repos;
 
-namespace MiniFlexCrmApi.Auth;
+namespace MiniFlexCrmApi.Api.Auth;
 
 public class AuthService : IAuthService
 {

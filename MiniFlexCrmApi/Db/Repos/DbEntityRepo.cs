@@ -69,7 +69,7 @@ public class DbEntityRepo<T> : IRepo<T> where T : DbEntity
     public virtual Task<T?> FindAsync(int id) => ConnectionProvider.Connection.QueryFirstOrDefaultAsync<T>(
         $"SELECT * FROM {TableName} WHERE id = @id", new { id }
     );
-    public Task<int> UpdateAsync(T entity) =>
+    public virtual Task<int> UpdateAsync(T entity) =>
         ConnectionProvider.Connection.ExecuteAsync($@"
         UPDATE {TableName}
         SET {_updateClause}
@@ -77,7 +77,7 @@ public class DbEntityRepo<T> : IRepo<T> where T : DbEntity
         AND (@UpdatedTs IS NULL OR updated_ts = @UpdatedTs)", entity);
 
 
-    public Task<int> DeleteAsync(int id) => ConnectionProvider.Connection.ExecuteAsync(
+    public virtual Task<int> DeleteAsync(int id) => ConnectionProvider.Connection.ExecuteAsync(
         $"DELETE FROM {TableName} WHERE id = @id", new { id }
     );
 

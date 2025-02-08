@@ -1,4 +1,4 @@
-using MiniFlexCrmApi.Models.Public;
+using MiniFlexCrmApi.Api.Models;
 
 namespace MiniFlexCrmApi.Api.Services;
 

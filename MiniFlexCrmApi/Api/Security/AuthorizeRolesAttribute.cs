@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using MiniFlexCrmApi.Api.Models;
 
+namespace MiniFlexCrmApi.Api.Security;
+
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
 public class AuthorizeRolesAttribute : Attribute, IAuthorizationFilter
 {

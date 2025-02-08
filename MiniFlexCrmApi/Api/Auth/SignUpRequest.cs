@@ -1,4 +1,4 @@
-namespace MiniFlexCrmApi.Auth;
+namespace MiniFlexCrmApi.Api.Auth;
 
 public class SignUpRequest
 {

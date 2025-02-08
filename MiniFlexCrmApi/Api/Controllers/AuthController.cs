@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using MiniFlexCrmApi.Api.Middleware;
+using MiniFlexCrmApi.Api.Auth;
+using MiniFlexCrmApi.Api.Context;
 using MiniFlexCrmApi.Api.Models;
-using MiniFlexCrmApi.Auth;
 
 namespace MiniFlexCrmApi.Api.Controllers;
 

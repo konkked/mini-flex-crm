@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using MiniFlexCrmApi.Api.Auth;
 using MiniFlexCrmApi.Api.Models;
-using MiniFlexCrmApi.Auth;
 
-namespace MiniFlexCrmApi.Api.Middleware;
+namespace MiniFlexCrmApi.Api.Context;
 
 public class RequestContextModelBinder : IModelBinder
 {

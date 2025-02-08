@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using MiniFlexCrmApi.Api.Models;
 
-namespace MiniFlexCrmApi.Api.Middleware;
+namespace MiniFlexCrmApi.Api.Context;
 
 public class RequestContextModelBinderProvider : IModelBinderProvider
 {

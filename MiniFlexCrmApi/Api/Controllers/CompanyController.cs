@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using MiniFlexCrmApi.Api.Models;
 using MiniFlexCrmApi.Api.Services;
-using MiniFlexCrmApi.Models.Public;
+
+namespace MiniFlexCrmApi.Api.Controllers;
 
 [ApiController]
 [Route("api/tenant/{tenantId}/company")]

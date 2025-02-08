@@ -1,7 +1,4 @@
-using MiniFlexCrmApi.Db;
-using MiniFlexCrmApi.Db.Repos;
-
-namespace MiniFlexCrmApi.Models.Public;
+namespace MiniFlexCrmApi.Api.Models;
 
 public class UserModel : TenantBoundBaseModel
 {

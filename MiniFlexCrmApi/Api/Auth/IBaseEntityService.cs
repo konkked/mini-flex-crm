@@ -1,6 +1,6 @@
 using MiniFlexCrmApi.Api.Models;
 
-namespace MiniFlexCrmApi.Auth;
+namespace MiniFlexCrmApi.Api.Auth;
 
 public interface IBaseEntityService<T>
 {

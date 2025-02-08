@@ -1,6 +1,6 @@
 using MiniFlexCrmApi.Api.Services;
 
-namespace MiniFlexCrmApi.Models.Public;
+namespace MiniFlexCrmApi.Api.Models;
 
 public class RelationModel : BaseApiModel
 {

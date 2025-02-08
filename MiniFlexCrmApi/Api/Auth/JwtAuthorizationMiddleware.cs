@@ -2,8 +2,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using MiniFlexCrmApi.Auth;
 using MiniFlexCrmApi.Db.Repos;
+
+namespace MiniFlexCrmApi.Api.Auth;
 
 public class JwtAuthorizationMiddleware
 {
@@ -11,12 +12,11 @@ public class JwtAuthorizationMiddleware
     private readonly IUserRepo _userRepo;
     private readonly string _jwtSecret;
 
-    public JwtAuthorizationMiddleware(RequestDelegate next, IConfiguration configuration, IUserRepo userRepo)
+    public JwtAuthorizationMiddleware(RequestDelegate next, IJwtKeyProvider jwtKeyProvider, IUserRepo userRepo)
     {
         _next = next;
         _userRepo = userRepo;
-        _jwtSecret = configuration["MINIFLEXCRMAPI_JWT_KEY"] 
-                     ?? throw new ArgumentNullException("JWT secret key is missing.");
+        _jwtSecret = jwtKeyProvider.GetKey();
     }
 
     public async Task Invoke(HttpContext context)

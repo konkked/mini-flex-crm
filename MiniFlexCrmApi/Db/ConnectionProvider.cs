@@ -3,11 +3,12 @@ using Npgsql;
 
 namespace MiniFlexCrmApi.Db;
 
-public class ConnectionProvider : IConnectionProvider
+public class ConnectionProvider(string connectionString) : IConnectionProvider
 {
-    private readonly Lazy<DbConnection> _connection;
-    public ConnectionProvider(string connectionString)
-        => _connection = new Lazy<DbConnection>(() => new NpgsqlConnection(connectionString));
-    
+    private readonly Lazy<DbConnection> _connection 
+        = new(() => string.IsNullOrEmpty(connectionString) 
+            ? throw new ArgumentException(nameof(connectionString)) 
+            : new NpgsqlConnection(connectionString));
+
     public DbConnection Connection => _connection.Value;
 }

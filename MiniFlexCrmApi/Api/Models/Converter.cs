@@ -1,6 +1,6 @@
 using MiniFlexCrmApi.Db.Models;
 
-namespace MiniFlexCrmApi.Models.Public;
+namespace MiniFlexCrmApi.Api.Models;
 
 public static class Converter
 {

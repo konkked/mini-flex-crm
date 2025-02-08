@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using MiniFlexCrmApi.Api.Middleware;
+using MiniFlexCrmApi.Api.Context;
 using MiniFlexCrmApi.Api.Models;
-using MiniFlexCrmApi.Models.Public;
 
 namespace MiniFlexCrmApi.Api.Controllers;
 

@@ -1,5 +1,6 @@
-namespace MiniFlexCrmApi.Reflect;
 using System.Reflection;
+
+namespace MiniFlexCrmApi.Util;
 
 public static class Transpose
 {

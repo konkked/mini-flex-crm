@@ -10,6 +10,7 @@ public static class RepositoryBootstrapper
         services.AddSingleton<IUserRepo,UserRepo>();
         services.AddSingleton<ICustomerRepo,CustomerRepo>();
         services.AddSingleton<ICompanyRepo, CompanyRepo>();
+        services.AddSingleton<ITenantRepo, TenantRepo>();
         return services;
     }
 }

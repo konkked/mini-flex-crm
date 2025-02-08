@@ -4,16 +4,15 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using MiniFlexCrmApi.Db.Models;
 
-namespace MiniFlexCrmApi.Auth;
+namespace MiniFlexCrmApi.Api.Auth;
 
 public class JwtService
 {
     private readonly string _jwtSecret;
 
-    public JwtService(IConfiguration configuration)
+    public JwtService(IJwtKeyProvider secretProvider)
     {
-        _jwtSecret = configuration["MINIFLEXCRMAPI_JWT_KEY"] 
-                     ?? throw new ArgumentNullException("JWT secret key is missing.");
+        _jwtSecret = secretProvider.GetKey();
     }
 
     public string GenerateToken(UserDbModel user)

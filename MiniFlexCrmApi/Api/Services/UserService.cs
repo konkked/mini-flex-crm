@@ -1,6 +1,6 @@
+using MiniFlexCrmApi.Api.Models;
 using MiniFlexCrmApi.Db.Models;
 using MiniFlexCrmApi.Db.Repos;
-using MiniFlexCrmApi.Models.Public;
 
 namespace MiniFlexCrmApi.Api.Services;
 

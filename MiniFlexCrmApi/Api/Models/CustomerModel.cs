@@ -1,4 +1,4 @@
-namespace MiniFlexCrmApi.Models.Public;
+namespace MiniFlexCrmApi.Api.Models;
 
 public class CustomerModel : TenantBoundBaseModel
 {
