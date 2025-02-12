@@ -57,7 +57,7 @@ public class AuthController : ControllerBase
         [FromBody] TokenRefreshRequest request)
     {
         var response = await _authService.RefreshTokenAsync(request);
-        if (response == null) return Unauthorized(new { message = "Invalid or expired refresh token" });
+        if (response == null) return Forbid();
 
         return Ok(response);
     }

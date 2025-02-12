@@ -15,6 +15,10 @@ public class RelationController(IRelationService relationService) : ControllerBa
     [HttpGet]
     public async Task<IActionResult> ListRelations([FromQuery] int pageSize = 50, [FromQuery] string? next = null) =>
         Ok(await relationService.ListItems(pageSize, next));
+    
+    [HttpGet]
+    public async Task<IActionResult> ListPreviousItems([FromQuery] int pageSize = 50, [FromQuery] string? prev = null) =>
+        Ok(await relationService.ListPreviousItems(pageSize, prev));
 
     [HttpPost]
     public async Task<IActionResult> CreateRelation([FromBody] RelationModel model) =>

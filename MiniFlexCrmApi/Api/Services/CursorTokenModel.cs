@@ -2,8 +2,8 @@ using System.Buffers.Text;
 
 namespace MiniFlexCrmApi.Api.Services;
 
-public class NextTokenModel
+public class CursorTokenModel
 {
-    public int LastId { get; set; }
+    public int Id { get; set; }
     public int PageSize { get; set; }
 }

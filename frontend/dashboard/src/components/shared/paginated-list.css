@@ -1,0 +1,30 @@
+.pagination-container {
+    position: relative;
+    width: 100%;
+    height: 7.27vh; /* 7.27% of the page height */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+  }
+  
+  .pagination-button {
+    position: absolute;
+    bottom: 2vh; /* Slightly above the page bottom */
+    width: 5.27vw; /* 5.27% of page width */
+    height: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .pagination-button.left {
+    left: 2vw; /* Align to bottom-left */
+  }
+  
+  .pagination-button.right {
+    right: 2vw; /* Align to bottom-right */
+  }
+  

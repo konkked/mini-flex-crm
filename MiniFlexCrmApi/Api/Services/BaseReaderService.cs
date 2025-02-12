@@ -3,41 +3,63 @@ using MiniFlexCrmApi.Db.Repos;
 
 namespace MiniFlexCrmApi.Api.Services;
 
-public abstract class BaseReaderService<TDbModel,TApiModel> : IBaseReaderService<TApiModel> where TDbModel : DbEntity
+public abstract class BaseReaderService<TDbModel, TApiModel>(IRepo<TDbModel> repo) : IBaseReaderService<TApiModel>
+    where TDbModel : DbEntity
 {
-    protected readonly IRepo<TDbModel> Repo;
-
-    protected BaseReaderService(IRepo<TDbModel> repo)
-    {
-        Repo = repo;
-    }
-    
     protected abstract TApiModel ConvertToApiModel(TDbModel model);
     
     public virtual async Task<TApiModel> GetItem(int id) => 
-        ConvertToApiModel(await Repo.FindAsync(id).ConfigureAwait(false));
+        ConvertToApiModel(await repo.FindAsync(id).ConfigureAwait(false));
     
     public Task<Page<TApiModel>> ListItems() => ListItems(ServiceContants.PageSize);
     public Task<Page<TApiModel>> ListItems(int pageSize) => ListItems(pageSize, null);
-    public async Task<Page<TApiModel>> ListItems(int pageSize, string? next)
+    public Task<Page<TApiModel>> ListItems(int pageSize, string? next) => ListItems(pageSize, next, null);
+    public async Task<Page<TApiModel>> ListItems(int pageSize, string? next, string? query)
     {
         var prevToken = string.IsNullOrEmpty(next) 
-            ? new NextTokenModel {LastId = 0, PageSize = pageSize } 
-            : Base62JsonConverter.Deserialize<NextTokenModel>(next);
+            ? new CursorTokenModel {Id = 0, PageSize = pageSize } 
+            : Base62JsonConverter.Deserialize<CursorTokenModel>(next);
         var returning = new List<TApiModel>();
         var lastId = 0;
-        await foreach (var user in Repo.GetNext(prevToken.LastId,prevToken.PageSize).ConfigureAwait(false))
+        await foreach (var val in repo.GetNext(prevToken.Id,prevToken.PageSize, query).ConfigureAwait(false))
         {
-            lastId = user.Id;
-            returning.Add(ConvertToApiModel(user));
+            lastId = val.Id;
+            returning.Add(ConvertToApiModel(val));
         }
 
         return new()
         {
             Items = returning,
             Next = returning.Count >= pageSize
-                ? Base62JsonConverter.Serialize(new NextTokenModel { LastId = lastId, PageSize = pageSize })
-                : null
+                ? Base62JsonConverter.Serialize(new CursorTokenModel { Id = lastId, PageSize = pageSize })
+                : null,
         };
+    }
+
+    public Task<Page<TApiModel>> ListPreviousItems(int pageSize, string? prev) =>  ListPreviousItems(pageSize, prev, null);
+    public async Task<Page<TApiModel>> ListPreviousItems(int pageSize, string? prev, string? query) 
+    {
+        var prevToken = string.IsNullOrEmpty(prev) 
+            ? new CursorTokenModel {Id = 0, PageSize = pageSize } 
+            : Base62JsonConverter.Deserialize<CursorTokenModel>(prev);
+        pageSize = prevToken.PageSize;
+        var returning = new Stack<TApiModel>();
+        var id = 0;
+        await foreach (var val in repo.GetPrevious(prevToken.Id,prevToken.PageSize + 1, query).ConfigureAwait(false))
+        {
+            returning.Push(ConvertToApiModel(val));
+            pageSize--;
+            if (pageSize == 0)
+                id = val.Id;
+        }
+        
+        return new()
+            {
+                Items = returning,
+                Previous = id == 0 
+                    ? null 
+                    : Base62JsonConverter.Serialize(new CursorTokenModel { Id =  id, PageSize = pageSize }),
+                Next = prev 
+            };
     }
 }

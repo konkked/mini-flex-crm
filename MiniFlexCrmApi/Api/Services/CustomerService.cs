@@ -17,4 +17,13 @@ public class CustomerService(ICustomerRepo repo, IRelationRepo relationRepo) : B
         var relations= await relationRepo.GetCustomerRelationshipsAsync(id).ConfigureAwait(false);
         return Converter.From(customer, relations);
     }
+
+    public async Task<CustomerModel> GetCustomerWithRelationship(int customerId)
+    {
+        var customer = repo.FindAsync(customerId);
+        var relationships = relationRepo.GetCustomerRelationshipsAsync(customerId);
+        await Task.WhenAll(customer, relationships).ConfigureAwait(false);
+        return Converter.From(await customer.ConfigureAwait(false), 
+            await relationships.ConfigureAwait(false));
+    }
 }

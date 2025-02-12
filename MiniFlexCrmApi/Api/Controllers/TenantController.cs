@@ -15,6 +15,10 @@ public class TenantController(ITenantService tenantService) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> ListTenants([FromQuery] int pageSize = 50, [FromQuery] string? next = null) =>
         Ok(await tenantService.ListItems(pageSize, next));
+    
+    [HttpGet]
+    public async Task<IActionResult> ListPreviousItems([FromQuery] int pageSize = 50, [FromQuery] string? prev = null) =>
+        Ok(await tenantService.ListPreviousItems(pageSize, prev));
 
     [HttpPost]
     public async Task<IActionResult> CreateTenant([FromBody] TenantModel model) =>

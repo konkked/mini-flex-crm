@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using MiniFlexCrmApi.Api.Models;
 using MiniFlexCrmApi.Api.Services;
@@ -8,6 +9,10 @@ namespace MiniFlexCrmApi.Api.Controllers;
 [Route("api/tenant/{tenantId}/customer")]
 public class CustomerController(ICustomerService customerService) : ControllerBase
 {
+    [HttpGet("{id}/relationships")]
+    public async Task<IActionResult> GetCustomerWithRelationships(int id)
+        => Ok(await customerService.GetCustomerWithRelationship(id));
+    
     [HttpGet("{id}")]
     public async Task<IActionResult> GetCustomer(int id) =>
         Ok(await customerService.GetItem(id));
@@ -15,6 +20,10 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
     [HttpGet]
     public async Task<IActionResult> ListCustomers([FromQuery] int pageSize = 50, [FromQuery] string? next = null) =>
         Ok(await customerService.ListItems(pageSize, next));
+    
+    [HttpGet]
+    public async Task<IActionResult> ListPreviousCustomers([FromQuery] int pageSize = 50, [FromQuery] string? prev = null) =>
+        Ok(await customerService.ListPreviousItems(pageSize, prev));
 
     [HttpPost]
     public async Task<IActionResult> CreateCustomer([FromBody] CustomerModel model) =>
