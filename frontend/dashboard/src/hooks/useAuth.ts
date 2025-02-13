@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react';
-import { getUserFromToken, logout as logoutUser } from '../lib/svc/auth';
+import api, { getCurrentUser, setAuthToken } from '../api';
 
 export const useAuth = () => {
-  const [user, setUser] = useState(getUserFromToken());
+  const [user, setUser] = useState(getCurrentUser());
   const [isAuthenticated, setIsAuthenticated] = useState(!!user);
 
   useEffect(() => {
-    setUser(getUserFromToken());
+    setUser(getCurrentUser());
     setIsAuthenticated(!!user);
   }, []);
 
   const logout = () => {
-    logoutUser();
+    setAuthToken(null);
     setUser(null);
     setIsAuthenticated(false);
   };

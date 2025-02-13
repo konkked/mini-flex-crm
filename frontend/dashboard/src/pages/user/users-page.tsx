@@ -1,6 +1,6 @@
 import React from "react";
-import api, { hasAdminAccessToItem } from "../../lib/api";
-import PaginatedList from "../../components/shared/paginated-list-component";
+import api, { hasAdminAccessToItem } from "../../api";
+import PaginatedList from "../../components/paginated-list/paginated-list-component";
 
 const UsersPage = () => {
     const next = async (token?: string) => {

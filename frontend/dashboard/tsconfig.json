@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+      "jsx": "react",
+      "tsx": "react",
+      "target": "ESNext",
+      "module": "commonjs",
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "baseUrl": "./src",
+      "paths": {
+        "@components/*": ["components/*"],
+        "@pages/*": ["pages/*"],
+        "@lib/*": ["lib/*"]
+      },
+    },
+    "include": ["src"]
+  }

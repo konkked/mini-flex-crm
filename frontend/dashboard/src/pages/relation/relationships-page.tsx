@@ -1,7 +1,7 @@
 import React from "react";
-import api, { hasAdminAccessToItem, getCurrentRole} from "../../lib/api";
-import PaginatedList from "../../components/shared/paginated-list-component";
-import { Relation } from "../../lib/models/relation";
+import api, { hasAdminAccessToItem, getCurrentRole} from "../../api";
+import PaginatedList from "../../components/paginated-list/paginated-list-component";
+import { Relation } from "../../models/relation";
 
 const RelationshipsPage : React.FC = () => {
     const next = async (token?: string) => {

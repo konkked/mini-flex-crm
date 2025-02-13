@@ -5,14 +5,14 @@ FROM node:20-alpine AS build
 WORKDIR /app
 
 # Copy package.json and install dependencies
-COPY frontend/package.json frontend/package-lock.json ./
-RUN npm install
+COPY dashboard/package.json dashboard/yarn.lock ./
+RUN yarn install
 
 # Copy the project files
 COPY frontend/. ./
 
 # Build the React application
-RUN npm run build
+RUN yarn build
 
 # Serve the application using Nginx
 FROM nginx:alpine AS production
@@ -21,7 +21,7 @@ FROM nginx:alpine AS production
 COPY --from=build /app/build /usr/share/nginx/html
 
 # Expose port 80 for Nginx
-EXPOSE 3000
+EXPOSE 80
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]

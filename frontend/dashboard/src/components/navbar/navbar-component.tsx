@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
-import { getCurrentUser, setAuthToken } from '../../lib/api';
+import { getCurrentUser, setAuthToken } from '../../api';
 
 const AppNavbar = () => {
   const user = getCurrentUser();

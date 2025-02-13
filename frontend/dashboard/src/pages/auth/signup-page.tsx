@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
-import api from '../../lib/api';
+import api from '../../api';
 
 const SignupPage: React.FC = () => {
   const [username, setUsername] = useState('');

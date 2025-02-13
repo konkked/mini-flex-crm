@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-and-database-to-backend
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ include "miniflexcrm.name" . }}-backend
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: {{ include "miniflexcrm.name" . }}-frontend
+        - podSelector:
+            matchLabels:
+              app: {{ include "miniflexcrm.name" . }}-database

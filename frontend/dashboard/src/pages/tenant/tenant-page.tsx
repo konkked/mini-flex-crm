@@ -1,6 +1,6 @@
 import React from "react";
-import api from "../../lib/api";
-import PaginatedList from "../../components/shared/paginated-list-component";
+import api from "../../api";
+import PaginatedList from "../../components/paginated-list/paginated-list-component";
 
 const TenantsPage = () => {
   const next = async (token?: string) => {

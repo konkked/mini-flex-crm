@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
-import api from '../../lib/api';
-import { Company } from '../../lib/models/company';
+import api from '../../api';
+import { Company } from '../../models/company';
 
 const EditCompanyPage: React.FC = () => {
   const { companyId } = useParams<{ companyId: string }>();
