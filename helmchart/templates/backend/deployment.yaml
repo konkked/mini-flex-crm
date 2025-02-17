@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "miniflexcrm.fullname" . }}-backend
+  name: {{ include "miniflexcrm.name" . }}-backed
   labels:
     {{- include "miniflexcrm.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.backend.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "miniflexcrm.name" . }}-backend
+      app: {{ include "miniflexcrm.name" . }}-backed
   template:
     metadata:
       labels:
-        app: {{ include "miniflexcrm.name" . }}-backend
+        app: {{ include "miniflexcrm.name" . }}-backed
     spec:
       containers:
         - name: backend
@@ -20,5 +20,11 @@ spec:
           imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
           ports:
             - containerPort: 80
+          env:
+            - name: MINIFLEXCRMAPI_JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: miniflexcrm-jwt-secret
+                  key: jwt-key
           resources:
             {{- toYaml .Values.backend.resources | nindent 12 }}

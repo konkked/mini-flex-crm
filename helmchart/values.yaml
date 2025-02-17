@@ -1,47 +1,63 @@
 replicaCount: 1
 
+fullnameOverride: miniflex-crm
+
 frontend:
   replicaCount: 1
   image:
-    repository: your-docker-repo/frontend
+    repository: konkked/mfcrm-frontend
     pullPolicy: IfNotPresent
     tag: "latest"
   service:
-    type: ClusterIP
-    port: 80
+    type: LoadBalancer
+    port: 3000
   resources: {}
 
 backend:
   replicaCount: 1
   image:
-    repository: your-docker-repo/backend
+    repository: konkked/mfcrm-backend
     pullPolicy: IfNotPresent
     tag: "latest"
   service:
-    type: ClusterIP
-    port: 80
+    type: LoadBalancer
+    port: 5000
   resources: {}
 
 database:
   replicaCount: 1
   image:
-    repository: your-docker-repo/database
+    repository: konkked/mfcrm-database
     pullPolicy: IfNotPresent
     tag: "latest"
   service:
     type: ClusterIP
     port: 5432
+  env:
+    POSTGRES_USER: admin
+    POSTGRES_PASSWORD: admin
+    POSTGRES_DB: miniflexcrm
   resources: {}
 
 ingress:
-  enabled: false
+  enabled: true
   className: ""
   annotations: {}
   hosts:
-    - host: chart-example.local
+    - host: frontend.mfcrm-base.local
+      name: frontend
       paths:
         - path: /
           pathType: ImplementationSpecific
+      port:
+        number: 3000
+    - host: backend.mfcrm-base.local
+      name: backend
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+      port:
+        number: 5000
   tls: []
 
 resources: {}

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "{{ include "miniflexcrm.fullname" . }}-test-connection"
+  name: {{ include "miniflexcrm.fullname" . }}-test-connection
   labels:
     {{- include "miniflexcrm.labels" . | nindent 4 }}
   annotations:
@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "miniflexcrm.fullname" . }}:{{ .Values.service.port }}']
+      args: ['{{ include "miniflexcrm.fullname" . }}-frontend:{{ .Values.frontend.service.port }}']
   restartPolicy: Never

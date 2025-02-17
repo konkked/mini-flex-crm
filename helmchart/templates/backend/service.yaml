@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "miniflexcrm.fullname" . }}-backend
+  labels:
+    {{- include "miniflexcrm.labels" . | nindent 4 }}
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 5000
+      targetPort: 5000
+  selector:
+    app: {{ include "miniflexcrm.name" . }}-backend
