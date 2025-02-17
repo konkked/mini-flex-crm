@@ -10,6 +10,17 @@ using MiniFlexCrmApi.Api.Services;
 using MiniFlexCrmApi.Db;
 using MiniFlexCrmApi.Db.Repos;
 
+string GetConnectionString(IServiceProvider services)
+{
+    var connectionString =
+        services.GetService<IConfiguration>()?.GetConnectionString("DefaultConnection") ?? string.Empty;
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        connectionString = Environment.GetEnvironmentVariable("DefaultConnection");
+    }
+    return connectionString;
+}
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddLogging(logging =>
@@ -32,7 +43,7 @@ builder.Services.AddControllers(options =>
     });
 
 builder.Services.AddSingleton<IConnectionProvider, ConnectionProvider>(services => 
-    new (services.GetService<IConfiguration>()?.GetConnectionString("DefaultConnection") ?? string.Empty));
+    new (GetConnectionString(services)));
 builder.Services.AddSingleton<IJwtKeyProvider, JwtKeyProvider>();
 builder.Services.AddRepositories();
 builder.Services.AddSwaggerGen();

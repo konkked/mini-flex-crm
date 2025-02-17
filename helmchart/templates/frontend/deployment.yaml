@@ -20,5 +20,8 @@ spec:
           imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
           ports:
             - containerPort: 80
+          env:
+            - name: API_BASE_URL
+              value: "http://backend.mfcrm-base.local/api" # Update this to your backend API URL
           resources:
             {{- toYaml .Values.frontend.resources | nindent 12 }}

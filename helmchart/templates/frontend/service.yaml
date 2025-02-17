@@ -5,9 +5,9 @@ metadata:
   labels:
     {{- include "miniflexcrm.labels" . | nindent 4 }}
 spec:
-  type: LoadBalancer
+  type: {{ .Values.frontend.service.type }}
   ports:
-    - port: 3000
-      targetPort: 3000
+    - port: {{ .Values.frontend.service.port }}
+      targetPort: 80
   selector:
     app: {{ include "miniflexcrm.name" . }}-frontend

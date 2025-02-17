@@ -9,8 +9,8 @@ frontend:
     pullPolicy: Always
     tag: "latest"
   service:
-    type: LoadBalancer
-    pullPolicy: Always
+    type: ClusterIP
+    port: 80
   resources: {}
 
 backend:
@@ -20,8 +20,8 @@ backend:
     pullPolicy: Always
     tag: "latest"
   service:
-    type: LoadBalancer
-    port: 5000
+    type: ClusterIP
+    port: 80
   resources: {}
 
 database:
@@ -41,23 +41,23 @@ database:
 
 ingress:
   enabled: true
-  className: ""
+  className: nginx
   annotations: {}
   hosts:
     - host: frontend.mfcrm-base.local
       name: frontend
       paths:
         - path: /
-          pathType: ImplementationSpecific
+          pathType: Prefix
       port:
-        number: 3000
+        number: 80
     - host: backend.mfcrm-base.local
       name: backend
       paths:
         - path: /
-          pathType: ImplementationSpecific
+          pathType: Prefix
       port:
-        number: 5000
+        number: 80
   tls: []
 
 resources: {}

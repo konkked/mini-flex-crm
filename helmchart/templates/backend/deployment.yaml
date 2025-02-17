@@ -19,12 +19,17 @@ spec:
           image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
           imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
           ports:
-            - containerPort: 5000
+            - containerPort: 80
           env:
             - name: MINIFLEXCRMAPI_JWT_KEY
               valueFrom:
                 secretKeyRef:
                   name: miniflexcrm-jwt-secret
                   key: jwt-key
+            - name: DefaultConnection
+              valueFrom:
+                secretKeyRef:
+                  name: db-connection-secret
+                  key: connectionString
           resources:
             {{- toYaml .Values.backend.resources | nindent 12 }}
