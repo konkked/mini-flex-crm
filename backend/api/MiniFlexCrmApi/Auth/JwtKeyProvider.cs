@@ -1,4 +1,7 @@
+using System;
 using System.Security.Cryptography;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace MiniFlexCrmApi.Api.Auth;
 

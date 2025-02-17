@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "miniflexcrm.name" . }}-backed
+  name: {{ include "miniflexcrm.fullname" . }}-backed
   labels:
     {{- include "miniflexcrm.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.backend.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "miniflexcrm.name" . }}-backed
+      app: {{ include "miniflexcrm.fullname" . }}-backed
   template:
     metadata:
       labels:
-        app: {{ include "miniflexcrm.name" . }}-backed
+        app: {{ include "miniflexcrm.fullname" . }}-backed
     spec:
       containers:
         - name: backend
           image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
           imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
           ports:
-            - containerPort: 80
+            - containerPort: 5000
           env:
             - name: MINIFLEXCRMAPI_JWT_KEY
               valueFrom:

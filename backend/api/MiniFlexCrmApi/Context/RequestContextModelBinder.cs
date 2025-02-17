@@ -1,4 +1,6 @@
+using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using MiniFlexCrmApi.Api.Auth;
 using MiniFlexCrmApi.Api.Models;

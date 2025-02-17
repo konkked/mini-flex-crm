@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using MiniFlexCrmApi.Db.Models;
 using MiniFlexCrmApi.Db.Repos;
 

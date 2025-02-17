@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace MiniFlexCrmApi.Api.Auth;
 
 public interface IAuthService

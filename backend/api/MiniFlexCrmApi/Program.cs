@@ -1,5 +1,8 @@
 using System.Text.Json;
-using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MiniFlexCrmApi.Api.Auth;
 using MiniFlexCrmApi.Api.Context;
 using MiniFlexCrmApi.Api.Serialization;
@@ -29,7 +32,7 @@ builder.Services.AddControllers(options =>
     });
 
 builder.Services.AddSingleton<IConnectionProvider, ConnectionProvider>(services => 
-    new (services.GetService<IConfiguration>()?.GetConnectionString("DefaultConnection") ?? String.Empty));
+    new (services.GetService<IConfiguration>()?.GetConnectionString("DefaultConnection") ?? string.Empty));
 builder.Services.AddSingleton<IJwtKeyProvider, JwtKeyProvider>();
 builder.Services.AddRepositories();
 builder.Services.AddSwaggerGen();

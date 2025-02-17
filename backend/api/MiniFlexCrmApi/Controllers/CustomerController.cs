@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using MiniFlexCrmApi.Api.Models;
@@ -18,12 +19,13 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
         Ok(await customerService.GetItem(id));
 
     [HttpGet]
-    public async Task<IActionResult> ListCustomers([FromQuery] int pageSize = 50, [FromQuery] string? next = null) =>
-        Ok(await customerService.ListItems(pageSize, next));
-    
-    [HttpGet]
-    public async Task<IActionResult> ListPreviousCustomers([FromQuery] int pageSize = 50, [FromQuery] string? prev = null) =>
-        Ok(await customerService.ListPreviousItems(pageSize, prev));
+    public async Task<IActionResult> ListCustomers([FromQuery] int pageSize = 50,
+        [FromQuery] string? next = null,
+        [FromQuery] string? prev = null,
+        [FromQuery] string? search = null) =>
+        string.IsNullOrEmpty(prev)
+            ? Ok(await customerService.ListItems(pageSize, next, search))
+            : Ok(await customerService.ListPreviousItems(pageSize, prev, search));
 
     [HttpPost]
     public async Task<IActionResult> CreateCustomer([FromBody] CustomerModel model) =>

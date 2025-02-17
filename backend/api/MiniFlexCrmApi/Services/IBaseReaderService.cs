@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace MiniFlexCrmApi.Api.Services;
 
 public interface IBaseReaderService<TApiModel>

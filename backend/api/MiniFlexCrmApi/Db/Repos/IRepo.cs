@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace MiniFlexCrmApi.Db.Repos;
 
 public interface IRepo<T> where T : class

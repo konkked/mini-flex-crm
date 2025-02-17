@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection;
+
 namespace MiniFlexCrmApi.Api.Services;
 
 public static class ServicesBootstrapper

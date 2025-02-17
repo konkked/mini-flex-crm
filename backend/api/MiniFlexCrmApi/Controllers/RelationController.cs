@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MiniFlexCrmApi.Api.Models;
 using MiniFlexCrmApi.Api.Services;
@@ -13,12 +14,13 @@ public class RelationController(IRelationService relationService) : ControllerBa
         Ok(await relationService.GetItem(id));
 
     [HttpGet]
-    public async Task<IActionResult> ListRelations([FromQuery] int pageSize = 50, [FromQuery] string? next = null) =>
-        Ok(await relationService.ListItems(pageSize, next));
-    
-    [HttpGet]
-    public async Task<IActionResult> ListPreviousItems([FromQuery] int pageSize = 50, [FromQuery] string? prev = null) =>
-        Ok(await relationService.ListPreviousItems(pageSize, prev));
+    public async Task<IActionResult> ListRelations([FromQuery] int pageSize = 50,
+        [FromQuery] string? next = null,
+        [FromQuery] string? prev = null,
+        [FromQuery] string? search = null) =>
+        string.IsNullOrEmpty(prev)
+            ? Ok(await relationService.ListItems(pageSize, next, search))
+            : Ok(await relationService.ListPreviousItems(pageSize, prev, search));
 
     [HttpPost]
     public async Task<IActionResult> CreateRelation([FromBody] RelationModel model) =>

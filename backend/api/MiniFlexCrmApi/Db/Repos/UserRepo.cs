@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Dapper;
 using MiniFlexCrmApi.Db.Models;
 

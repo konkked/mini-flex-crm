@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MiniFlexCrmApi.Api.Models;
 using MiniFlexCrmApi.Api.Services;
@@ -13,12 +14,11 @@ public class CompanyController(ICompanyService companyService) : ControllerBase
         Ok(await companyService.GetItem(id));
 
     [HttpGet]
-    public async Task<IActionResult> ListCompanies([FromQuery] int pageSize = 50, [FromQuery] string? next = null, [FromQuery] string? search = null) =>
-        Ok(await companyService.ListItems(pageSize, next));
-    
-    [HttpGet]
-    public async Task<IActionResult> ListPreviousCompanies([FromQuery] int pageSize = 50, [FromQuery] string? prev = null) =>
-        Ok(await companyService.ListPreviousItems(pageSize, prev));
+    public async Task<IActionResult> ListCompanies([FromQuery] int pageSize = 50, [FromQuery] string? next = null, 
+        [FromQuery] string? prev = null, [FromQuery] string? search = null) =>
+        string.IsNullOrEmpty(prev) 
+            ? Ok(await companyService.ListItems(pageSize, next, search))
+            : Ok(await companyService.ListPreviousItems(pageSize, prev, search));
 
     [HttpPost]
     public async Task<IActionResult> CreateCompany([FromBody] CompanyModel model) =>

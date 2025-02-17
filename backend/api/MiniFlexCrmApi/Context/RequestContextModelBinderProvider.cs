@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using MiniFlexCrmApi.Api.Models;
 

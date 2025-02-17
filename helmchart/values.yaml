@@ -6,18 +6,18 @@ frontend:
   replicaCount: 1
   image:
     repository: konkked/mfcrm-frontend
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     tag: "latest"
   service:
     type: LoadBalancer
-    port: 3000
+    pullPolicy: Always
   resources: {}
 
 backend:
   replicaCount: 1
   image:
     repository: konkked/mfcrm-backend
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     tag: "latest"
   service:
     type: LoadBalancer
@@ -28,7 +28,7 @@ database:
   replicaCount: 1
   image:
     repository: konkked/mfcrm-database
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     tag: "latest"
   service:
     type: ClusterIP

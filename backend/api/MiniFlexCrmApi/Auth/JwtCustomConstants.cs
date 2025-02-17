@@ -1,3 +1,5 @@
+using System;
+
 namespace MiniFlexCrmApi.Api.Auth;
 
 public static class JwtCustomConstants

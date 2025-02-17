@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace MiniFlexCrmApi.Api.Services;
 
 public class Page<T>

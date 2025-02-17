@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using MiniFlexCrmApi.Api.Context;
@@ -16,12 +17,13 @@ public class UserController(IUserService userService) : ControllerBase
         Ok(await userService.GetItem(id));
 
     [HttpGet]
-    public async Task<IActionResult> NextUsers([FromQuery] int pageSize = 50, [FromQuery] string? next = null) =>
-        Ok(await userService.ListItems(pageSize, next));
-
-    [HttpGet]
-    public async Task<IActionResult> PrevUsers([FromQuery] int pageSize = 50, [FromQuery] string? prev = null) =>
-        Ok(await userService.ListPreviousItems(pageSize, prev));
+    public async Task<IActionResult> NextUsers([FromQuery] int pageSize = 50,
+        [FromQuery] string? next = null,
+        [FromQuery] string? prev = null,
+        [FromQuery] string? search = null) =>
+        string.IsNullOrEmpty(prev)
+            ? Ok(await userService.ListItems(pageSize, next, search))
+            : Ok(await userService.ListPreviousItems(pageSize, prev, search));
 
     [HttpPost]
     public async Task<IActionResult> CreateUser([FromBody] UserModel model) =>

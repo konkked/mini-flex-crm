@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using MiniFlexCrmApi.Db.Models;
 
 namespace MiniFlexCrmApi.Api.Models;
