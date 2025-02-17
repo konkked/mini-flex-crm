@@ -9,7 +9,7 @@ COPY dashboard/package.json dashboard/yarn.lock ./
 RUN yarn install
 
 # Copy the project files
-COPY frontend/. ./
+COPY dashboard/. ./
 
 # Build the React application
 RUN yarn build
@@ -21,7 +21,7 @@ FROM nginx:alpine AS production
 COPY --from=build /app/build /usr/share/nginx/html
 
 # Expose port 80 for Nginx
-EXPOSE 80
+EXPOSE 3000
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]

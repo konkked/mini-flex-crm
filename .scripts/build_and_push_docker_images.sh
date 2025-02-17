@@ -1,11 +1,17 @@
 # Build the frontend image
-docker build -t konkked/mfcrm-frontend:latest -f /Users/charleskeyser/repos/MiniFlexCRM/frontend/Dockerfile .
+cd frontend
+docker build -t konkked/mfcrm-frontend:latest -f Dockerfile .
 docker push konkked/mfcrm-frontend:latest
+cd ..
 
 # Build the backend image
-docker build -t konkked/mfcrm-backend:latest -f /Users/charleskeyser/repos/MiniFlexCRM/backend/Dockerfile .
+cd backend
+docker build -t konkked/mfcrm-backend:latest -f Dockerfile .
 docker push konkked/mfcrm-backend:latest
+cd ..
 
 # Build the database image (if needed)
-docker build -t konkked/mfcrm-database:latest -f /Users/charleskeyser/repos/MiniFlexCRM/database/Dockerfile .
+cd db
+docker build -t konkked/mfcrm-database:latest -f Dockerfile .
 docker push konkked/mfcrm-database:latest
+cd ..
