@@ -17,13 +17,11 @@ public class UserController(IUserService userService) : ControllerBase
         Ok(await userService.GetItem(id));
 
     [HttpGet]
-    public async Task<IActionResult> NextUsers([FromQuery] int pageSize = 50,
-        [FromQuery] string? next = null,
-        [FromQuery] string? prev = null,
-        [FromQuery] string? search = null) =>
-        string.IsNullOrEmpty(prev)
-            ? Ok(await userService.ListItems(pageSize, next, search))
-            : Ok(await userService.ListPreviousItems(pageSize, prev, search));
+    public async Task<IActionResult> ListUsers(
+        [FromQuery] int limit = 50,
+        [FromQuery] int offset = 0,
+        [FromQuery] string? search = null) => 
+        Ok(await userService.ListItems(limit, offset, search));
 
     [HttpPost]
     public async Task<IActionResult> CreateUser([FromBody] UserModel model) =>

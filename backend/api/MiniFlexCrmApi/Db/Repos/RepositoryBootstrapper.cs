@@ -7,7 +7,7 @@ public static class RepositoryBootstrapper
 {
     public static IServiceCollection AddRepositories(this IServiceCollection services)
     {
-        services.AddSingleton<IRelationRepo, RelationRepo>();
+        services.AddSingleton<IRelationshipRepo, RelationshipRepo>();
         services.AddSingleton<IUserRepo,UserRepo>();
         services.AddSingleton<ICustomerRepo,CustomerRepo>();
         services.AddSingleton<ICompanyRepo, CompanyRepo>();

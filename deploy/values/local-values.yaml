@@ -1,0 +1,71 @@
+replicaCount: 1
+
+fullnameOverride: miniflex-crm
+
+hosts:
+  - host: frontend.mfcrm-base.local
+  - host: backend.mfcrm-base.local
+
+frontend:
+  replicaCount: 1
+  image:
+    repository: konkked/mfcrm-frontend
+    pullPolicy: Always
+    tag: "latest"
+  service:
+    type: ClusterIP
+    port: 80
+  resources: {}
+
+backend:
+  replicaCount: 1
+  image:
+    repository: konkked/mfcrm-backend
+    pullPolicy: Always
+    tag: "latest"
+  service:
+    type: ClusterIP
+    port: 80
+  resources: {}
+  base_api_uri: "http://backend.mfcrm-base.local/api"
+
+database:
+  replicaCount: 1
+  image:
+    repository: konkked/mfcrm-database
+    pullPolicy: Always
+    tag: "latest"
+  service:
+    type: ClusterIP
+    port: 5432
+  env:
+    POSTGRES_USER: admin
+    POSTGRES_PASSWORD: admin
+    POSTGRES_DB: miniflexcrm
+  resources: {}
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations: {}
+  hosts:
+    - host: frontend.mfcrm-base.local
+      name: frontend
+      paths:
+        - path: /
+          pathType: Prefix
+      port:
+        number: 80
+    - host: backend.mfcrm-base.local
+      name: backend
+      paths:
+        - path: /
+          pathType: Prefix
+      port:
+        number: 80
+  tls: []
+
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}

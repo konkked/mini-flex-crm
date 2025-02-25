@@ -113,16 +113,16 @@ public class BaseServiceTests
             new() { Id = 2, Name = "Test2" }
         };
 
-        _mockRepo.Setup(repo => repo.GetNext(It.IsAny<int>(), It.IsAny<int>()))
+        _mockRepo.Setup(repo => repo.GetSomeAsync(It.IsAny<int>(), It.IsAny<int>()))
             .Returns(testDbModels.AsAsyncEnumerable());
 
         // Act
         var result = await _testService.ListItems(2);
 
         // Assert
-        Assert.That(result.Items.Count(), Is.EqualTo(2));
-        Assert.That(result.Items.ElementAt(0).Name, Is.EqualTo("Test1"));
-        Assert.That(result.Items.ElementAt(1).Name, Is.EqualTo("Test2"));
+        Assert.That(result.Count(), Is.EqualTo(2));
+        Assert.That(result.ElementAt(0).Name, Is.EqualTo("Test1"));
+        Assert.That(result.ElementAt(1).Name, Is.EqualTo("Test2"));
     }
     
     //  Test: Next Token is generated when there are more items
@@ -137,16 +137,15 @@ public class BaseServiceTests
             new() { Id = 3, Name = "Item3" }
         };
 
-        _mockRepo.Setup(repo => repo.GetNext(It.IsAny<int>(), It.IsAny<int>()))
+        _mockRepo.Setup(repo => repo.GetSomeAsync(It.IsAny<int>(), It.IsAny<int>()))
             .Returns(testDbModels.AsAsyncEnumerable());
 
         // Act
         var result = await _testService.ListItems(3);
 
         // Assert
-        Assert.That(result.Items.Count(), Is.EqualTo(3));
-        Assert.That(result.Next, Is.Not.EqualTo(null)); // Next token should be generated
-    }
+        Assert.That(result.Count(), Is.EqualTo(3));
+     }
 
     //  Test: Next Token is NULL when there are NO more items
     [Test]
@@ -159,14 +158,13 @@ public class BaseServiceTests
             new() { Id = 2, Name = "Item2" }
         };
 
-        _mockRepo.Setup(repo => repo.GetNext(It.IsAny<int>(), It.IsAny<int>()))
+        _mockRepo.Setup(repo => repo.GetSomeAsync(It.IsAny<int>(), It.IsAny<int>()))
             .Returns(testDbModels.AsAsyncEnumerable());
 
         // Act
         var result = await _testService.ListItems(3);
 
         // Assert
-        Assert.That(result.Items.Count(), Is.EqualTo(2));
-        Assert.That(result.Next, Is.EqualTo(null)); 
+        Assert.That(result.Count(), Is.EqualTo(2));
     }
 }

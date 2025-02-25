@@ -4,5 +4,5 @@ namespace MiniFlexCrmApi.Db;
 
 public interface IConnectionProvider
 {
-    DbConnection Connection { get; }
+    DbConnection GetConnection();
 }

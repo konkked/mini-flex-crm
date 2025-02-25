@@ -29,6 +29,7 @@ builder.Services.AddLogging(logging =>
     logging.AddDebug();   
 });
 
+
 builder.Services.AddControllers(options =>
     {
         options.ModelBinderProviders.Insert(0, new RequestContextModelBinderProvider());

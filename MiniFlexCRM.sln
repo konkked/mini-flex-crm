@@ -1,0 +1,39 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "backend", "backend", "{1AE8ACA6-933B-BF2A-3671-3E2EAC007D16}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "api", "api", "{F5770A5D-1764-CA48-906B-8D098984A6C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniFlexCrmApi", "backend\api\MiniFlexCrmApi\MiniFlexCrmApi.csproj", "{DD784E2D-CCBE-735B-D592-D369A4258C56}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniFlexCrmApi.Tests", "backend\api\MiniFlexCrmApi.Tests\MiniFlexCrmApi.Tests.csproj", "{EB7AC230-25A8-652C-7C37-E532B97A6152}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DD784E2D-CCBE-735B-D592-D369A4258C56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD784E2D-CCBE-735B-D592-D369A4258C56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD784E2D-CCBE-735B-D592-D369A4258C56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD784E2D-CCBE-735B-D592-D369A4258C56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB7AC230-25A8-652C-7C37-E532B97A6152}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB7AC230-25A8-652C-7C37-E532B97A6152}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB7AC230-25A8-652C-7C37-E532B97A6152}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB7AC230-25A8-652C-7C37-E532B97A6152}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F5770A5D-1764-CA48-906B-8D098984A6C2} = {1AE8ACA6-933B-BF2A-3671-3E2EAC007D16}
+		{DD784E2D-CCBE-735B-D592-D369A4258C56} = {F5770A5D-1764-CA48-906B-8D098984A6C2}
+		{EB7AC230-25A8-652C-7C37-E532B97A6152} = {F5770A5D-1764-CA48-906B-8D098984A6C2}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7AA51D92-AB2C-492A-B974-F474285225C2}
+	EndGlobalSection
+EndGlobal

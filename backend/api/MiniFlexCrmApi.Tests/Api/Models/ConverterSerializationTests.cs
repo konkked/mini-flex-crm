@@ -138,7 +138,7 @@ public class ConverterSerializationTests
     [Test]
     public void Serialize_RelationModel_ToJson()
     {
-        var model = new RelationModel
+        var model = new RelationshipModel
         {
             Id = 4,
             EntityId = 500,
@@ -147,7 +147,7 @@ public class ConverterSerializationTests
             CustomerName = "Customer X"
         };
         
-        var deserialized = JsonSerializer.Deserialize<RelationModel>(
+        var deserialized = JsonSerializer.Deserialize<RelationshipModel>(
             JsonSerializer.Serialize(model, JsonOptions), JsonOptions);
 
         Assert.That(model, Is.EqualTo(deserialized));
@@ -158,7 +158,7 @@ public class ConverterSerializationTests
     public void Deserialize_RelationModel_FromJson()
     {
         var json = @"{""id"":4,""entityId"":500,""entityName"":""company"",""customerId"":600,""customerName"":""Customer X""}";
-        var model = JsonSerializer.Deserialize<RelationModel>(json, JsonOptions);
+        var model = JsonSerializer.Deserialize<RelationshipModel>(json, JsonOptions);
 
         Assert.That(model, Is.Not.Null);
         Assert.That(model!.Id, Is.EqualTo(4));

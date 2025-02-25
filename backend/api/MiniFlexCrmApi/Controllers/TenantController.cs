@@ -14,13 +14,11 @@ public class TenantController(ITenantService tenantService) : ControllerBase
         Ok(await tenantService.GetItem(id));
 
     [HttpGet]
-    public async Task<IActionResult> ListTenants([FromQuery] int pageSize = 50, 
-        [FromQuery] string? next = null, 
-        [FromQuery] string? prev = null,
-        [FromQuery] string? search = null) =>
-    string.IsNullOrEmpty(prev) 
-        ? Ok(await tenantService.ListItems(pageSize, next, search))
-        : Ok(await tenantService.ListPreviousItems(pageSize, prev, search));
+    public async Task<IActionResult> ListTenants(
+        [FromQuery] int limit = 50,
+        [FromQuery] int offset = 0,
+        [FromQuery] string? search = null) => 
+        Ok(await tenantService.ListItems(limit, offset, search));
 
     [HttpPost]
     public async Task<IActionResult> CreateTenant([FromBody] TenantModel model) =>

@@ -10,9 +10,9 @@ namespace MiniFlexCrmApi.Api.Auth;
 public class AuthService : IAuthService
 {
     private readonly IUserRepo _userRepo;
-    private readonly JwtService _jwtService;
+    private readonly IJwtService _jwtService;
 
-    public AuthService(IUserRepo userRepo, JwtService jwtService)
+    public AuthService(IUserRepo userRepo, IJwtService jwtService)
     {
         _userRepo = userRepo;
         _jwtService = jwtService;

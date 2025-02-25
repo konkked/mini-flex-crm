@@ -14,11 +14,8 @@ public class CompanyController(ICompanyService companyService) : ControllerBase
         Ok(await companyService.GetItem(id));
 
     [HttpGet]
-    public async Task<IActionResult> ListCompanies([FromQuery] int pageSize = 50, [FromQuery] string? next = null, 
-        [FromQuery] string? prev = null, [FromQuery] string? search = null) =>
-        string.IsNullOrEmpty(prev) 
-            ? Ok(await companyService.ListItems(pageSize, next, search))
-            : Ok(await companyService.ListPreviousItems(pageSize, prev, search));
+    public async Task<ActionResult<IEnumerable<CompanyModel>>> ListCompanies([FromQuery] int limit = 50, [FromQuery] int offset = 0) 
+        => Ok(await companyService.ListItems(limit, offset));
 
     [HttpPost]
     public async Task<IActionResult> CreateCompany([FromBody] CompanyModel model) =>

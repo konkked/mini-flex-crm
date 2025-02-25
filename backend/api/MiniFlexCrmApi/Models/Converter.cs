@@ -57,18 +57,18 @@ public static class Converter
         TenantId = model.TenantId,
         Attributes = model.Attributes
     };
-    public static RelationModel From(RelationDbModel relationDbModel) => new()
+    public static RelationshipModel From(RelationshipDbModel relationshipDbModel) => new()
     {
-        Id = relationDbModel.Id,
-        EntityId = relationDbModel.EntityId,
-        EntityName = Enum.TryParse<EntityNameType>(relationDbModel.Entity, true, out var entityType) 
+        Id = relationshipDbModel.Id,
+        EntityId = relationshipDbModel.EntityId,
+        EntityName = Enum.TryParse<EntityNameType>(relationshipDbModel.Entity, true, out var entityType) 
             ? entityType 
-            : throw new ArgumentException($"Invalid entity type: {relationDbModel.Entity}"),
-        CustomerId = relationDbModel.CustomerId,
-        CustomerName = relationDbModel.CustomerName
+            : throw new ArgumentException($"Invalid entity type: {relationshipDbModel.Entity}"),
+        CustomerId = relationshipDbModel.CustomerId,
+        CustomerName = relationshipDbModel.CustomerName
     };
 
-    public static RelationDbModel To(RelationModel model) => new()
+    public static RelationshipDbModel To(RelationshipModel model) => new()
     {
         Id = model.Id,
         EntityId = model.EntityId,

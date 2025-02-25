@@ -147,7 +147,7 @@ public class ConverterTests
     [Test]
     public void Convert_RelationDbModel_To_RelationModel()
     {
-        var dbModel = new RelationDbModel
+        var dbModel = new RelationshipDbModel
         {
             Id = 1,
             EntityId = 42,
@@ -169,7 +169,7 @@ public class ConverterTests
     [Test]
     public void Convert_RelationModel_To_RelationDbModel()
     {
-        var model = new RelationModel
+        var model = new RelationshipModel
         {
             Id = 1,
             EntityId = 42,

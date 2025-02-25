@@ -13,7 +13,7 @@ namespace MiniFlexCrmApi.Db.Repos;
 
 public class DbEntityRepo<T> : IRepo<T> where T : DbEntity
 {
-    protected (string? whereFilter, Dictionary<string, object> values)? GrokQuery(string query, bool hasQuery = true)
+    protected (string? whereFilter, Dictionary<string, object> values)? GrokQuery(string query)
     {
         var queryObject = Base62JsonConverter.DeserializeAnonymous(query, null as Dictionary<string, string>);
         if (queryObject == null)
@@ -21,9 +21,6 @@ public class DbEntityRepo<T> : IRepo<T> where T : DbEntity
 
         var stringBuilder = new StringBuilder();
         var values = new Dictionary<string, object>();
-
-        if (hasQuery)
-            stringBuilder.Append(" AND ");
 
         foreach (var key in queryObject.Keys)
         {
@@ -108,63 +105,78 @@ public class DbEntityRepo<T> : IRepo<T> where T : DbEntity
             .Select(n => $"{ToSnakeCase(n)}=@{n}"));
     }
 
-    public Task<bool> ExistsAsync(int id) => ConnectionProvider.Connection.ExecuteScalarAsync<bool>(
-        $"SELECT EXISTS(SELECT 1 FROM {TableName} WHERE id = @id)", new { id }
-    );
-    
-    public virtual IAsyncEnumerable<T> GetSome(int count) => GetNext(0, count, null);
-    public virtual IAsyncEnumerable<T> GetSome(int count, string query) => GetNext(0, count, query);
-    public virtual IAsyncEnumerable<T> GetNext(int id, int count) => GetNext(id, count, null);
-    public virtual async IAsyncEnumerable<T> GetNext(int id, int count, string query)
+    public async Task<bool> ExistsAsync(int id)
     {
-        var queryObj = GrokQuery(query, !string.IsNullOrEmpty(query));
+        await using var connection = ConnectionProvider.GetConnection();
+        await connection.OpenAsync().ConfigureAwait(false);
+        return await connection.ExecuteScalarAsync<bool>(
+        $"SELECT EXISTS(SELECT 1 FROM {TableName} WHERE id = @id)", new { id }
+        ).ConfigureAwait(false);
+    }
+
+    public virtual IAsyncEnumerable<T> GetSomeAsync() => GetSomeAsync(ServiceContants.PageSize, 0);
+    public virtual IAsyncEnumerable<T> GetSomeAsync(int limit) => GetSomeAsync(limit, 0, null);
+    public virtual IAsyncEnumerable<T> GetSomeAsync(int limit, string query) => GetSomeAsync(limit, 0, query);
+    public virtual IAsyncEnumerable<T> GetSomeAsync(int limit, int offset) => GetSomeAsync(limit, offset, null);
+    public virtual async IAsyncEnumerable<T> GetSomeAsync(int limit, int offset, string query)
+    {
+        var queryObj = GrokQuery(query);
         var whereFilter = queryObj?.whereFilter ?? "";
         var values = queryObj?.values ?? new Dictionary<string, object>();
-        values["id"] = id;
-        var results = await ConnectionProvider.Connection.QueryAsync<T>(
-            $"SELECT * FROM {TableName} WHERE id > @id {whereFilter} ORDER BY id ASC LIMIT @count",
+        values["offset"] = offset;
+        values["count"] = limit;
+        await using var connection = ConnectionProvider.GetConnection();
+        await connection.OpenAsync().ConfigureAwait(false);
+        var results = await connection.QueryAsync<T>(
+            $@"SELECT * 
+                   FROM {TableName} 
+                    {(!string.IsNullOrEmpty(whereFilter) ? $"WHERE {whereFilter}" : string.Empty)} 
+                   ORDER BY id ASC 
+                   LIMIT @count 
+                   OFFSET @offset ",
             values
-        );
+        ).ConfigureAwait(false);
 
         foreach (var item in results)
             yield return item;
     }
-    
-    public virtual IAsyncEnumerable<T> GetPrevious(int id, int count)=>GetPrevious(id, count, null);
-    public virtual async IAsyncEnumerable<T> GetPrevious(int id, int count, string query)
-    {
-        var queryObj = GrokQuery(query, !string.IsNullOrEmpty(query));
-        var whereFilter = queryObj?.whereFilter ?? "";
-        var values = queryObj?.values ?? new Dictionary<string, object>();
-        values.Add("lastId", id);
-        values.Add("count", count);
-        var results = await ConnectionProvider.Connection.QueryAsync<T>(
-            $"SELECT * FROM {TableName} WHERE id < @id {whereFilter} ORDER BY id DESC LIMIT @count",
-            values
-        );
 
-        foreach (var item in results.Reverse()) // Reverse to maintain ascending order
-            yield return item;
+    public virtual async Task<T?> FindAsync(int id)
+    {
+        await using var connection = ConnectionProvider.GetConnection();
+        await connection.OpenAsync().ConfigureAwait(false);
+        return await connection.QueryFirstOrDefaultAsync<T>(
+            $"SELECT * FROM {TableName} WHERE id = @id", new { id }
+        ).ConfigureAwait(false);
     }
 
-    public virtual Task<T?> FindAsync(int id) => ConnectionProvider.Connection.QueryFirstOrDefaultAsync<T>(
-        $"SELECT * FROM {TableName} WHERE id = @id", new { id }
-    );
-    public virtual Task<int> UpdateAsync(T entity) =>
-        ConnectionProvider.Connection.ExecuteAsync($@"
+    public virtual async Task<int> UpdateAsync(T entity)
+    {
+        await using var connection = ConnectionProvider.GetConnection();
+        await connection.OpenAsync().ConfigureAwait(false);
+        return await connection.ExecuteAsync($@"
         UPDATE {TableName}
         SET {_updateClause}
         WHERE id = @Id
         AND (@UpdatedTs IS NULL OR updated_ts = @UpdatedTs)", entity);
+    }
+    
+    public virtual async Task<int> DeleteAsync(int id)
+    {
+        await using var connection = ConnectionProvider.GetConnection();
+        await connection.OpenAsync().ConfigureAwait(false);
+        return await connection.ExecuteAsync(
+            $"DELETE FROM {TableName} WHERE id = @id", new { id }
+        ).ConfigureAwait(false);
+    }
 
-
-    public virtual Task<int> DeleteAsync(int id) => ConnectionProvider.Connection.ExecuteAsync(
-        $"DELETE FROM {TableName} WHERE id = @id", new { id }
-    );
-
-    public Task<int> CreateAsync(T entity) =>
-        ConnectionProvider.Connection.ExecuteScalarAsync<int>(
+    public async Task<int> CreateAsync(T entity)
+    {
+        await using var connection = ConnectionProvider.GetConnection();
+        await connection.OpenAsync().ConfigureAwait(false);
+        return await connection.ExecuteScalarAsync<int>(
             @$"INSERT INTO {TableName} ({_insertLeftClause}) 
                    VALUES ({_insertRightClause}) RETURNING id", entity
-        );
+        ).ConfigureAwait(false);
+    }
 }

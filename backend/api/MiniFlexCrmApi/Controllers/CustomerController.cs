@@ -19,13 +19,11 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
         Ok(await customerService.GetItem(id));
 
     [HttpGet]
-    public async Task<IActionResult> ListCustomers([FromQuery] int pageSize = 50,
-        [FromQuery] string? next = null,
-        [FromQuery] string? prev = null,
-        [FromQuery] string? search = null) =>
-        string.IsNullOrEmpty(prev)
-            ? Ok(await customerService.ListItems(pageSize, next, search))
-            : Ok(await customerService.ListPreviousItems(pageSize, prev, search));
+    public async Task<ActionResult<IEnumerable<CustomerModel>>> ListCustomers(
+        [FromQuery] int limit = 50,
+        [FromQuery] int offset = 0,
+        [FromQuery] string? search = null)
+            => Ok(await customerService.ListItems(limit, offset, search));
 
     [HttpPost]
     public async Task<IActionResult> CreateCustomer([FromBody] CustomerModel model) =>
