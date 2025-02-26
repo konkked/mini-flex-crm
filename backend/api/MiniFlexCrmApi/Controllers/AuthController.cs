@@ -62,4 +62,10 @@ public class AuthController : ControllerBase
 
         return Ok(response);
     }
+
+    [HttpPost("verify_email")]
+    public async Task<ActionResult<bool>> VerifyEmail([FromQuery] string token)
+    {
+        return Ok(await _authService.VerifyEmailAsync(token));
+    }
 }

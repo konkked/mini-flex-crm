@@ -2,6 +2,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using MimeKit;
 using MiniFlexCrmApi.Db.Models;
 using MiniFlexCrmApi.Db.Repos;
 
@@ -11,11 +12,15 @@ public class AuthService : IAuthService
 {
     private readonly IUserRepo _userRepo;
     private readonly IJwtService _jwtService;
+    private readonly IEmailSender _emailSender;
+    private readonly IEndecryptor _endecryptor;
 
-    public AuthService(IUserRepo userRepo, IJwtService jwtService)
+    public AuthService(IUserRepo userRepo, IJwtService jwtService, IEmailSender emailSender, IEndecryptor endecryptor)
     {
         _userRepo = userRepo;
         _jwtService = jwtService;
+        _emailSender = emailSender;
+        _endecryptor = endecryptor;
     }
 
     public async Task<AuthResponse?> LoginAsync(LoginRequest request)
@@ -48,11 +53,16 @@ public class AuthService : IAuthService
         {
             Username = request.Username,
             PasswordHash = hashedPassword,
+            Email = request.Email,
+            Name = request.Name,
             Salt = salt,
             TenantId = request.TenantId
         };
 
         await _userRepo.CreateAsync(newUser).ConfigureAwait(false);
+        await _emailSender.SendVerificationEmailAsync(request.Email,
+            _endecryptor.Encrypt($"{request.Username}:{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}",
+                62));
         return AuthResponseFromUser(newUser);
     }
 
@@ -61,8 +71,8 @@ public class AuthService : IAuthService
         var expiredTokenData = _jwtService.ValidateThenGetTokenExpiry(expiredTokenRequest.Token);
 
         if (expiredTokenData == null
-            || expiredTokenData.Value.Expiry >= TimeSpan.FromMinutes(JwtCustomConstants.RefreshWindowInMinutes)
-            || expiredTokenData.Value.Expiry <= TimeSpan.FromMinutes(-JwtCustomConstants.RefreshWindowInMinutes))
+            || expiredTokenData.Value.Expiry >= TimeSpan.FromMinutes(ServerCustomConstants.RefreshWindowInMinutes)
+            || expiredTokenData.Value.Expiry <= TimeSpan.FromMinutes(-ServerCustomConstants.RefreshWindowInMinutes))
             return null;
 
         var user = await _userRepo.FindAsync(expiredTokenData.Value.UserId)
@@ -74,6 +84,27 @@ public class AuthService : IAuthService
         return AuthResponseFromUser(user);
     }
 
+    public async Task<bool> VerifyEmailAsync(string token)
+    {
+        try
+        {
+            token = _endecryptor.Decrypt(token, 62);
+            var split = token.Split(':');
+            var userName = split[0];
+            var unixTime = long.Parse(split[1]);
+            var sentTime = DateTimeOffset.FromUnixTimeSeconds(unixTime);
+            if (DateTime.UtcNow - sentTime >= TimeSpan.FromMinutes(ServerCustomConstants.RefreshWindowInMinutes))
+            {
+                return await _userRepo.EnableUserByUsernameAsync(userName);
+            }
+        }
+        catch
+        {
+        }
+
+        return false;
+    }
+
 
     private AuthResponse? AuthResponseFromUser(UserDbModel user)
     {
@@ -82,7 +113,7 @@ public class AuthService : IAuthService
         return new AuthResponse
         {
             Token = token,
-            Expiration = DateTime.UtcNow + JwtCustomConstants.TokenLifetime.Add(TimeSpan.FromMinutes(-1))
+            Expiration = DateTime.UtcNow + ServerCustomConstants.TokenLifetime.Add(TimeSpan.FromMinutes(-1))
         };
     }
 

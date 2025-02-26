@@ -2,7 +2,7 @@ using System;
 
 namespace MiniFlexCrmApi.Api.Auth;
 
-public static class JwtCustomConstants
+public static class ServerCustomConstants
 {
     public static class ClaimTypes
     {
@@ -12,4 +12,5 @@ public static class JwtCustomConstants
 
     public static readonly TimeSpan TokenLifetime = TimeSpan.FromMinutes(60);
     public const int RefreshWindowInMinutes = 5;
+    public const int EmailVerificationWindowInMinutes = 15;
 }

@@ -29,17 +29,17 @@ public class DbEntityRepo<T> : IRepo<T> where T : DbEntity
                 continue;
 
             object parsedValue;
-            if (int.TryParse(value, out int intValue))
+            if (int.TryParse(value, out var intValue))
             {
                 parsedValue = intValue;
                 stringBuilder.Append($"{snakeName}=@{snakeName} AND ");
             }
-            else if (decimal.TryParse(value, out decimal decimalValue))
+            else if (decimal.TryParse(value, out var decimalValue))
             {
                 parsedValue = decimalValue;
                 stringBuilder.Append($"{snakeName}=@{snakeName} AND ");
             }
-            else if (float.TryParse(value, out float floatValue))
+            else if (float.TryParse(value, out var floatValue))
             {
                 parsedValue = floatValue;
                 stringBuilder.Append($"{snakeName}=@{snakeName} AND ");

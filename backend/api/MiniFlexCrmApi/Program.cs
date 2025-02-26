@@ -43,9 +43,11 @@ builder.Services.AddControllers(options =>
         options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
     });
 
+builder.Services.AddSingleton<IEndecryptor, Endecryptor>();
+builder.Services.AddSingleton<IEmailSender, EmailSender>();
 builder.Services.AddSingleton<IConnectionProvider, ConnectionProvider>(services => 
     new (GetConnectionString(services)));
-builder.Services.AddSingleton<IJwtKeyProvider, JwtKeyProvider>();
+builder.Services.AddSingleton<IEncryptionSecretProvider, EncryptionSecretProvider>();
 builder.Services.AddRepositories();
 builder.Services.AddSwaggerGen();
 builder.Services.AddApiServices();

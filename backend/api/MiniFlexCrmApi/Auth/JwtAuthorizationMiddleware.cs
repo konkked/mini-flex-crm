@@ -16,11 +16,11 @@ public class JwtAuthorizationMiddleware
     private readonly IUserRepo _userRepo;
     private readonly string _jwtSecret;
 
-    public JwtAuthorizationMiddleware(RequestDelegate next, IJwtKeyProvider jwtKeyProvider, IUserRepo userRepo)
+    public JwtAuthorizationMiddleware(RequestDelegate next, IEncryptionSecretProvider encryptionSecretProvider, IUserRepo userRepo)
     {
         _next = next;
         _userRepo = userRepo;
-        _jwtSecret = jwtKeyProvider.GetKey();
+        _jwtSecret = encryptionSecretProvider.GetSecret();
     }
 
     public async Task Invoke(HttpContext context)
@@ -34,7 +34,7 @@ public class JwtAuthorizationMiddleware
         }
         
         var requestPath = context.Request.Path.Value?.Trim('/').Split('/');
-        int? pathTenantId = ExtractTenantIdFromPath(requestPath);
+        var pathTenantId = ExtractTenantIdFromPath(requestPath);
 
         var handler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_jwtSecret);
@@ -52,7 +52,7 @@ public class JwtAuthorizationMiddleware
 
             int? tokenTenantId = null;
             if (int.TryParse(
-                    claimsPrincipal.FindFirstValue(JwtCustomConstants.ClaimTypes.TenantId),
+                    claimsPrincipal.FindFirstValue(ServerCustomConstants.ClaimTypes.TenantId),
                     out var tid))
             {
                 tokenTenantId = tid;
@@ -116,7 +116,7 @@ public class JwtAuthorizationMiddleware
     {
         if (requestPath.Length < 2) return null;
 
-        for (int i = 0; i < requestPath.Length - 1; i++)
+        for (var i = 0; i < requestPath.Length - 1; i++)
         {
             if (requestPath[i].Equals("tenant", StringComparison.OrdinalIgnoreCase) &&
                 int.TryParse(requestPath[i + 1], out var tenantId))

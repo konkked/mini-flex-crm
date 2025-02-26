@@ -15,6 +15,15 @@ public class UserRepo(IConnectionProvider connectionProvider) : TenantBoundDbEnt
             .ConfigureAwait(false);
     }
 
+    public async Task<bool> EnableUserByUsernameAsync(string username)
+    {
+        await using var connection = ConnectionProvider.GetConnection();
+        await connection.OpenAsync().ConfigureAwait(false);
+        return await connection.ExecuteAsync(
+                $@"UPDATE {TableName} SET enabled=true WHERE username = @username", new { username })
+            .ConfigureAwait(false) == 1;
+    }
+
     public async Task<bool> ExistsByUsernameAsync(string username)
     {
         await using var connection = ConnectionProvider.GetConnection();

@@ -29,7 +29,7 @@ public class RequestContextModelBinder : IModelBinder
                 .ToDictionary(c => c.Key, c => c.Value),
             UserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value,
             Username = user.FindFirst(ClaimTypes.Name)?.Value,
-            TenantId = int.TryParse(user.FindFirst(JwtCustomConstants.ClaimTypes.TenantId)?.Value, out var tenant) 
+            TenantId = int.TryParse(user.FindFirst(ServerCustomConstants.ClaimTypes.TenantId)?.Value, out var tenant) 
                 ? tenant : null,
             Role = user.FindFirst(ClaimTypes.Role)?.Value,
             Claims = user.Claims.ToDictionary(c => c.Type, c => c.Value)

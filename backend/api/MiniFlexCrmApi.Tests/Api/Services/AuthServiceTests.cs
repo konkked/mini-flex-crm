@@ -18,7 +18,9 @@ public class AuthServiceTests
     {
         var userRepo = Mock.Of<IUserRepo>();
         var jwtService = Mock.Of<IJwtService>();
-        var authService = new AuthService(userRepo, jwtService);
+        var emailSender = Mock.Of<IEmailSender>();
+        var endecryptor = Mock.Of<IEndecryptor>();
+        var authService = new AuthService(userRepo, jwtService, emailSender, endecryptor);
         Mock.Get(userRepo)
             .Setup(a=>a.ExistsByUsernameAsync(It.IsAny<string>()))
             .ReturnsAsync(false);

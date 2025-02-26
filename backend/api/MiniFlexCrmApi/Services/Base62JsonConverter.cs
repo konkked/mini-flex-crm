@@ -35,7 +35,7 @@ public static class Base62JsonConverter
     /// </summary>
     private static string EncodeBase62(byte[] bytes)
     {
-        BigInteger value = new BigInteger(bytes.Concat(new byte[] { 0 }).ToArray()); // Ensure positive BigInteger
+        var value = new BigInteger(bytes.Concat(new byte[] { 0 }).ToArray()); // Ensure positive BigInteger
         var result = new StringBuilder();
 
         while (value > 0)

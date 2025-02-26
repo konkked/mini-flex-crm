@@ -24,9 +24,9 @@ public class JwtService : IJwtService
 {
     private readonly string _jwtSecret;
 
-    public JwtService(IJwtKeyProvider secretProvider)
+    public JwtService(IEncryptionSecretProvider secretProvider)
     {
-        _jwtSecret = secretProvider.GetKey();
+        _jwtSecret = secretProvider.GetSecret();
     }
 
     public string GenerateToken(UserDbModel user)
@@ -39,10 +39,10 @@ public class JwtService : IJwtService
             {
                 new (JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new (JwtRegisteredClaimNames.UniqueName, user.Username),
-                new (JwtCustomConstants.ClaimTypes.TenantId, user.TenantId.ToString()),
-                new ( JwtCustomConstants.ClaimTypes.Role, user.Role),
+                new (ServerCustomConstants.ClaimTypes.TenantId, user.TenantId.ToString()),
+                new ( ServerCustomConstants.ClaimTypes.Role, user.Role),
             }),
-            Expires = DateTime.UtcNow + JwtCustomConstants.TokenLifetime,
+            Expires = DateTime.UtcNow + ServerCustomConstants.TokenLifetime,
             SigningCredentials = credentials
         };
 
@@ -73,7 +73,7 @@ public class JwtService : IJwtService
                 ClockSkew = TimeSpan.Zero
             };
 
-            var principal = tokenHandler.ValidateToken(token, parameters, out SecurityToken validatedToken);
+            var principal = tokenHandler.ValidateToken(token, parameters, out var validatedToken);
 
             if (validatedToken is JwtSecurityToken jwtToken)
             {

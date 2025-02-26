@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace MiniFlexCrmApi.Api.Auth;
 
-public class JwtKeyProvider(ILogger<JwtKeyProvider> logger, IConfiguration configuration) : IJwtKeyProvider
+public class EncryptionSecretProvider(ILogger<EncryptionSecretProvider> logger, IConfiguration configuration) : IEncryptionSecretProvider
 {
     private const string EnvironmentVariableName = "MINIFLEXCRMAPI_JWT_KEY";
     private const string ConfigurationName = "JWT_SECRET";
@@ -28,7 +28,7 @@ public class JwtKeyProvider(ILogger<JwtKeyProvider> logger, IConfiguration confi
 
     });
 
-    public string GetKey() => _key.Value;
+    public string GetSecret() => _key.Value;
 
     private static string GenerateKey(ILogger logger)
     {
