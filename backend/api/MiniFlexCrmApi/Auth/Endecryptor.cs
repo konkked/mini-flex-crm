@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace MiniFlexCrmApi.Api.Auth;
+namespace MiniFlexCrmApi.Auth;
 
 public interface IEndecryptor
 {

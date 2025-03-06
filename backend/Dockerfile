@@ -2,6 +2,8 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
+ENV SERVER_PORT="5000"
+
 # Copy project files and restore dependencies
 COPY api/MiniFlexCrmApi/*.csproj ./
 RUN dotnet restore

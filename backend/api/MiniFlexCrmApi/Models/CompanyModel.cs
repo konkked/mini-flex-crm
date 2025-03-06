@@ -1,4 +1,4 @@
-namespace MiniFlexCrmApi.Api.Models;
+namespace MiniFlexCrmApi.Models;
 
 public record CompanyModel : TenantBoundBaseModel
 {

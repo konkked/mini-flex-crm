@@ -1,11 +1,11 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { Relation, Relationships } from "./models/relation";
+import { Relationship, PivotedRelationships } from "./models/relationship";
 import { Company } from "./models/company";
 import { User } from "./models/user";
 import { Customer } from "./models/customer";
 
-const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:8080/api";
+const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:5111/api";
 
 // Function to base62 encode a string
 export const base62Encode = (str: string): string => {
@@ -54,9 +54,9 @@ export const getCurrentUser = () => {
 
 export const getCurrentRole = () => getCurrentUser()?.role;
 export const getCurrentUserId = () => getCurrentUser()?.sub;
-export const hasAdminAccessToItem = (item: Customer | Company | User | Relation) => {
+export const hasAdminAccessToItem = (item: Customer | Company | User | Relationship) => {
     return getCurrentRole() === "admin" 
-            && (item.tenantId == getCurrentTenantId() || getCurrentTenantId() == "0");
+            && (item.tenantId == getCurrentTenantId() || getCurrentTenantId() == 0);
 }
 
 
@@ -82,6 +82,7 @@ const isTokenExpired = (token: string) => {
     const decoded: any = jwtDecode(token);
     return decoded.exp * 1000 < Date.now();
   } catch (err) {
+    console.log('Token is invalid or expired', err);
     return true;
   }
 };
@@ -105,63 +106,43 @@ const refreshAuthToken = async () => {
 
 // Interceptor to refresh token before requests
 apiClient.interceptors.request.use(async (config) => {
+  
   let token = getAuthToken();
   if (token && isTokenExpired(token)) {
     token = await refreshAuthToken();
   }
+  
   if (token) {
     config.headers["Authorization"] = `Bearer ${token}`;
   }
+
   return config;
 });
 
 
-const entities = ["user", "customer", "company", "relation"];
+const entities = ["user", "customer", "company", "relationship"];
 
 // API Object that will dynamically contain all API calls
 const api: Record<string, any> = {};
 
 
-export const getCurrentTenantId = () => getCurrentUser()?.tenant_id;
+export const getCurrentTenantId = () => Number.parseInt(getCurrentUser()?.tenant_id ?? '-1');
  
 entities.forEach((entity) => {
-  api.admin = {};
+  api.admin ??= {};
+  const fetch = async (tenantId?: number, offset?: number, limit?: number, search?: any) => {
+    const params : Record<string, any> = {};
+    params.offset = offset ?? 0;
+    params.limit = limit ?? 50;
+    if (search) {
+        params.search = base62Encode(JSON.stringify(search));
+    }
+    const response = await apiClient.get(tenantId !== -1 ? `/tenant/${tenantId}/${entity}` : `/${entity}`, { params });
+    return response.data;
+  }
   api.admin[entity] = {
-    list: {
-        next: async (tenantId?: string, nextToken?: string, search?: any) => {
-            const params = nextToken 
-                ? search 
-                    ? { next: nextToken, search: base62Encode(JSON.stringify(search)) } 
-                    : { next: nextToken }
-                : search 
-                    ? { search: base62Encode(JSON.stringify(search)) } 
-                    : {};
-            const response = await apiClient.get(tenantId ? `/tenant/${tenantId}/${entity}` : `/${entity}`, { params });
-            return response.data;
-        },
-        prev: async (tenantId?: string, prevToken?: string, search?: any) => {
-            const params = prevToken 
-                ? search 
-                    ? { next: prevToken, search: base62Encode(JSON.stringify(search)) } 
-                    : { next: prevToken }
-                : search 
-                    ? { search: base62Encode(JSON.stringify(search)) } 
-                    : {};
-            const response = await apiClient.get(tenantId ? `/tenant/${tenantId}/${entity}` : `/${entity}`, { params });
-            return response.data;
-        }
-    },
-    search: async (tenantId?: string, nextToken?: string, search?: any) => {
-        const params = nextToken 
-            ? search 
-                ? { next: nextToken, search: base62Encode(JSON.stringify(search)) } 
-                : { next: nextToken }
-            : search 
-                ? { search: base62Encode(JSON.stringify(search)) } 
-                : {};
-        const response = await apiClient.get(tenantId ? `/tenant/${tenantId}/${entity}` : `/${entity}`, { params });
-        return response.data;
-    },
+    list: async (tenantId?:number, offset?: number, limit?: number) => await fetch(tenantId, offset, limit),
+    search: async (tenantId?:number, offset?: number, limit?: number, query?:any) => await fetch(tenantId, offset, limit, query),
     get: async (tenantId: string, id: number) => {
       const response = await apiClient.get(`/tenant/${tenantId}/${entity}/${id}`);
       return response.data;
@@ -181,13 +162,10 @@ entities.forEach((entity) => {
   };
  
 
-  api.std = {};
+  api.std ??= {};
   api.std[entity] = {
-    list: { 
-        next: async (nextToken?: string) => await api.admin[entity].list(getCurrentTenantId(), nextToken), 
-        prev: async (prevToken?: string) => await api.admin[entity].list(getCurrentTenantId(), prevToken) 
-    },
-    search: async (criteria: any, nextToken?: string) => await api.admin[entity].list(getCurrentTenantId(), nextToken, criteria),
+    list: async (offset?: number, limit?: number) => await api.admin[entity].list(getCurrentTenantId(), offset, limit),
+    search: async (offset?: number, limit?: number, query?: any) => await api.admin[entity].search(getCurrentTenantId(), offset, limit, query),
     get: async (id: number) => await api.admin[entity].get(getCurrentTenantId(), id),
     create: async (data: any) => await api.admin[entity].create(getCurrentTenantId(), data),
     edit: async (id: number, data: any) => await api.admin[entity].edit(getCurrentTenantId(), id, data),
@@ -196,23 +174,21 @@ entities.forEach((entity) => {
 
 });
 
-api.std.customer.get_with_relationships = async (tenantId: string, id: number) => {
-    const response = await apiClient.get<Relationships>(`/tenant/${tenantId}/customer/${id}/relationships`);
+api.std.customer.get_with_relationships = async (id: number) => {
+    const response = await apiClient.get<PivotedRelationships>(`/tenant/${getCurrentTenantId()}/customer/${id}/relationships`);
     return response.data;
 };
 
 api.admin.tenant = {
-    list: { 
-        next : async (nextToken?: string) => {
-            const params = nextToken ? { next: nextToken } : {};
-            const response = await apiClient.get(`/tenant`, { params });
-            return response.data;
-        }, 
-        prev : async (prevToken?: string) => {
-            const params = prevToken ? { prev: prevToken } : {};
-            const response = await apiClient.get(`/tenant`, { params });
-            return response.data;
-        }
+    list: async (offset?: number, limit?: number) : Promise<any[]> => {
+        const params = { offset: offset ?? 0, limit: limit ?? 50 };
+        const response = await apiClient.get(`/tenant`, { params });
+        return response.data;
+    },
+    searchByName: async (name: string) : Promise<any[]> => {
+        const params = { offset: 0, limit: 1000, search: base62Encode(JSON.stringify({name})) };
+        const response = await apiClient.get(`/tenant`, { params });
+        return response.data;
     },
     get: async (tenantId: string, id: number) => {
         const response = await apiClient.get(`/tenant/${tenantId}/${id}`);
@@ -233,23 +209,26 @@ api.admin.tenant = {
 };
 
 // enable and disable users need to be added.
-api.admin.user.enable = async (tenantId: string, userId: number) => {
-  return apiClient.post(`/tenant/${tenantId}/user/${userId}/enable`);
+api.admin.user.enable = async (userId: number) => {
+  return apiClient.post(`/tenant/0/user/${userId}/enable`);
 };
 
-api.admin.user.disable = async (tenantId: string, userId: number) => {
-  return apiClient.post(`/tenant/${tenantId}/user/${userId}/disable`);
+api.admin.user.disable = async (userId: number) => {
+  return apiClient.post(`/tenant/0/user/${userId}/disable`);
 };
 
 // Authentication API Calls
 api.auth = {
   login: async (username: string, password: string) => {
+    console.log('inside of login');
+    setAuthToken(null);
     const response = await apiClient.post("/auth/login", { username, password });
+    console.log('response:', response);
     if (response.data.token) setAuthToken(response.data.token);
-    return response.data;
+    return getCurrentUser();
   },
-  signup: async (username: string, password: string, tenantId: number) => {
-    const response = await apiClient.post("/auth/signup", { username, password, tenantId });
+  signup: async (username: string, name: string, email: string, password: string, tenantId: number) => {
+    const response = await apiClient.post("/auth/signup", { username, name, email, password, tenantId });
     return response.data;
   },
   refreshToken: async (token: string) => {

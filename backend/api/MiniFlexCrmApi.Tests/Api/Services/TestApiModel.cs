@@ -1,4 +1,4 @@
-using MiniFlexCrmApi.Api.Services;
+using MiniFlexCrmApi.Services;
 
 namespace MiniFlexCrmApi.Tests.Api.Services;
 

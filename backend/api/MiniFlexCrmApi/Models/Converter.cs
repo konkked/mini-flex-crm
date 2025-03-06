@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
 using MiniFlexCrmApi.Db.Models;
 
-namespace MiniFlexCrmApi.Api.Models;
+namespace MiniFlexCrmApi.Models;
 
 public static class Converter
 {
@@ -13,7 +11,9 @@ public static class Converter
         Role = userDbModel.Role,
         Tenant = userDbModel.TenantName ?? string.Empty,
         TenantId = userDbModel.TenantId,
-        Enabled = userDbModel.Enabled
+        Enabled = userDbModel.Enabled ?? false,
+        Email = userDbModel.Email,
+        Name = userDbModel.Name,
     };
 
     public static UserDbModel To(UserModel model) => new()
@@ -22,7 +22,9 @@ public static class Converter
         Username = model.Username,
         Role = model.Role,
         TenantId = model.TenantId,
-        Enabled = model.Enabled
+        Enabled = model.Enabled,
+        Email = model.Email,
+        Name = model.Name,
     };
 
     public static CompanyModel From(CompanyDbModel companyDbModel) => new()
@@ -40,14 +42,14 @@ public static class Converter
         TenantId = model.TenantId
     };
 
-    public static CustomerModel From(CustomerDbModel customerDbModel, Dictionary<string, dynamic[]>? relations) => new()
+    public static CustomerModel From(CustomerDbModel customerDbModel, Dictionary<string, dynamic?[]>? relationships) => new()
     {
         Id = customerDbModel.Id,
         Name = customerDbModel.Name,
         Tenant = customerDbModel.TenantName ?? string.Empty,
         TenantId = customerDbModel.TenantId,
         Attributes = customerDbModel.Attributes,
-        Relationships = relations
+        Relationships = relationships
     };
 
     public static CustomerDbModel To(CustomerModel model) => new()
@@ -57,6 +59,7 @@ public static class Converter
         TenantId = model.TenantId,
         Attributes = model.Attributes
     };
+    
     public static RelationshipModel From(RelationshipDbModel relationshipDbModel) => new()
     {
         Id = relationshipDbModel.Id,
@@ -76,8 +79,16 @@ public static class Converter
         CustomerId = model.CustomerId,
         CustomerName = model.CustomerName
     };
-
     
-    public static TenantModel From(TenantDbModel tenantDbModel) => new(){ Id = tenantDbModel.Id, Name = tenantDbModel.Name };
-    public static TenantDbModel To(TenantModel model) => new()  { Id = model.Id, Name = model.Name };
+    public static TenantModel From(TenantDbModel tenantDbModel) => new()
+    {
+        Id = tenantDbModel.Id, 
+        Name = tenantDbModel.Name
+    };
+    
+    public static TenantDbModel To(TenantModel model) => new()
+    {
+        Id = model.Id, 
+        Name = model.Name
+    };
 }

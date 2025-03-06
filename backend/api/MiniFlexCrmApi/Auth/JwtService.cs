@@ -1,12 +1,10 @@
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using MiniFlexCrmApi.Db.Models;
 
-namespace MiniFlexCrmApi.Api.Auth;
+namespace MiniFlexCrmApi.Auth;
 
 public interface IJwtService
 {

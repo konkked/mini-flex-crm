@@ -1,20 +1,15 @@
 import React from "react";
 import api, { hasAdminAccessToItem, getCurrentRole} from "../../api";
 import PaginatedList from "../../components/paginated-list/paginated-list-component";
-import { Relation } from "../../models/relation";
+import { Relationship } from "../../models/relationship";
 
 const RelationshipsPage : React.FC = () => {
-    const next = async (token?: string) => {
-      const data = await api.std.relation.list.next(token);
-      return { ...data };
+    const fetch = async (offset?: number, limit?: number) => {
+      return await api.std.relationship.list(offset, limit);
     };
-    const prev = async (token?: string) => {
-      const data = await api.std.relation.list.prev(token);
-      return { ...data };
-    }
-    const deleteItem = async (item: Relation) => {
+    const deleteItem = async (item: Relationship) => {
         if(hasAdminAccessToItem(item)){
-            await api.admin.relation.delete(item.id);
+            await api.admin.relationship.delete(item.id);
         }
     }
 
@@ -22,8 +17,7 @@ const RelationshipsPage : React.FC = () => {
     <div>
       <h2>Relationships </h2>
       <PaginatedList
-        nextItems={next}
-        prevItems={prev}
+        fetch={fetch}
         deleteItem={getCurrentRole() === "admin" ? deleteItem : undefined}
         columns={[
           { key: "id", label: "ID" },

@@ -30,7 +30,7 @@ public class BaseServiceTests
             .ReturnsAsync(1);
 
         // Act
-        var result = await _testService.CreateItem(testModel);
+        var result = await _testService.CreateItemAsync(testModel);
 
         // Assert
         Assert.That(result, Is.EqualTo(true));
@@ -45,7 +45,7 @@ public class BaseServiceTests
         _mockRepo.Setup(repo => repo.DeleteAsync(1)).ReturnsAsync(1);
 
         // Act
-        var result = await _testService.DeleteItem(1);
+        var result = await _testService.DeleteItemAsync(1);
 
         // Assert
         Assert.That(result, Is.EqualTo(true));
@@ -64,7 +64,7 @@ public class BaseServiceTests
         _mockRepo.Setup(repo => repo.UpdateAsync(It.IsAny<TestDbModel>())).ReturnsAsync(1);
 
         // Act
-        var result = await _testService.UpdateItem(testModel);
+        var result = await _testService.UpdateItemAsync(testModel);
 
         // Assert
         Assert.That(result, Is.EqualTo(true));
@@ -80,7 +80,7 @@ public class BaseServiceTests
         _mockRepo.Setup(repo => repo.FindAsync(1)).ReturnsAsync(testDbModel);
 
         // Act
-        var result = await _testService.GetItem(1);
+        var result = await _testService.GetItemAsync(1);
 
         // Assert
         Assert.That(result.Id,Is.EqualTo(testDbModel.Id));
@@ -96,7 +96,7 @@ public class BaseServiceTests
             .Returns(Task.FromResult((TestDbModel)null));
 
         // Act
-        var result = await _testService.GetItem(1);
+        var result = await _testService.GetItemAsync(1);
 
         // Assert
         Assert.That(result, Is.EqualTo(null));
@@ -117,7 +117,7 @@ public class BaseServiceTests
             .Returns(testDbModels.AsAsyncEnumerable());
 
         // Act
-        var result = await _testService.ListItems(2);
+        var result = await _testService.ListItemsAsync(2);
 
         // Assert
         Assert.That(result.Count(), Is.EqualTo(2));
@@ -141,7 +141,7 @@ public class BaseServiceTests
             .Returns(testDbModels.AsAsyncEnumerable());
 
         // Act
-        var result = await _testService.ListItems(3);
+        var result = await _testService.ListItemsAsync(3);
 
         // Assert
         Assert.That(result.Count(), Is.EqualTo(3));
@@ -162,7 +162,7 @@ public class BaseServiceTests
             .Returns(testDbModels.AsAsyncEnumerable());
 
         // Act
-        var result = await _testService.ListItems(3);
+        var result = await _testService.ListItemsAsync(3);
 
         // Assert
         Assert.That(result.Count(), Is.EqualTo(2));

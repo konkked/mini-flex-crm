@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
-using MiniFlexCrmApi.Api.Auth;
+using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
+using MiniFlexCrmApi.Auth;
 using MiniFlexCrmApi.Db.Repos;
 using Moq;
 using NUnit.Framework;
@@ -20,7 +22,8 @@ public class AuthServiceTests
         var jwtService = Mock.Of<IJwtService>();
         var emailSender = Mock.Of<IEmailSender>();
         var endecryptor = Mock.Of<IEndecryptor>();
-        var authService = new AuthService(userRepo, jwtService, emailSender, endecryptor);
+        var consoleLogger = Mock.Of<ILogger<AuthService>>();
+        var authService = new AuthService(consoleLogger, userRepo, jwtService, emailSender, endecryptor);
         Mock.Get(userRepo)
             .Setup(a=>a.ExistsByUsernameAsync(It.IsAny<string>()))
             .ReturnsAsync(false);

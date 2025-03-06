@@ -1,6 +1,3 @@
-using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
-
 namespace MiniFlexCrmApi.Db.Repos;
 
 public static class RepositoryBootstrapper

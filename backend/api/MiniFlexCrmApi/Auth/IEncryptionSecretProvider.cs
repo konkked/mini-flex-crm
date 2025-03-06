@@ -1,4 +1,4 @@
-namespace MiniFlexCrmApi.Api.Auth;
+namespace MiniFlexCrmApi.Auth;
 
 public interface IEncryptionSecretProvider
 {

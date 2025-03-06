@@ -1,8 +1,9 @@
 using System.Text.Json.Serialization;
-using MiniFlexCrmApi.Api.Serialization;
+using MiniFlexCrmApi.Serialization;
 
 namespace MiniFlexCrmApi.Db.Models;
 
+[TableName("app_user")]
 public class UserDbModel : TenantBoundDbEntity
 {
     public string? Username { get; set; }
@@ -19,4 +20,9 @@ public class UserDbModel : TenantBoundDbEntity
     public bool? Enabled { get; set; }
     
     public string? Role { get; set; }
+}
+
+public class TableNameAttribute(string name) : Attribute
+{
+    public string Name { get; } = name;
 }

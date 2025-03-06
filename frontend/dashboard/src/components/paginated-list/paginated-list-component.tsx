@@ -9,6 +9,7 @@ interface PaginatedListProps {
   fetch: (offset?: number, limit?: number) => Promise<any[]>;
   defaultPageSize?: number;
   editItem?: (item: any) => Promise<void>;
+  deleteItem?: (item: any) => Promise<void>;
   columns: {
     key: string;
     label: string;
@@ -20,9 +21,9 @@ interface PaginatedListProps {
   }[];
 }
 
-const PaginatedList = ({ defaultPageSize, fetch: fetchNext, editItem, columns }: PaginatedListProps) => {
+const PaginatedList = ({ defaultPageSize, fetch, editItem, columns }: PaginatedListProps) => {
   const [offset, setOffset] = useGenQueryState<number>("offset", i=>Number.parseInt(i ?? "0"), JSON.stringify);
-  const [count, setCount]= useGenQueryState<number>("count", i=>Number.parseInt(i ?? `${defaultPageSize}`), JSON.stringify);
+  const [count, setCount]= useGenQueryState<number>("count", i=>Number.parseInt(i ?? `${defaultPageSize}`) || 50, JSON.stringify);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingItem, setEditingItem] = useState<any | null>(null);
   const [items, setItems] = useState<any[]>([]);
@@ -32,16 +33,17 @@ const PaginatedList = ({ defaultPageSize, fetch: fetchNext, editItem, columns }:
     const loadData = async () => {
       setLoading(true);
       try {
-        const response = await fetchNext(offset ?? 0, count ?? 50);
+        const response = await fetch(offset ?? 0, count ?? 50);
         setEditingItem(null);
         setItems(response);
+        console.log('response:' , response);
       } catch (error) {
         toast.error("Error fetching data");
       }
       setLoading(false);
     };
     loadData();
-  }, [offset, count, fetchNext]);
+  }, [offset, count, fetch]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -71,80 +73,93 @@ const PaginatedList = ({ defaultPageSize, fetch: fetchNext, editItem, columns }:
           ) : col.linkTo ? (
             <a href={col.linkTo(item.id)}>{item[col.key]}</a>
           ) : (
-            item[col.key]
+             (function(){/*console.log(`adding column ${col.key} with value ${item[col.key]}`);*/return `${item[col.key]}`;})()
           )}
         </td>
       ));
     }
 
-    function invokeIfEditableFunction(col: any, item: any) {
+    function isColumnEditable(col: any, item: any) {
+      if (!editItem && typeof editItem !== "function") {
+        console.log('edit item is not a function, column not editable.');
+        return false;
+      }
       if (typeof col.editable === "function") {
+        console.log('col.editable(item) 1:', col.editable(item));
         return col.editable(item);
       }
-      return item;
+      if (col.editable === true) {
+        console.log('col.editable(item) 2:', true);
+        return true;
+      }
+
+      console.log('col.editable(item) 3:', !!col.editable);
+      return !!col.editable;
     }
     return columns.map((col) =>
-      col.editable === false || !invokeIfEditableFunction(col, item) ? (
-      <td key={col.key}>
-        {col.convert ? col.convert(editingItem[col.key]) : editingItem[col.key]}
-      </td>
+      editingIndex !== index || !isColumnEditable(col, item) ? (
+        <td key={col.key}>
+          {col.convert
+            ? col.convert(editingItem[col.key])
+            :  editingItem[col.key]}
+        </td>
       ) : (
-      <td key={col.key}>
-        {typeof editingItem[col.key] === "number" ? (
-        <Form.Control
-          type="number"
-          value={editingItem[col.key]}
-          onChange={(e) =>
-          setEditingItem({
-            ...editingItem,
-            [col.key]: parseFloat(e.target.value),
-          })
-          }
-        />
-        ) : typeof editingItem[col.key] === "boolean" ? (
-        <Form.Control
-          as="select"
-          value={editingItem[col.key] ? "true" : "false"}
-          onChange={(e) =>
-          setEditingItem({
-            ...editingItem,
-            [col.key]: e.target.value === "true",
-          })
-          }
-        >
-          <option value="true">True</option>
-          <option value="false">False</option>
-        </Form.Control>
-        ) : col.options ? (
-        <Form.Control
-          as="select"
-          value={editingItem[col.key]}
-          onChange={(e) =>
-          setEditingItem({
-            ...editingItem,
-            [col.key]: e.target.value,
-          })
-          }
-        >
-          {col.options.map((option) => (
-          <option key={option.label} value={option.value}>
-            {option.label}
-          </option>
-          ))}
-        </Form.Control>
-        ) : (
-        <Form.Control
-          type="text"
-          value={editingItem[col.key]}
-          onChange={(e) =>
-          setEditingItem({
-            ...editingItem,
-            [col.key]: e.target.value,
-          })
-          }
-        />
-        )}
-      </td>
+        <td key={col.key}>
+          {typeof editingItem[col.key] === "number" ? (
+            <Form.Control
+              type="number"
+              value={editingItem[col.key]}
+              onChange={(e) =>
+                setEditingItem({
+                  ...editingItem,
+                  [col.key]: parseFloat(isColumnEditable(col, e.target.value)),
+                })
+              }
+            />
+          ) : typeof editingItem[col.key] === "boolean" ? (
+            <Form.Control
+              as="select"
+              value={editingItem[col.key] ? "true" : "false"}
+              onChange={(e) =>
+                setEditingItem({
+                  ...editingItem,
+                  [col.key]: isColumnEditable(col, e.target.value) === "true",
+                })
+              }
+            >
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </Form.Control>
+          ) : col.options ? (
+            <Form.Control
+              as="select"
+              value={editingItem[col.key]}
+              onChange={(e) =>
+                setEditingItem({
+                  ...editingItem,
+                  [col.key]: isColumnEditable(col, e.target.value),
+                })
+              }
+            >
+              {col.options.map((option) => (
+                <option key={option.label} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Form.Control>
+          ) : (
+            <Form.Control
+              type="text"
+              value={editingItem[col.key]}
+              onChange={(e) =>
+                setEditingItem({
+                  ...editingItem,
+                  [col.key]: isColumnEditable(col, e.target.value),
+                })
+              }
+            />
+          )}
+        </td>
       )
     );
   };
@@ -205,14 +220,21 @@ const PaginatedList = ({ defaultPageSize, fetch: fetchNext, editItem, columns }:
             {columns.map((col) => (
               <th key={col.key}>{col.label}</th>
             ))}
-            {columns.some((col) => col.editable === true || typeof col.editable === "function") && <th>Actions</th>}
+            {columns.some((col) => col.editable === true || typeof col.editable === "function") 
+              && typeof editItem == "function" 
+              && <th>Actions</th>}
           </tr>
         </thead>
         <tbody>
           {items.map((item, index) => (
             <tr key={index}>
               <RowItem editingIndex={editingIndex} index={index} item={item} />
-              <EditingOptionsRowPart editingIndex={editingIndex} index={index} item={item} />
+              {columns.some((col) => col.editable === true || typeof col.editable === "function")
+                && typeof editItem == "function" 
+                && <EditingOptionsRowPart 
+                    editingIndex={editingIndex} 
+                    index={index} 
+                    item={item} />}
             </tr>
           ))}
         </tbody>

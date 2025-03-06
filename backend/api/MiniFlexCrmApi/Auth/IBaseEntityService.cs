@@ -1,8 +1,6 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using MiniFlexCrmApi.Api.Models;
+using MiniFlexCrmApi.Models;
 
-namespace MiniFlexCrmApi.Api.Auth;
+namespace MiniFlexCrmApi.Auth;
 
 public interface IBaseEntityService<T>
 {

@@ -1,32 +1,24 @@
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using MiniFlexCrmApi.Api.Auth;
-using MiniFlexCrmApi.Api.Context;
-using MiniFlexCrmApi.Api.Models;
-using MiniFlexCrmApi.Api.Security;
-using MiniFlexCrmApi.Api.Services;
+using MiniFlexCrmApi.Auth;
 
-namespace MiniFlexCrmApi.Api.Controllers;
+namespace MiniFlexCrmApi.Controllers;
 
 [ApiController]
 [Route("api/auth")]
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
-    private readonly IUserService _userService;
 
-    public AuthController(IAuthService authService, IUserService userService)
+    public AuthController(IAuthService authService)
     {
         _authService = authService;
-        _userService = userService;
     }
 
     /// <summary>
     /// Logs in a user and returns a JWT token if credentials are valid.
     /// </summary>
     [HttpPost("login")]
-    public async Task<IActionResult> Login(
-        [FromRequestContext] RequestContext requestContext,
+    public async Task<ActionResult<AuthResponse>> Login(
         [FromBody] LoginRequest request)
     {
         var response = await _authService.LoginAsync(request);
@@ -39,8 +31,7 @@ public class AuthController : ControllerBase
     /// Registers a new user and returns a JWT token.
     /// </summary>
     [HttpPost("signup")]
-    public async Task<IActionResult> SignUp(
-        [FromRequestContext] RequestContext requestContext,
+    public async Task<ActionResult<AuthResponse>> SignUp(
         [FromBody] SignUpRequest request)
     {
         var response = await _authService.SignUpAsync(request);
@@ -53,8 +44,7 @@ public class AuthController : ControllerBase
     /// Refreshes an expired JWT token.
     /// </summary>
     [HttpPost("refresh")]
-    public async Task<IActionResult> Refresh(
-        [FromRequestContext] RequestContext requestContext,
+    public async Task<ActionResult<AuthResponse>> Refresh(
         [FromBody] TokenRefreshRequest request)
     {
         var response = await _authService.RefreshTokenAsync(request);

@@ -1,5 +1,5 @@
-using MiniFlexCrmApi.Api.Services;
 using MiniFlexCrmApi.Db.Repos;
+using MiniFlexCrmApi.Services;
 
 namespace MiniFlexCrmApi.Tests.Api.Services;
 

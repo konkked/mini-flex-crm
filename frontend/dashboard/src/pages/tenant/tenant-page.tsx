@@ -2,23 +2,17 @@ import React from "react";
 import api from "../../api";
 import PaginatedList from "../../components/paginated-list/paginated-list-component";
 
-const TenantsPage = () => {
-  const next = async (token?: string) => {
-    const data = await api.admin.tenant.list.next(token);
-    return { ...data };
-  };
-
-  const prev = async (token?: string) => {
-    const data = await api.admin.tenant.list.prev(token);
-    return { ...data };
+const TenantsPage : React.FC = () => {
+  const fetch = async (offset?: number, limit?: number) => {
+    const data = await api.admin.tenant.list(offset, limit);
+    return data;
   };
 
   return (
     <div>
       <h2>Tenants</h2>
       <PaginatedList
-        nextItems={next}
-        prevItems={prev}
+        fetch={fetch}
         columns={[
           { key: "id", label: "ID" },
           { key: "name", label: "Name", editable: true },

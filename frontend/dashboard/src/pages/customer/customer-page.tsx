@@ -3,7 +3,7 @@ import api, {hasAdminAccessToItem, getCurrentRole} from "../../api";
 import { useParams } from 'react-router-dom';
 import PaginatedList from "../../components/paginated-list/paginated-list-component";
 import EditAttributes from "../../components/shared/edit-attributes-component";
-import { Relation, Relationships } from "../../models/relation";
+import { Relationship, PivotedRelationships } from "../../models/relationship";
 import { Customer } from "../../models/customer";
 import { Company } from "../../models/company";
 import SearchModal from "../../components/shared/search-modal";
@@ -15,7 +15,7 @@ const CustomerPage : React.FC =  () => {
   const [showUserModal, setShowUserAddModal] = useState(false);
   const { customerId } = useParams<{ customerId: string }>();
   const [customer, setCustomer] = useState<Customer | null>();
-  const [relationships, setRelationships] = useState<Relationships | null>(null);
+  const [relationships, setRelationships] = useState<PivotedRelationships | null>(null);
 
   useEffect(()=>{
     const fetchData = async () => {
@@ -47,16 +47,14 @@ const CustomerPage : React.FC =  () => {
   };
 
   const searchCompanies = async (criteria: string) => {
-    const data = await api.std.company.search({name: criteria, tenant_id: customer.tenantId});
-    return data.items;
+    return await api.std.company.search({name: criteria, tenant_id: customer.tenantId});
   }
 
   const searchUsers = async (criteria: string) => {
-    const data = await api.std.company.search({username: criteria, tenant_id: customer.tenantId});
-    return data.items;
+    return await api.std.user.search({username: criteria, tenant_id: customer.tenantId});
   }
 
-  const deleteRelation = async (item: Relation) => {
+  const deleteRelation = async (item: Relationship) => {
     await api.admin.relation.delete(item.id);
   }
 
@@ -90,7 +88,7 @@ const CustomerPage : React.FC =  () => {
     {relationships.company && (<div>
       <h3>Companies </h3>
       <PaginatedList
-      initialItems={relationships.company}
+      fetch={async (_0, _1) => relationships.company}
       deleteItem={getCurrentRole() === "admin" ? deleteRelation : undefined}
       columns={[
         { key: "id", label: "ID" },
@@ -109,7 +107,7 @@ const CustomerPage : React.FC =  () => {
     {relationships.user && (<div>
       <h3>Users </h3>
       <PaginatedList
-        initialItems={relationships.user}
+      fetch={async (_0, _1) => relationships.user}
         deleteItem={getCurrentRole() === "admin" ? deleteRelation : undefined}
         columns={[
           { key: "id", label: "ID" },
@@ -130,7 +128,7 @@ const CustomerPage : React.FC =  () => {
             onHide={() => setShowUserAddModal(false)}
             onSelect={handleSelectUser}
             searchApi={searchUsers}
-            placeholder="Enter company name"
+            placeholder="Enter user name"
           />
         </div>)}
       </div>

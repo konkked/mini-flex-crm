@@ -1,11 +1,9 @@
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using MiniFlexCrmApi.Api.Auth;
-using MiniFlexCrmApi.Api.Models;
+using MiniFlexCrmApi.Auth;
+using MiniFlexCrmApi.Models;
 
-namespace MiniFlexCrmApi.Api.Context;
+namespace MiniFlexCrmApi.Context;
 
 public class RequestContextModelBinder : IModelBinder
 {
@@ -15,9 +13,18 @@ public class RequestContextModelBinder : IModelBinder
             return Task.CompletedTask;
 
         var httpContext = bindingContext.HttpContext;
-        var user = httpContext.User;
+        var requestContext = RequestContextExtractor.Extract(httpContext);
+        bindingContext.Result = ModelBindingResult.Success(requestContext);
+        return Task.CompletedTask;
+    }
+}
 
-        var requestContext = new RequestContext
+public static class RequestContextExtractor 
+{
+    public static RequestContext Extract(HttpContext httpContext)
+    {
+        var user = httpContext.User;
+        return new RequestContext
         {
             Method = httpContext.Request.Method,
             Path = httpContext.Request.Path,
@@ -34,8 +41,5 @@ public class RequestContextModelBinder : IModelBinder
             Role = user.FindFirst(ClaimTypes.Role)?.Value,
             Claims = user.Claims.ToDictionary(c => c.Type, c => c.Value)
         };
-
-        bindingContext.Result = ModelBindingResult.Success(requestContext);
-        return Task.CompletedTask;
     }
 }

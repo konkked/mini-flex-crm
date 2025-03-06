@@ -1,4 +1,4 @@
-namespace MiniFlexCrmApi.Api.Services;
+namespace MiniFlexCrmApi.Services;
 
 public class ServiceContants
 {

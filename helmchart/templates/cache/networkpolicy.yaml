@@ -1,0 +1,16 @@
+{{- if .Values.cache.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-backend-to-cache
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ include "miniflexcrm.name" . }}-cache
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: {{ include "miniflexcrm.name" . }}-cache
+{{- end }}

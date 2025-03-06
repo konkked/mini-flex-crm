@@ -1,22 +1,21 @@
-using System;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
-using MimeKit;
 using MiniFlexCrmApi.Db.Models;
 using MiniFlexCrmApi.Db.Repos;
 
-namespace MiniFlexCrmApi.Api.Auth;
+namespace MiniFlexCrmApi.Auth;
 
 public class AuthService : IAuthService
 {
+    private readonly ILogger _logger;
     private readonly IUserRepo _userRepo;
     private readonly IJwtService _jwtService;
     private readonly IEmailSender _emailSender;
     private readonly IEndecryptor _endecryptor;
 
-    public AuthService(IUserRepo userRepo, IJwtService jwtService, IEmailSender emailSender, IEndecryptor endecryptor)
+    public AuthService(ILogger<AuthService> logger, IUserRepo userRepo, IJwtService jwtService, IEmailSender emailSender, IEndecryptor endecryptor)
     {
+        _logger = logger;
         _userRepo = userRepo;
         _jwtService = jwtService;
         _emailSender = emailSender;
@@ -60,9 +59,17 @@ public class AuthService : IAuthService
         };
 
         await _userRepo.CreateAsync(newUser).ConfigureAwait(false);
-        await _emailSender.SendVerificationEmailAsync(request.Email,
-            _endecryptor.Encrypt($"{request.Username}:{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}",
-                62));
+        var token = _endecryptor.Encrypt($"{request.Username}:{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}", 62);
+        try
+        {
+            await _emailSender.SendVerificationEmailAsync(request.Email, token);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            _logger.LogInformation("Failed to email verification token. Token={token}", token);
+        }
+
         return AuthResponseFromUser(newUser);
     }
 

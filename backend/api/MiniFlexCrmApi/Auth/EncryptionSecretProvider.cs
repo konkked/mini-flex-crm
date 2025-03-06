@@ -1,9 +1,6 @@
-using System;
 using System.Security.Cryptography;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
-namespace MiniFlexCrmApi.Api.Auth;
+namespace MiniFlexCrmApi.Auth;
 
 public class EncryptionSecretProvider(ILogger<EncryptionSecretProvider> logger, IConfiguration configuration) : IEncryptionSecretProvider
 {

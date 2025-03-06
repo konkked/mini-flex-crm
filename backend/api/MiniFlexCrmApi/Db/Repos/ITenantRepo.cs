@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using MiniFlexCrmApi.Db.Models;
 
 namespace MiniFlexCrmApi.Db.Repos;

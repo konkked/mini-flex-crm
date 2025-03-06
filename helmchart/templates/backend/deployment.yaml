@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "miniflexcrm.fullname" . }}-backend
+  labels:
+    {{- include "miniflexcrm.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.backend.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "miniflexcrm.fullname" . }}-backend
+  template:
+    metadata:
+      labels:
+        app: {{ include "miniflexcrm.fullname" . }}-backend
+    spec:
+      containers:
+        - name: backend
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          ports:
+            - containerPort: 80
+          env:
+            - name: SERVER_PORT
+              value: "80"
+            - name: MINIFLEXCRMAPI_JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: jwt-key
+            - name: DefaultConnection
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: connection-string
+          {{- if .Values.redis.enabled }}
+            - name: REDIS_HOST
+              value: {{ .Values.redisConfig.host | quote }}
+            - name: REDIS_PORT
+              value: {{ .Values.redisConfig.port | quote }}
+          {{- if .Values.cache.auth.enabled }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: redis-password
+          {{- end }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.backend.resources | nindent 12 }}

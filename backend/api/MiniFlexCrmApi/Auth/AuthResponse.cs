@@ -1,6 +1,4 @@
-using System;
-
-namespace MiniFlexCrmApi.Api.Auth;
+namespace MiniFlexCrmApi.Auth;
 
 public class AuthResponse
 {

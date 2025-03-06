@@ -1,6 +1,6 @@
 using System.Net.Mail;
 
-namespace MiniFlexCrmApi.Api.Auth;
+namespace MiniFlexCrmApi.Auth;
 
 public class EmailSender : IEmailSender
 {private readonly string _smtpHost;

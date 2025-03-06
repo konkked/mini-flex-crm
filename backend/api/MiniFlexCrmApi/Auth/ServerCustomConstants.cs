@@ -1,6 +1,4 @@
-using System;
-
-namespace MiniFlexCrmApi.Api.Auth;
+namespace MiniFlexCrmApi.Auth;
 
 public static class ServerCustomConstants
 {
@@ -8,6 +6,7 @@ public static class ServerCustomConstants
     {
         public const string Role = "role";
         public const string TenantId = "tenant_id";
+        public const string NameIdentifier = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
     }
 
     public static readonly TimeSpan TokenLifetime = TimeSpan.FromMinutes(60);

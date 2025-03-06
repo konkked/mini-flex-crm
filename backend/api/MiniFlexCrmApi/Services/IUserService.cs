@@ -1,9 +1,8 @@
-using System.Threading.Tasks;
-using MiniFlexCrmApi.Api.Models;
+using MiniFlexCrmApi.Models;
 
-namespace MiniFlexCrmApi.Api.Services;
+namespace MiniFlexCrmApi.Services;
 
-public interface IUserService : IBaseService<UserModel>
+public interface IUserService : ITenantBoundBaseService<UserModel>
 {
     Task<bool> TryEnableUserAsync(int callerTenant, int userId);
     

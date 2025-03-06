@@ -1,22 +1,25 @@
 version: "3.8"
 
 services:
-  # frontend:
-  #   build: ./frontend
-  #   ports:
-  #     - "3000:3000"
-  #   depends_on:
-  #     - backend
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
 
   backend:
     build: ./MiniFlexCrmApi
     ports:
-      - "8080:8080"
+      - "80:5000"
     depends_on:
       - db
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=miniflexcrm;Username=admin;Password=admin
+      - REDIS_HOST=cache
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=password
 
   db:
     build: ./db
@@ -29,6 +32,13 @@ services:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=miniflexcrm
+
+  cache:
+    build: ./cache
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=password
 
 volumes:
   db_data:

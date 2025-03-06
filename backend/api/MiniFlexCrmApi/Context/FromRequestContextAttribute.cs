@@ -1,7 +1,6 @@
-using System;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace MiniFlexCrmApi.Api.Context;
+namespace MiniFlexCrmApi.Context;
 
 [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false)]
 public class FromRequestContextAttribute : Attribute, IBindingSourceMetadata

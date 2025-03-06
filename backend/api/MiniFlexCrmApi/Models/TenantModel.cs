@@ -1,6 +1,6 @@
-using MiniFlexCrmApi.Api.Services;
+using MiniFlexCrmApi.Services;
 
-namespace MiniFlexCrmApi.Api.Models;
+namespace MiniFlexCrmApi.Models;
 
 public record TenantModel : BaseApiModel
 {

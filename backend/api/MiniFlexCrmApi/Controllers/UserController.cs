@@ -1,42 +1,51 @@
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using MiniFlexCrmApi.Api.Context;
-using MiniFlexCrmApi.Api.Models;
-using MiniFlexCrmApi.Api.Security;
-using MiniFlexCrmApi.Api.Services;
+using MiniFlexCrmApi.Context;
+using MiniFlexCrmApi.Models;
+using MiniFlexCrmApi.Security;
+using MiniFlexCrmApi.Services;
 
-namespace MiniFlexCrmApi.Api.Controllers;
+namespace MiniFlexCrmApi.Controllers;
 
 [ApiController]
 [Route("api/tenant/{tenantId}/user")]
 public class UserController(IUserService userService) : ControllerBase
 {
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetUser(int id) =>
-        Ok(await userService.GetItem(id));
+    public async Task<IActionResult> GetUser([FromRoute] int tenantId, [FromRoute]int id) =>
+        Ok(await userService.GetItemAsync(tenantId, id).ConfigureAwait(false));
 
     [HttpGet]
     public async Task<IActionResult> ListUsers(
+        [FromRoute] int tenantId,
         [FromQuery] int limit = 50,
         [FromQuery] int offset = 0,
         [FromQuery] string? search = null) => 
-        Ok(await userService.ListItems(limit, offset, search));
-
-    [HttpPost]
-    public async Task<IActionResult> CreateUser([FromBody] UserModel model) =>
-        await userService.CreateItem(model) ? Ok() : BadRequest();
+        Ok(await userService.ListItemsAsync(limit, offset, search, new Dictionary<string,object>{ ["tenant_id"] = tenantId }).ConfigureAwait(false));
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateUser(int id, [FromBody] UserModel model)
+    public async Task<IActionResult> UpdateUser([FromRequestContext] RequestContext context, [FromRoute] int tenantId, [FromRoute]int id, [FromBody] UserModel model)
     {
+        if (tenantId != 0)
+        {
+            if (model.TenantId != tenantId)
+                return Forbid();
+            model.TenantId = tenantId;
+        }
+        else if (context.TenantId != 0)
+            return Forbid();
+        
+        model.TenantId = tenantId;
         model.Id = id;
-        return await userService.UpdateItem(model) ? Ok() : NotFound();
+        return await userService.UpdateItemAsync(model).ConfigureAwait(false) 
+            ? Ok() 
+            : NotFound();
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteUser(int id) =>
-        await userService.DeleteItem(id) ? Ok() : NotFound();
+    public async Task<ActionResult<bool>> DeleteUser([FromRoute] int tenantId, [FromRoute] int id) =>
+        await userService.DeleteItemAsync(tenantId, id).ConfigureAwait(false) 
+            ? Ok() 
+            : NotFound();
     
     [HttpPost("{id}/enable")]
     [AuthorizeRoles("admin")]

@@ -3,25 +3,21 @@ import api, { hasAdminAccessToItem } from "../../api";
 import PaginatedList from "../../components/paginated-list/paginated-list-component";
 
 const UsersPage = () => {
-    const next = async (token?: string) => {
-      const data = await api.std.user.list.next(token);
-      return { ...data };
-    };
-  
-    const prev = async (token?: string) => {
-      const data = await api.std.user.list.prev(token);
-      return { ...data };
+    const fetch = async (offset?: number, limit?: number) => {
+      const data = await api.std.user.list(offset, limit);
+      return data;
     };
 
   return (
     <div>
       <h2>Users</h2>
       <PaginatedList
-        nextItems={next}
-        prevItems={prev}
+        fetch={fetch}
         columns={[
           { key: "id", label: "ID", editable: false },
           { key: "username", label: "Username" },
+          { key: "name", label: "Name" },
+          { key: "email", label: "Email" },
           { key: "role", 
             label: "Role", 
             editable: hasAdminAccessToItem,

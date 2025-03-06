@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-
-namespace MiniFlexCrmApi.Api.Models;
+namespace MiniFlexCrmApi.Models;
 
 public class RequestContext
 {

@@ -1,5 +1,5 @@
-using MiniFlexCrmApi.Api.Models;
+using MiniFlexCrmApi.Models;
 
-namespace MiniFlexCrmApi.Api.Services;
+namespace MiniFlexCrmApi.Services;
 
-public interface ICompanyService : IBaseService<CompanyModel>;
+public interface ICompanyService : ITenantBoundBaseService<CompanyModel>;

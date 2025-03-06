@@ -1,14 +1,10 @@
-using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using MiniFlexCrmApi.Db.Repos;
 
-namespace MiniFlexCrmApi.Api.Auth;
+namespace MiniFlexCrmApi.Auth;
 
 public class JwtAuthorizationMiddleware
 {
@@ -25,6 +21,12 @@ public class JwtAuthorizationMiddleware
 
     public async Task Invoke(HttpContext context)
     {
+        if (context.Request.Method == "OPTIONS")
+        {
+            context.Response.StatusCode = 200; // Allow preflight to succeed
+            return;
+        }
+        
         var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Replace("Bearer ", "");
         if (string.IsNullOrEmpty(token))
         {
@@ -85,12 +87,14 @@ public class JwtAuthorizationMiddleware
                 return;
             }
 
-            if (int.TryParse(claimsPrincipal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value, out var id)
+            if ((int.TryParse(claimsPrincipal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value, out var id) 
+                 || int.TryParse(claimsPrincipal.FindFirst(ServerCustomConstants.ClaimTypes.NameIdentifier)?.Value, out id)) 
                 && await _userRepo.IsEnabledAsync(id).ConfigureAwait(false))
             {
                 // Store validated claims in HttpContext.User
                 context.User = claimsPrincipal;
                 await _next(context);
+                return;
             }
 
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;

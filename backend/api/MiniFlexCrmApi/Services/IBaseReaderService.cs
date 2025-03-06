@@ -1,12 +1,11 @@
-using System.Threading.Tasks;
-
-namespace MiniFlexCrmApi.Api.Services;
+namespace MiniFlexCrmApi.Services;
 
 public interface IBaseReaderService<TApiModel>
 {
-    Task<TApiModel> GetItem(int id);
-    Task<IEnumerable<TApiModel>> ListItems();
-    Task<IEnumerable<TApiModel>> ListItems(int limit);
-    Task<IEnumerable<TApiModel>> ListItems(int limit, int offset);
-    Task<IEnumerable<TApiModel>> ListItems(int limit, int offset, string? query);
+    Task<TApiModel> GetItemAsync(int id);
+    Task<IEnumerable<TApiModel>> ListItemsAsync();
+    Task<IEnumerable<TApiModel>> ListItemsAsync(int limit);
+    Task<IEnumerable<TApiModel>> ListItemsAsync(int limit, int offset);
+    Task<IEnumerable<TApiModel>> ListItemsAsync(int limit, int offset, string? query);
+    Task<IEnumerable<TApiModel>> ListItemsAsync(int limit, int offset, string? query, IDictionary<string, object>? parameters);
 }

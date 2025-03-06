@@ -1,9 +1,8 @@
-using System.Threading.Tasks;
-using MiniFlexCrmApi.Api.Models;
+using MiniFlexCrmApi.Models;
 
-namespace MiniFlexCrmApi.Api.Services;
+namespace MiniFlexCrmApi.Services;
 
-public interface ICustomerService : IBaseService<CustomerModel>
+public interface ICustomerService : ITenantBoundBaseService<CustomerModel>
 {
-    Task<CustomerModel> GetCustomerWithRelationship(int customerId);
+    Task<CustomerModel> GetCustomerWithRelationship(int tenantId, int customerId);
 }

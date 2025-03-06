@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS "tenant" (
+    id SERIAL PRIMARY KEY,
+    attributes JSON NULL,
+    name VARCHAR(255) UNIQUE NOT NULL
+);

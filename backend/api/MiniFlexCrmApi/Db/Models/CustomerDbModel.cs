@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using MiniFlexCrmApi.Api.Serialization;
+using MiniFlexCrmApi.Serialization;
 
 namespace MiniFlexCrmApi.Db.Models;
 

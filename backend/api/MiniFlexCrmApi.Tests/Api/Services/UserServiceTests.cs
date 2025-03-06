@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
-using MiniFlexCrmApi.Api.Models;
-using MiniFlexCrmApi.Api.Services;
 using MiniFlexCrmApi.Db.Models;
 using MiniFlexCrmApi.Db.Repos;
+using MiniFlexCrmApi.Models;
+using MiniFlexCrmApi.Services;
 using NUnit.Framework;
 using Moq;
 
@@ -32,7 +32,7 @@ public class UserServiceTests
             .ReturnsAsync(1);
 
         // Act
-        var result = await _userService.CreateItem(userModel);
+        var result = await _userService.CreateItemAsync(userModel);
 
         // Assert
         Assert.That(result, Is.True);
@@ -47,7 +47,7 @@ public class UserServiceTests
         _mockUserRepo.Setup(repo => repo.DeleteAsync(1)).ReturnsAsync(1);
 
         // Act
-        var result = await _userService.DeleteItem(1);
+        var result = await _userService.DeleteItemAsync(1);
 
         // Assert
         Assert.That(result,Is.True);
@@ -66,7 +66,7 @@ public class UserServiceTests
         _mockUserRepo.Setup(repo => repo.UpdateAsync(It.IsAny<UserDbModel>())).ReturnsAsync(1);
 
         // Act
-        var result = await _userService.UpdateItem(userModel);
+        var result = await _userService.UpdateItemAsync(userModel);
 
         // Assert
         Assert.That(result, Is.True);

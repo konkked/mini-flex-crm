@@ -1,0 +1,76 @@
+# ./values.yaml
+fullnameOverride: miniflex-crm
+
+# Redis config (if hosting Redis in Helm)
+redis:
+  enabled: false 
+
+frontend:
+  replicaCount: 1
+  image:
+    repository: konkked/mfcrm-frontend
+    pullPolicy: Always
+    tag: "latest"
+  service:
+    type: ClusterIP  # ALB will expose it
+    port: 80
+  resources: {}
+
+backend:
+  replicaCount: 1
+  image:
+    repository: konkked/mfcrm-backend
+    pullPolicy: Always
+    tag: "latest"
+  service:
+    type: ClusterIP  # ALB will expose it
+    port: 80
+  resources: {}
+  base_api_uri: "http://api.miniflexcrm.com/api"
+
+database:
+  replicaCount: 1
+  image:
+    repository: konkked/mfcrm-database
+    pullPolicy: Always
+    tag: "latest"
+  service:
+    type: ClusterIP
+    port: 5432
+  env:
+    POSTGRES_USER: admin
+    POSTGRES_PASSWORD: admin
+    POSTGRES_DB: miniflexcrm
+  resources: {}
+
+ingress:
+  enabled: true
+  className: alb  # Use AWS ALB Ingress Controller
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-west-2:123456789012:certificate/xxxx  # Replace with your ACM ARN
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"  # Force HTTPS
+  hosts:
+    - host: www.miniflexcrm.com
+      name: miniflex-crm-frontend  # Match service name
+      paths:
+        - path: /
+          pathType: Prefix
+      port:
+        number: 80
+    - host: api.miniflexcrm.com
+      name: miniflex-crm-backend  # Match service name
+      paths:
+        - path: /
+          pathType: Prefix
+      port:
+        number: 80
+  tls: []  # Not needed with ACM; ALB handles it
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80

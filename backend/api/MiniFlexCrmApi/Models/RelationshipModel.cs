@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
-using MiniFlexCrmApi.Api.Services;
 using MiniFlexCrmApi.Db.Models;
+using MiniFlexCrmApi.Services;
 
-namespace MiniFlexCrmApi.Api.Models;
+namespace MiniFlexCrmApi.Models;
 
 public record RelationshipModel : BaseApiModel
 {

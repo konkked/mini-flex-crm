@@ -1,8 +1,7 @@
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using MiniFlexCrmApi.Api.Serialization;
+using MiniFlexCrmApi.Serialization;
 
-namespace MiniFlexCrmApi.Api.Models;
+namespace MiniFlexCrmApi.Models;
 
 public record CustomerModel : TenantBoundBaseModel
 {

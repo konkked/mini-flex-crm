@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using MiniFlexCrmApi.Api.Models;
 using MiniFlexCrmApi.Db.Models;
+using MiniFlexCrmApi.Models;
 using NUnit.Framework;
 
 namespace MiniFlexCrmApi.Tests.Api.Models;

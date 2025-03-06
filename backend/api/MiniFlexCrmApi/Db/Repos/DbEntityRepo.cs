@@ -1,31 +1,54 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Dapper;
-using MiniFlexCrmApi.Api.Services;
 using MiniFlexCrmApi.Db.Models;
+using MiniFlexCrmApi.Serialization;
+using MiniFlexCrmApi.Services;
+using MiniFlexCrmApi.Util;
 
 namespace MiniFlexCrmApi.Db.Repos;
 
 public class DbEntityRepo<T> : IRepo<T> where T : DbEntity
 {
-    protected (string? whereFilter, Dictionary<string, object> values)? GrokQuery(string query)
+    protected (string? whereFilter, Dictionary<string, object> values)? GrokQuery(string? query, IDictionary<string, object>? parameters = null)
     {
         var queryObject = Base62JsonConverter.DeserializeAnonymous(query, null as Dictionary<string, string>);
         if (queryObject == null)
             return null;
-
-        var stringBuilder = new StringBuilder();
         var values = new Dictionary<string, object>();
+        var stringBuilder = new StringBuilder();
 
-        foreach (var key in queryObject.Keys)
+        if (parameters != null)
+        {
+            foreach (var key in parameters.Keys)
+            {
+                var snakeName = ToSnakeCase(key);
+                if (!Columns.ContainsKey(snakeName) || !parameters.TryGetValue(key, out var value) || value is null)
+                    continue;
+
+                if (value is not string)
+                    stringBuilder.Append($"{snakeName}=@{snakeName} AND ");
+                else
+                    stringBuilder.Append($"{snakeName} LIKE '%' || @{snakeName} || '%' AND ");
+
+                // SQL injection check
+                if (snakeName.Contains(";") || snakeName.Contains("--")
+                                            || snakeName.Contains("/*") || snakeName.Contains("*/"))
+                {
+                    throw new ArgumentException("Invalid query parameter");
+                }
+
+                values.Add(snakeName, value);
+            }
+        }
+
+        foreach (var key in queryObject.Keys.Where(k=>!values.ContainsKey(k)))
         {
             var snakeName = ToSnakeCase(key);
-            if (!Columns.ContainsKey(snakeName) || !queryObject.TryGetValue(key, out var value) || value is null)
+            if (!Columns.ContainsKey(snakeName) || !queryObject.TryGetValue(key, out var value))
                 continue;
 
             object parsedValue;
@@ -46,7 +69,7 @@ public class DbEntityRepo<T> : IRepo<T> where T : DbEntity
             }
             else
             {
-                parsedValue = value.ToString();
+                parsedValue = value;
                 stringBuilder.Append($"{snakeName} LIKE '%' || @{snakeName} || '%' AND ");
             }
 
@@ -59,6 +82,7 @@ public class DbEntityRepo<T> : IRepo<T> where T : DbEntity
 
             values.Add(snakeName, parsedValue);
         }
+        
 
         // Remove the trailing " AND "
         if (stringBuilder.Length > 5)
@@ -87,7 +111,13 @@ public class DbEntityRepo<T> : IRepo<T> where T : DbEntity
     public DbEntityRepo(IConnectionProvider connectionProvider)
     {
         ConnectionProvider = connectionProvider;
-        TableName = typeof(T).Name.Replace("DbModel", "").ToLower(); // Ensure table name is lowercase
+        
+        // Ensure table name is lowercase and add prefix.
+        var tableName = typeof(T).Name.Replace("DbModel", "").ToLower();
+        if (typeof(T).GetCustomAttribute(typeof(TableNameAttribute)) is TableNameAttribute tableNameAttribute)
+            tableName = tableNameAttribute.Name;
+        TableName = tableName;
+        
         var properties = typeof(T)
             .GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
             .ToList();
@@ -115,12 +145,20 @@ public class DbEntityRepo<T> : IRepo<T> where T : DbEntity
     }
 
     public virtual IAsyncEnumerable<T> GetSomeAsync() => GetSomeAsync(ServiceContants.PageSize, 0);
-    public virtual IAsyncEnumerable<T> GetSomeAsync(int limit) => GetSomeAsync(limit, 0, null);
-    public virtual IAsyncEnumerable<T> GetSomeAsync(int limit, string query) => GetSomeAsync(limit, 0, query);
-    public virtual IAsyncEnumerable<T> GetSomeAsync(int limit, int offset) => GetSomeAsync(limit, offset, null);
-    public virtual async IAsyncEnumerable<T> GetSomeAsync(int limit, int offset, string query)
+    public virtual IAsyncEnumerable<T> GetSomeAsync(int limit) => GetSomeAsync(limit, 0, null, null);
+    public virtual IAsyncEnumerable<T> GetSomeAsync(int limit, string? query) => GetSomeAsync(limit, 0, query);
+    public virtual IAsyncEnumerable<T> GetSomeAsync(int limit, int offset) 
+        => GetSomeAsync(limit, offset, null, null);
+
+    public virtual IAsyncEnumerable<T> GetSomeAsync(int limit, int offset, string? query)
+        => GetSomeAsync(limit, offset, query, null);
+
+    public virtual IAsyncEnumerable<T> GetSomeAsync(int limit, int offset, IDictionary<string, object>? parameters) 
+        => GetSomeAsync(limit, offset, null, parameters);
+    public virtual async IAsyncEnumerable<T> GetSomeAsync(int limit, int offset, string? query, 
+        IDictionary<string, object>? parameters)
     {
-        var queryObj = GrokQuery(query);
+        var queryObj = !string.IsNullOrEmpty(query) ? GrokQuery(query, parameters) : null;
         var whereFilter = queryObj?.whereFilter ?? "";
         var values = queryObj?.values ?? new Dictionary<string, object>();
         values["offset"] = offset;

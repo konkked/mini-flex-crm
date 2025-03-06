@@ -2,4 +2,4 @@ using MiniFlexCrmApi.Db.Models;
 
 namespace MiniFlexCrmApi.Db.Repos;
 
-public interface ICustomerRepo : IRepo<CustomerDbModel>;
+public interface ICustomerRepo : ITenantBoundDbEntityRepo<CustomerDbModel>;

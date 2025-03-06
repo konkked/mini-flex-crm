@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
-using MiniFlexCrmApi.Api.Models;
-using MiniFlexCrmApi.Api.Serialization;
+using MiniFlexCrmApi.Models;
+using MiniFlexCrmApi.Serialization;
 using NUnit.Framework;
 
 namespace MiniFlexCrmApi.Tests.Api.Models;
