@@ -2,12 +2,12 @@
 import React, { useState } from 'react';
 import { Button, Form, Row, Col } from 'react-bootstrap';
 
-interface AttributesComponentProps {
+interface ManageAttributesComponentProps {
   initialAttributes?: { [key: string]: string }; // Optional initial attributes
   onAttributesChange: (attributes: { [key: string]: string }) => void; // Callback for updates
 }
 
-const AttributesComponent: React.FC<AttributesComponentProps> = ({
+const ManageAttributesComponent: React.FC<ManageAttributesComponentProps> = ({
   initialAttributes = {},
   onAttributesChange,
 }) => {
@@ -76,4 +76,4 @@ const AttributesComponent: React.FC<AttributesComponentProps> = ({
   );
 };
 
-export default AttributesComponent;
+export default ManageAttributesComponent;
