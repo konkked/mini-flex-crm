@@ -1,6 +1,8 @@
 // src/pages/user/add-user-page.tsx
 import React, { useState } from 'react';
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import api from '../../api';
 import './add-user-page.css';
 import { useParams } from 'react-router-dom';
@@ -44,21 +46,17 @@ const AddUserPage: React.FC = () => {
     if (!validateForm()) return;
 
     try {
+      let newUserId;
       if(!userId || Number.isNaN(Number(userId))) {
-        await api.auth.signup({
+        const response = await api.auth.signup({
           username: formData.username,
           password: formData.password,
           tenantId: Number(urlTenantId || selectedTenant?.id),
           email: formData.email || undefined,
           name: formData.name || undefined,
         });
-        setSuccess(true);
-        setSubmitError(null);
-        setTimeout(() => {
-          setFormData({ username: '', password: '', email: '', name: '' });
-          setSelectedTenant(null);
-          setSuccess(false);
-        }, 5000);
+        newUserId = response.id;
+        toast.success(<div>User created successfully! <a href={`/user/${newUserId}`}>View User</a></div>);
       } else {    
         await api.admin.user.edit(Number(userId), {
           username: formData.username,
@@ -67,13 +65,17 @@ const AddUserPage: React.FC = () => {
           email: formData.email || undefined,
           name: formData.name || undefined,
         });
-        setSuccess(true);
-        setSubmitError(null);
-        setTimeout(() => {
-          window.location
-        }, 5000);
+        toast.success(<div>User updated successfully! <a href={`/user/${userId}`}>View User</a></div>);
       }
+      setSuccess(true);
+      setSubmitError(null);
+      setTimeout(() => {
+        setFormData({ username: '', password: '', email: '', name: '' });
+        setSelectedTenant(null);
+        setSuccess(false);
+      }, 5000);
     } catch (err) {
+      toast.error('Error adding user');
       setSubmitError('Error adding user');
       setSuccess(false);
     }
@@ -81,6 +83,7 @@ const AddUserPage: React.FC = () => {
 
   return (
     <Container fluid className="signup-container">
+      <ToastContainer />
       <Row className="justify-content-center align-items-center min-vh-100">
         <Col md={4} className="signup-form">
           <h2 className="text-center mb-4">Sign Up</h2>
