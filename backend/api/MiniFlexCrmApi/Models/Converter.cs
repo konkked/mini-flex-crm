@@ -14,6 +14,7 @@ public static class Converter
         Enabled = userDbModel.Enabled ?? false,
         Email = userDbModel.Email,
         Name = userDbModel.Name,
+        Attributes = userDbModel.Attributes
     };
 
     public static UserDbModel To(UserModel model) => new()
@@ -25,6 +26,7 @@ public static class Converter
         Enabled = model.Enabled,
         Email = model.Email,
         Name = model.Name,
+        Attributes = model.Attributes
     };
 
     public static CompanyModel From(CompanyDbModel companyDbModel) => new()
@@ -32,14 +34,16 @@ public static class Converter
         Id = companyDbModel.Id,
         Name = companyDbModel.Name,
         Tenant = companyDbModel.TenantName ?? string.Empty,
-        TenantId = companyDbModel.TenantId
+        TenantId = companyDbModel.TenantId,
+        Attributes = companyDbModel.Attributes
     };
 
     public static CompanyDbModel To(CompanyModel model) => new()
     {
         Id = model.Id,
         Name = model.Name,
-        TenantId = model.TenantId
+        TenantId = model.TenantId,
+        Attributes =  model.Attributes
     };
 
     public static CustomerModel From(CustomerDbModel customerDbModel, Dictionary<string, dynamic?[]>? relationships) => new()
@@ -68,7 +72,8 @@ public static class Converter
             ? entityType 
             : throw new ArgumentException($"Invalid entity type: {relationshipDbModel.Entity}"),
         CustomerId = relationshipDbModel.CustomerId,
-        CustomerName = relationshipDbModel.CustomerName
+        CustomerName = relationshipDbModel.CustomerName,
+        Attributes = relationshipDbModel.Attributes
     };
 
     public static RelationshipDbModel To(RelationshipModel model) => new()
@@ -77,18 +82,23 @@ public static class Converter
         EntityId = model.EntityId,
         Entity = model.EntityName.ToString().ToLower(), // Convert Enum to lowercase string
         CustomerId = model.CustomerId,
-        CustomerName = model.CustomerName
+        CustomerName = model.CustomerName,
+        Attributes = model.Attributes
     };
     
     public static TenantModel From(TenantDbModel tenantDbModel) => new()
     {
         Id = tenantDbModel.Id, 
-        Name = tenantDbModel.Name
+        Name = tenantDbModel.Name,
+        ShortId = tenantDbModel.ShortId,
+        Attributes = tenantDbModel.Attributes
     };
     
     public static TenantDbModel To(TenantModel model) => new()
     {
         Id = model.Id, 
-        Name = model.Name
+        Name = model.Name,
+        ShortId = model.ShortId,
+        Attributes = model.Attributes
     };
 }

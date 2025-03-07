@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using MiniFlexCrmApi.Context;
 using MiniFlexCrmApi.Models;
 
 namespace MiniFlexCrmApi.Security;
 
-[AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
 public class AuthorizeRolesAttribute : Attribute, IAuthorizationFilter
 {
     private readonly string[] _roles;
@@ -16,9 +17,9 @@ public class AuthorizeRolesAttribute : Attribute, IAuthorizationFilter
 
     public void OnAuthorization(AuthorizationFilterContext context)
     {
-        var requestContext = context.HttpContext.Items["RequestContext"] as RequestContext;
+        var requestContext = RequestContextExtractor.Extract(context.HttpContext);
 
-        if (requestContext == null || string.IsNullOrEmpty(requestContext.Role) || !_roles.Contains(requestContext.Role))
+        if (string.IsNullOrEmpty(requestContext.Role) || !_roles.Contains(requestContext.Role))
         {
             context.Result = new ForbidResult();
         }

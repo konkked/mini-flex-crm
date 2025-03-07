@@ -28,14 +28,14 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Registers a new user and returns a JWT token.
+    /// Registers a new user and returns new user id.
     /// </summary>
     [HttpPost("signup")]
-    public async Task<ActionResult<AuthResponse>> SignUp(
+    public async Task<ActionResult<int>> SignUp(
         [FromBody] SignUpRequest request)
     {
         var response = await _authService.SignUpAsync(request);
-        if (response == null) return BadRequest(new { message = "Username already taken" });
+        if (response == -1) return BadRequest(new { message = "Username already taken" });
 
         return Ok(response);
     }

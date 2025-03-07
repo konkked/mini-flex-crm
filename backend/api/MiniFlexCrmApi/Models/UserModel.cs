@@ -1,3 +1,6 @@
+using System.Text.Json.Serialization;
+using MiniFlexCrmApi.Serialization;
+
 namespace MiniFlexCrmApi.Models;
 
 public record UserModel : TenantBoundBaseModel
@@ -7,4 +10,7 @@ public record UserModel : TenantBoundBaseModel
     public bool Enabled { get; set; }
     public string Email { get; set; }
     public string Name { get; set; }
+    
+    [JsonConverter(typeof(AttributesJsonConverter))]
+    public dynamic? Attributes { get; set; }
 }

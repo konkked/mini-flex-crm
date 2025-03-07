@@ -38,11 +38,11 @@ public class AuthService : IAuthService
         return new AuthResponse { Token = token, Expiration = DateTime.UtcNow.AddMinutes(60) };
     }
 
-    public async Task<AuthResponse?> SignUpAsync(SignUpRequest request)
+    public async Task<int> SignUpAsync(SignUpRequest request)
     {
         if (await _userRepo.ExistsByUsernameAsync(request.Username))
         {
-            return null; // Return null if username is taken
+            return -1; // Return null if username is taken
         }
 
         var salt = GenerateSalt();
@@ -58,7 +58,7 @@ public class AuthService : IAuthService
             TenantId = request.TenantId
         };
 
-        await _userRepo.CreateAsync(newUser).ConfigureAwait(false);
+        var userId = await _userRepo.CreateAsync(newUser).ConfigureAwait(false);
         var token = _endecryptor.Encrypt($"{request.Username}:{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}", 62);
         try
         {
@@ -70,7 +70,7 @@ public class AuthService : IAuthService
             _logger.LogInformation("Failed to email verification token. Token={token}", token);
         }
 
-        return AuthResponseFromUser(newUser);
+        return userId;
     }
 
     public async Task<AuthResponse?> RefreshTokenAsync(TokenRefreshRequest expiredTokenRequest)

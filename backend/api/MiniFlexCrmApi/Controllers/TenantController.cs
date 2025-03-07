@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using MiniFlexCrmApi.Models;
+using MiniFlexCrmApi.Security;
 using MiniFlexCrmApi.Services;
 
 namespace MiniFlexCrmApi.Controllers;
 
 [ApiController]
 [Route("api/tenant/")]
+[AuthorizeRoles("admin")]
 public class TenantController(ITenantService tenantService) : ControllerBase
 {
     [HttpGet("{id}")]
@@ -21,6 +23,6 @@ public class TenantController(ITenantService tenantService) : ControllerBase
 
     [HttpPost]
     public async Task<IActionResult> CreateTenant([FromBody] TenantModel model) =>
-        await tenantService.CreateItemAsync(model) ? Ok() : BadRequest();
-    
+        Ok(await tenantService.CreateItemAsync(model).ConfigureAwait(false));
+
 }

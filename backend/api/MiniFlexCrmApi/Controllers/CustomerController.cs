@@ -39,7 +39,7 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
         }
         else if(context.TenantId != 0)
             return Forbid();
-        return await customerService.CreateItemAsync(model) ? Ok() : BadRequest();
+        return Ok(await customerService.CreateItemAsync(model).ConfigureAwait(false));
     }
 
     [HttpPut("{id}")]
@@ -47,6 +47,7 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
         [FromRoute] int tenantId, 
         [FromRoute] int id, [FromBody] CustomerModel model)
     {
+        model.Id = id;
         if (tenantId != 0)
         {
             if (model.TenantId != tenantId)

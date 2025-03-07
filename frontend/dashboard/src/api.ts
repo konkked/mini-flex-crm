@@ -217,6 +217,10 @@ api.admin.user.disable = async (userId: number) => {
   return apiClient.post(`/tenant/0/user/${userId}/disable`);
 };
 
+api.admin.user.edit = async (userId: number, data: any) => {
+  return apiClient.put(`/tenant/${data.tenantId}/user/${userId}`, data);
+}
+
 // Authentication API Calls
 api.auth = {
   login: async (username: string, password: string) => {

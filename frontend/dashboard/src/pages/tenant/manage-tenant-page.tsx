@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 import api from '../../api';
 
-const CreateTenantPage: React.FC = () => {
+const ManageTenantPage: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     shortid: '',
@@ -22,8 +22,10 @@ const CreateTenantPage: React.FC = () => {
     try {
       await api.admin.tenant.create({
         name: formData.name,
-        shortid: formData.shortid,
-        theme: formData.theme,
+        attributes: { 
+          shortid: formData.shortid, 
+          theme: formData.theme 
+        }
       });
       setSuccess(true);
       setError(null);
@@ -77,4 +79,4 @@ const CreateTenantPage: React.FC = () => {
   );
 };
 
-export default CreateTenantPage;
+export default ManageTenantPage;

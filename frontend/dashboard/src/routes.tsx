@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import LoginPage from './pages/auth/login-page';
-import AddUserPage from './pages/user/add-user-page';
+import AddUserPage from './pages/user/manage-user-page';
 import { useAuth } from './hooks/useAuth';
 import UsersPage from './pages/user/users-page';
 import EditCompanyPage from './pages/company/edit-company-page';
@@ -8,7 +8,7 @@ import CompaniesPage from './pages/company/companies-page';
 import HomePage from './pages/home/home-page';
 import RelationshipsPage from './pages/relation/relationships-page';
 import TenantsPage from './pages/tenant/tenant-page';
-import CreateTenantPage from './pages/tenant/create-tenant-page';
+import ManageTenantPage from './pages/tenant/manage-tenant-page';
 import React from 'react';
 import { getCurrentRole } from './api'; // Corrected import path assuming './api'
 
@@ -41,7 +41,7 @@ const AppRoutes = () => {
           <Route path="/companies" element={<CompaniesPage />} />
           <Route path="/relationships" element={<RelationshipsPage />} />
           <Route path="/tenants" element={<TenantsPage />} />
-          <Route path="/tenant" element={<CreateTenantPage />} />
+          <Route path="/tenant" element={<ManageTenantPage />} />
           {isAuthenticated ? (
             <>
               <Route path="/home" element={<HomePage />} />

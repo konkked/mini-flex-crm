@@ -16,7 +16,7 @@ const AddUserPage: React.FC = () => {
   });
   const [selectedTenant, setSelectedTenant] = useState<{ id: number; name: string } | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const { tenantId: urlTenantId } = useParams<{ tenantId: string }>();
+  const { tenantId: urlTenantId, userId: userId } = useParams<{ tenantId: string, userId: string }>();
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
 
@@ -40,19 +40,39 @@ const AddUserPage: React.FC = () => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!validateForm()) return;
 
     try {
-      await api.auth.signup({
-        username: formData.username,
-        password: formData.password,
-        tenantId: Number(urlTenantId || selectedTenant?.id),
-        email: formData.email || undefined,
-        name: formData.name || undefined,
-      });
-      setSuccess(true);
-      setSubmitError(null);
-      setFormData({ username: '', password: '', email: '', name: '' });
+      if(!userId || Number.isNaN(Number(userId))) {
+        await api.auth.signup({
+          username: formData.username,
+          password: formData.password,
+          tenantId: Number(urlTenantId || selectedTenant?.id),
+          email: formData.email || undefined,
+          name: formData.name || undefined,
+        });
+        setSuccess(true);
+        setSubmitError(null);
+        setTimeout(() => {
+          setFormData({ username: '', password: '', email: '', name: '' });
+          setSelectedTenant(null);
+          setSuccess(false);
+        }, 5000);
+      } else {    
+        await api.admin.user.edit(Number(userId), {
+          username: formData.username,
+          password: formData.password,
+          tenantId: Number(urlTenantId || selectedTenant?.id),
+          email: formData.email || undefined,
+          name: formData.name || undefined,
+        });
+        setSuccess(true);
+        setSubmitError(null);
+        setTimeout(() => {
+          window.location
+        }, 5000);
+      }
     } catch (err) {
       setSubmitError('Error adding user');
       setSuccess(false);

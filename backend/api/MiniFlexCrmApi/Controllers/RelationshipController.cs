@@ -20,8 +20,8 @@ public class RelationshipController(IRelationService relationService) : Controll
         Ok(await relationService.ListItemsAsync(limit, offset, search));
 
     [HttpPost]
-    public async Task<ActionResult<bool>> CreateRelationship([FromBody] RelationshipModel model) =>
-        await relationService.CreateItemAsync(model) ? Ok() : BadRequest();
+    public async Task<ActionResult<bool>> CreateRelationship([FromBody] RelationshipModel model)
+        => Ok(await relationService.CreateItemAsync(model).ConfigureAwait(false));
 
     [HttpPut("{id}")]
     public async Task<ActionResult<bool>> UpdateRelationship(int id, [FromBody] RelationshipModel model)
