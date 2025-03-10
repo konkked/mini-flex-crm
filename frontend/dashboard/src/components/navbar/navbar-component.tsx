@@ -15,7 +15,7 @@ const AppNavbar = () => {
             {user?.role.includes('admin') && <Nav.Link href="/tenants">Tenants</Nav.Link>}
             {user?.role.includes('admin') && <Nav.Link href="/users">Users</Nav.Link>}
             <Nav.Link href="/companies">Companies</Nav.Link>
-            <Nav.Link href="/customers">Companies</Nav.Link>
+            <Nav.Link href="/customers">Customers</Nav.Link>
             <Nav.Link onClick={() => { 
               setAuthToken(null); 
               window.location.href = '/login';
