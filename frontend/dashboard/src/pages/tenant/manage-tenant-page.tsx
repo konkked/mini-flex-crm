@@ -22,6 +22,7 @@ const ManageTenantPage: React.FC = () => {
     try {
       await api.admin.tenant.create({
         name: formData.name,
+        shortId: formData.shortid,
         attributes: { 
           shortid: formData.shortid, 
           theme: formData.theme 

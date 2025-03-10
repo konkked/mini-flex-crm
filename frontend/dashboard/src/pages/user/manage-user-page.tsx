@@ -1,5 +1,4 @@
-// src/pages/user/add-user-page.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -7,9 +6,10 @@ import api from '../../api';
 import './add-user-page.css';
 import { useParams } from 'react-router-dom';
 import SearchBar from '../../components/search-bar/search-bar-component';
-import { Tenant } from 'models/tenant';
+import { Tenant } from '../../models/tenant';
+import AttributesComponent from '../../components/attributes/manage-attributes-component'; // Import the component
 
-const AddUserPage: React.FC = () => {
+const ManageUserPage: React.FC = () => {
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -17,10 +17,32 @@ const AddUserPage: React.FC = () => {
     name: '',
   });
   const [selectedTenant, setSelectedTenant] = useState<{ id: number; name: string } | null>(null);
+  const [attributes, setAttributes] = useState<{ [key: string]: string }>({}); // Managed by AttributesComponent
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const { tenantId: urlTenantId, userId: userId } = useParams<{ tenantId: string, userId: string }>();
+  const { tenantId: urlTenantId, userId: userId } = useParams<{ tenantId: string; userId: string }>();
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
+
+  useEffect(()=>{
+    if(userId && !Number.isNaN(Number(userId))){
+      const fetchUser = async () => {
+        try {
+          const data = await api.std.user.get(Number(userId));
+          setFormData({
+            username: data.username,
+            password: '',
+            email: data.email || '',
+            name: data.name || '',
+          });
+          setSelectedTenant({ id: data.tenantId, name: data.tenantName });
+          setAttributes(data.attributes); // Set attributes
+        } catch (err) {
+          setSubmitError('Error fetching user data');
+        }
+      };
+      fetchUser();
+    }
+  },[urlTenantId, userId]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -42,29 +64,25 @@ const AddUserPage: React.FC = () => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     try {
       let newUserId;
-      if(!userId || Number.isNaN(Number(userId))) {
-        const response = await api.auth.signup({
-          username: formData.username,
-          password: formData.password,
-          tenantId: Number(urlTenantId || selectedTenant?.id),
-          email: formData.email || undefined,
-          name: formData.name || undefined,
-        });
+      const payload = {
+        username: formData.username,
+        password: formData.password,
+        tenantId: Number(urlTenantId || selectedTenant?.id),
+        email: formData.email || undefined,
+        name: formData.name || undefined,
+        attributes, // Include attributes in the payload
+      };
+      if (!userId || Number.isNaN(Number(userId))) {
+        const response = await api.auth.signup(payload);
         newUserId = response.id;
         toast.success(<div>User created successfully! <a href={`/user/${newUserId}`}>View User</a></div>);
-      } else {    
-        await api.admin.user.edit(Number(userId), {
-          username: formData.username,
-          password: formData.password,
-          tenantId: Number(urlTenantId || selectedTenant?.id),
-          email: formData.email || undefined,
-          name: formData.name || undefined,
-        });
+      } else {
+        await api.admin.user.edit(Number(userId), payload);
         toast.success(<div>User updated successfully! <a href={`/user/${userId}`}>View User</a></div>);
       }
       setSuccess(true);
@@ -72,6 +90,7 @@ const AddUserPage: React.FC = () => {
       setTimeout(() => {
         setFormData({ username: '', password: '', email: '', name: '' });
         setSelectedTenant(null);
+        setAttributes({}); // Reset attributes
         setSuccess(false);
       }, 5000);
     } catch (err) {
@@ -129,7 +148,8 @@ const AddUserPage: React.FC = () => {
               <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
             </Form.Group>
 
-            {!urlTenantId &&<Form.Group controlId="formTenantId" className="mb-3">
+            {!urlTenantId && (
+              <Form.Group controlId="formTenantId" className="mb-3">
                 <Form.Label>Company <span className="text-danger">*</span></Form.Label>
                 <SearchBar<Tenant>
                   searchApi={api.admin.tenant.searchByName}
@@ -138,7 +158,8 @@ const AddUserPage: React.FC = () => {
                   onSelect={(tenant) => setSelectedTenant(tenant)}
                 />
                 {errors.tenantId && <div className="invalid-feedback d-block">{errors.tenantId}</div>}
-              </Form.Group>}
+              </Form.Group>
+            )}
 
             <Form.Group controlId="formEmail" className="mb-3">
               <Form.Label>Email</Form.Label>
@@ -153,6 +174,11 @@ const AddUserPage: React.FC = () => {
               <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
             </Form.Group>
 
+            <AttributesComponent
+              initialAttributes={attributes}
+              onAttributesChange={setAttributes}
+            />
+
             <Button variant="primary" type="submit" className="w-100">
               Sign Up
             </Button>
@@ -163,4 +189,4 @@ const AddUserPage: React.FC = () => {
   );
 };
 
-export default AddUserPage;
+export default ManageUserPage;
