@@ -65,7 +65,7 @@ public class TenantBoundDbEntityRepo<T>(IConnectionProvider connectionProvider)
             @$"SELECT t1.*, t2.name as tenant_name 
                 FROM {TableName} t1 
                     JOIN tenant t2 on t1.tenant_id = t2.id
-                WHERE id = @id",
+                WHERE t1.id = @id",
             new { id }
         ).ConfigureAwait(false);
     }
@@ -81,7 +81,7 @@ public class TenantBoundDbEntityRepo<T>(IConnectionProvider connectionProvider)
 
     public async Task<T?> FindInTenantById(int id, int tenantId)
     {
-        if(tenantId == 0) return await FindAsync(id).ConfigureAwait(false);
+        if (tenantId == 0) return await FindAsync(id).ConfigureAwait(false);
         await using var connection = ConnectionProvider.GetConnection();
         await connection.OpenAsync().ConfigureAwait(false);
         return await connection.QueryFirstOrDefaultAsync<T>(

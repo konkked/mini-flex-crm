@@ -11,8 +11,11 @@ namespace MiniFlexCrmApi.Controllers;
 public class UserController(IUserService userService) : ControllerBase
 {
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetUser([FromRoute] int tenantId, [FromRoute]int id) =>
-        Ok(await userService.GetItemAsync(tenantId, id).ConfigureAwait(false));
+    public async Task<IActionResult> GetUser([FromRoute] int tenantId, [FromRoute]int id)
+    {
+        var user =  await userService.GetItemAsync(tenantId, id).ConfigureAwait(false);
+        return Ok(user);
+    }
 
     [HttpGet]
     public async Task<IActionResult> ListUsers(
