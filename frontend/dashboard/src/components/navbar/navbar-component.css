@@ -35,7 +35,6 @@
   /* Style the menu row */
   .menu-row {
     background-color: var(--dark-color);
-    width: 100%;
     padding: 0 1rem; /* Match navbar padding for alignment */
     position: absolute;
     top: 100%; /* Directly below the navbar */
@@ -49,16 +48,21 @@
   .menu-items {
     display: flex;
     flex-direction: column; /* Stack items vertically */
-    width: auto;
-    min-width: 200px; /* Minimum width for readability */
+    width: 100%; /* Take full width of menu-row */
   }
   
   /* Style individual menu items */
   .menu-items .menu-item {
     color: var(--light-color) !important;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 0; /* Reduced padding for tighter spacing */
     text-align: left;
     display: block; /* Ensure full-width clickable area */
+    border-bottom: 1px solid #666; /* Grey line between items */
+  }
+  
+  /* Remove border-bottom from the last menu item */
+  .menu-items .menu-item:last-child {
+    border-bottom: none;
   }
   
   /* Hover effect for menu items */
