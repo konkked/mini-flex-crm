@@ -1,11 +1,7 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using MiniFlexCrmApi.Context;
 using MiniFlexCrmApi.Models;
 using MiniFlexCrmApi.Services;
-using Org.BouncyCastle.Asn1.Ocsp;
 
 [ApiController]
 [Route("api/tenant/{tenantId}/[controller]")]
@@ -24,7 +20,7 @@ public class NotesController : ControllerBase
         [FromRoute] string route)
     {
         var userId = int.Parse(context.UserId);
-        var notes = await _notesService.ListAsync(userId, tenantId, route);
+        var notes = await _notesService.Get5LatestNotes(userId, tenantId, route);
         return Ok(notes);
     }
 
@@ -37,9 +33,23 @@ public class NotesController : ControllerBase
         var userId = int.Parse(context.UserId);
         note.UserId = userId;
         note.TenantId = tenantId;
+        note.Route = route;
         var id = await _notesService.CreateAsync(note);
         note.Id = id;
         return CreatedAtAction(nameof(GetNotes), new { route }, note);
+    }
+    
+    [HttpPut("{*route}")]
+    public async Task<ActionResult<NoteModel>> UpdateNote([FromRoute] int tenantId, 
+        [FromRequestContext] RequestContext context, 
+        [FromBody] NoteModel note)
+    {
+        var userId = int.Parse(context.UserId);
+        note.UserId = userId;
+        note.TenantId = tenantId;
+        var id = await _notesService.CreateAsync(note);
+        note.Id = id;
+        return Ok();
     }
 
     [HttpDelete("{id}")]

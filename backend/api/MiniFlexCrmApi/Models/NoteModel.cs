@@ -8,4 +8,5 @@ public class NoteModel
     public string Content { get; set; }
     public int UserId { get; set; }
     public int TenantId { get; set; }
+    public string Route { get; set; }
 }
