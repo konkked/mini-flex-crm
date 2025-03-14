@@ -6,23 +6,18 @@ namespace MiniFlexCrmApi.Db.Models;
 [TableName("app_user")]
 public class UserDbModel : TenantBoundDbEntity
 {
-    public string? Username { get; set; }
+    public string Username { get; set; }
     
     public string Email { get; set; }
     
     public string Name { get; set; }
-    
-    [JsonConverter(typeof(AttributesJsonConverter))]
-    public dynamic? Attributes { get; set; }
     public string? PasswordHash { get; set; }
     public string? Salt { get; set; }
     
-    public bool? Enabled { get; set; }
+    public bool Enabled { get; set; }
     
-    public string? Role { get; set; }
-}
-
-public class TableNameAttribute(string name) : Attribute
-{
-    public string Name { get; } = name;
+    public string Role { get; set; }
+    
+    [JsonConverter(typeof(AttributesJsonConverter))]
+    public dynamic? Attributes { get; set; }
 }

@@ -1,3 +1,4 @@
+using System.Dynamic;
 using System.Security.Cryptography;
 using System.Text;
 using MiniFlexCrmApi.Db.Models;
@@ -9,14 +10,17 @@ public class AuthService : IAuthService
 {
     private readonly ILogger _logger;
     private readonly IUserRepo _userRepo;
+    private readonly ITenantRepo _tenantRepo;
     private readonly IJwtService _jwtService;
     private readonly IEmailSender _emailSender;
     private readonly IEndecryptor _endecryptor;
 
-    public AuthService(ILogger<AuthService> logger, IUserRepo userRepo, IJwtService jwtService, IEmailSender emailSender, IEndecryptor endecryptor)
+    public AuthService(ILogger<AuthService> logger, IUserRepo userRepo, ITenantRepo tenantRepo,
+        IJwtService jwtService, IEmailSender emailSender, IEndecryptor endecryptor)
     {
         _logger = logger;
         _userRepo = userRepo;
+        _tenantRepo = tenantRepo;
         _jwtService = jwtService;
         _emailSender = emailSender;
         _endecryptor = endecryptor;
@@ -27,11 +31,31 @@ public class AuthService : IAuthService
         var user = await _userRepo.FindByUsernameAsync(request.Username);
 
         if ((user?.Enabled ?? false) == false)
+        {
             return null;
+        }
 
         if (!VerifyPassword(request.Password, user.PasswordHash, user.Salt))
         {
             return null; // Return null for invalid login
+        }
+        
+        var tenant = await _tenantRepo.FindAsync(user.TenantId);
+        if (user.Attributes == null)
+        {
+            user.Attributes = new ExpandoObject();
+        }
+
+        if (user.Attributes.theme == null)
+        {
+            if (!string.IsNullOrEmpty(tenant.Theme))
+            {
+                user.Attributes.theme = tenant.Theme;
+            }
+            else
+            {
+                user.Attributes.theme = tenant.Attributes?.theme ?? "professional";
+            }
         }
 
         var token = _jwtService.GenerateToken(user);

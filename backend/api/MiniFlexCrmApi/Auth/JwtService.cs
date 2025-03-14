@@ -6,18 +6,6 @@ using MiniFlexCrmApi.Db.Models;
 
 namespace MiniFlexCrmApi.Auth;
 
-public interface IJwtService
-{
-    string GenerateToken(UserDbModel user);
-
-    /// <summary>
-    /// Validates a JWT token and returns:
-    /// - (UserId, TimeSpan until expiration) if valid
-    /// - null if expired or signature does not match
-    /// </summary>
-    (int UserId, TimeSpan Expiry)? ValidateThenGetTokenExpiry(string token);
-}
-
 public class JwtService : IJwtService
 {
     private readonly string _jwtSecret;
@@ -39,6 +27,7 @@ public class JwtService : IJwtService
                 new (JwtRegisteredClaimNames.UniqueName, user.Username),
                 new (ServerCustomConstants.ClaimTypes.TenantId, user.TenantId.ToString()),
                 new ( ServerCustomConstants.ClaimTypes.Role, user.Role),
+                new (ServerCustomConstants.ClaimTypes.Theme, user.Attributes?.theme ?? "professional")
             }),
             Expires = DateTime.UtcNow + ServerCustomConstants.TokenLifetime,
             SigningCredentials = credentials
@@ -78,7 +67,14 @@ public class JwtService : IJwtService
                 var expiration = jwtToken.ValidTo;
                 var userId = int.TryParse(
                     principal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value, out var userIdInt) 
-                    ? userIdInt : 0;
+                    ? userIdInt : -1;
+
+                if (userId == -1)
+                {
+                    userId =int.TryParse(
+                        principal.FindFirst(ServerCustomConstants.ClaimTypes.NameIdentifier)?.Value, 
+                        out var userIdInt2) ? userIdInt2 : -1;
+                }
 
                 return (userId, expiration - DateTime.UtcNow);
             }
