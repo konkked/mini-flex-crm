@@ -9,4 +9,21 @@
   --info-color: #17a2b8;
   --light-color: #f8f9fa;
   --dark-color: #343a40;
+  --hero-background-gradient: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  --hero-text-color: white;
+}
+
+[data-theme="professional-dark"] {
+  --background-color: #181818;
+  --text-color: #f8f9fa;
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --info-color: #17a2b8;
+  --light-color: #7289a0;
+  --dark-color: #000000;
+  --hero-background-gradient: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+  --hero-text-color: white;
 }

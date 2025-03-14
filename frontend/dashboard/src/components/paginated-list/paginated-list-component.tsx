@@ -3,7 +3,7 @@ import { Table, Button, Form } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { PencilSquare, ChevronLeft, ChevronRight, Trash, Floppy, X } from "react-bootstrap-icons"; // Bootstrap Icons
 import "./paginated-list-component.css"; // Custom styles for button positioning
-import { useQueryState, useGenQueryState } from "hooks/useQueryState";
+import { useGenQueryState } from "hooks/useQueryState";
 
 interface PaginatedListProps {
   fetch: (offset?: number, limit?: number) => Promise<any[]>;

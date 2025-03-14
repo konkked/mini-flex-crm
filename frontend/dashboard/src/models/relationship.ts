@@ -11,6 +11,6 @@ export interface Relationship {
 }
 
 export interface PivotedRelationships {
-  company: Company[];
-  user: User[];
+  company?: Company[];
+  user?: User[];
 }

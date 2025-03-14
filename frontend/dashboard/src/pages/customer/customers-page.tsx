@@ -1,14 +1,6 @@
-import React, { useState, useEffect } from "react";
-import api, {hasAdminAccessToItem, getCurrentRole} from "../../api";
-import { useParams } from 'react-router-dom';
+import React from "react";
+import api from "../../api";
 import PaginatedList from "../../components/paginated-list/paginated-list-component";
-import EditAttributes from "../../components/search-modal/edit-attributes-component";
-import { Relationship, PivotedRelationships } from "../../models/relationship";
-import { Customer } from "../../models/customer";
-import { Company } from "../../models/company";
-import SearchModal from "../../components/search-modal/search-modal";
-import { Button } from "react-bootstrap";
-import { Plus } from "react-bootstrap-icons"; // Bootstrap Icons
 
 const CustomersPage = () => {
   const next = async (offset?: number, limit?: number) => {
@@ -22,7 +14,7 @@ const CustomersPage = () => {
       <PaginatedList
         fetch={next}
         columns={[
-          { key: "id", label: "ID", editable: false },
+          { key: "id", label: "ID", linkTo: (id)=>`/customer/${id}`, editable: false },
           { key: "name", label: "ID", editable: false },
         ]}
       />

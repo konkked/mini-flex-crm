@@ -1,6 +1,29 @@
-[data-theme="social-light"] {
-    --background-color: #f5f8fa;
-    --text-color: #14171a;
+[data-theme="social"] {
+  --background-color: #f5f8fa;
+  --text-color: #14171a;
+  --primary-color: #1da1f2;
+  --secondary-color: #6c757d;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --info-color: #17a2b8;
+  --light-color: #f8f9fa;
+  --dark-color: #343a40;
+  --hero-background-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  --hero-text-color: #333;
+}
+
+[data-theme="social-dark"] {
+    --background-color: #181818;
+    --text-color: #ffffff;
     --primary-color: #1da1f2;
-    /* Add other variables as needed */
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --hero-background-gradient: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+    --hero-text-color: white;
   }

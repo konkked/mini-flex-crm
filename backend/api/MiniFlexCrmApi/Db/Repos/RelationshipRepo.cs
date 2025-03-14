@@ -19,13 +19,10 @@ public class RelationshipRepo : DbEntityRepo<RelationshipDbModel>, IRelationship
         await using var connection = ConnectionProvider.GetConnection();
         await connection.OpenAsync().ConfigureAwait(false);
         var result = await connection
-            .QueryFirstOrDefaultAsync<string>(
-                "SELECT get_customer_entities(@customerId) AS relationships_json", 
+            .ExecuteScalarAsync<string>(
+                "SELECT get_customer_relationships(@customerId);", 
                 new { customerId })
             .ConfigureAwait(false);
-
-        if (string.IsNullOrEmpty(result))
-            return null;
 
         // Convert JSON result into a Dictionary<string, dynamic[]>
         

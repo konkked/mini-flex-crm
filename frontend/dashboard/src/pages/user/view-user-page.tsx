@@ -4,16 +4,11 @@ import { Link, useParams } from 'react-router-dom';
 import api from '../../api';
 import ViewAttributesComponent from '../../components/attributes/view-attributes-component'; // Import the read-only attributes component
 import './view-user-page.css'; // Import the CSS file
+import { User } from 'models/user';
 
 const ViewUserPage: React.FC = () => {
-  const [userData, setUserData] = useState({
-    username: '',
-    email: '',
-    name: '',
-    tenantName: '',
-    attributes: {},
-  });
-  const { userId } = useParams<{ userId: string }>();
+  const [userData, setUserData] = useState<User | null>(null);
+  const { userId } = useParams<{ tenantId: string; userId: string }>();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -21,13 +16,7 @@ const ViewUserPage: React.FC = () => {
       const fetchUser = async () => {
         try {
           const data = await api.std.user.get(Number(userId));
-          setUserData({
-            username: data.username,
-            email: data.email || '',
-            name: data.name || '',
-            tenantName: data.tenantName,
-            attributes: data.attributes || {},
-          });
+          setUserData(data);
         } catch (err) {
           setError('Error fetching user data');
         }
@@ -44,21 +33,21 @@ const ViewUserPage: React.FC = () => {
           {error && <Alert variant="danger">{error}</Alert>}
           <Row className="mb-3">
             <Col><strong>Username:</strong></Col>
-            <Col>{userData.username}</Col>
+            <Col>{userData?.username}</Col>
           </Row>
           <Row className="mb-3">
             <Col><strong>Email:</strong></Col>
-            <Col>{userData.email}</Col>
+            <Col>{userData?.email}</Col>
           </Row>
           <Row className="mb-3">
             <Col><strong>Name:</strong></Col>
-            <Col>{userData.name}</Col>
+            <Col>{userData?.name}</Col>
           </Row>
           <Row className="mb-3">
             <Col><strong>Company:</strong></Col>
-            <Col>{userData.tenantName}</Col>
+            <Col>{userData?.tenantName}</Col>
           </Row>
-          <ViewAttributesComponent attributes={userData.attributes} />
+          <ViewAttributesComponent target={userData ? userData : null} />
           <div className="text-center mt-4">
             <Link to={`/user/${userId}/manage`}>
               <Button variant="primary">Manage User</Button>

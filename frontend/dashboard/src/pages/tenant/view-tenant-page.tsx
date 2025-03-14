@@ -6,8 +6,9 @@ import './view-tenant-page.css'; // Import the CSS file
 
 const ViewTenantPage: React.FC = () => {
   const [tenantData, setTenantData] = useState({
+    id: 0,
     name: '',
-    shortid: '',
+    shortId: '',
     theme: '',
   });
   const { tenantId } = useParams<{ tenantId: string }>();
@@ -18,11 +19,7 @@ const ViewTenantPage: React.FC = () => {
       const fetchTenant = async () => {
         try {
           const data = await api.admin.tenant.get(tenantId);
-          setTenantData({
-            name: data.name,
-            shortid: data.attributes?.shortid || data.shortId || '',
-            theme: data.attributes?.theme || '',
-          });
+          setTenantData(data);
         } catch (err) {
           setError('Error fetching tenant data');
         }
@@ -38,12 +35,16 @@ const ViewTenantPage: React.FC = () => {
           <h2 className="text-center mb-4">Tenant Details</h2>
           {error && <Alert variant="danger">{error}</Alert>}
           <Row className="mb-3">
+            <Col><strong>ID:</strong></Col>
+            <Col>{tenantData.id}</Col>
+          </Row>
+          <Row className="mb-3">
             <Col><strong>Name:</strong></Col>
             <Col>{tenantData.name}</Col>
           </Row>
           <Row className="mb-3">
             <Col><strong>Short ID:</strong></Col>
-            <Col>{tenantData.shortid}</Col>
+            <Col>{tenantData.shortId}</Col>
           </Row>
           <Row className="mb-3">
             <Col><strong>Theme:</strong></Col>

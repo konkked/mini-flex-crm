@@ -8,6 +8,8 @@ public record TenantModel : BaseApiModel
 {
     public required string Name { get; set; }
     
+    public string Theme { get; set; }
+    
     public string ShortId { get; set; }
     
     [JsonConverter(typeof(AttributesJsonConverter))]

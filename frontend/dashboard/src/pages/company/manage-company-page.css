@@ -1,99 +1,99 @@
 /* Container styling */
 .manage-company-container {
-    background-color: #f8f9fa; /* Light gray background (similar to the screenshot's background) */
-    padding: 2rem; /* Padding around the container */
-    min-height: 100vh; /* Ensure the container takes up the full viewport height */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  /* Form card styling */
-  .manage-company-card {
-    background-color: #ffffff; /* White background for the card */
-    padding: 2rem; /* Padding inside the card */
-    border-radius: 0.5rem; /* Rounded corners (similar to the screenshot) */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow (matches the screenshot) */
-    width: 100%;
-    max-width: 600px; /* Limit the card width for better readability */
-  }
-  
-  /* Heading styling */
-  .manage-company-card h2 {
-    font-size: 1.5rem; /* Match the font size from the screenshot */
-    font-weight: 600; /* Bold heading */
-    margin-bottom: 1.5rem; /* Space below the heading */
-    color: #333; /* Dark text color */
-  }
-  
-  /* Form group styling */
-  .manage-company-card .form-group {
-    margin-bottom: 1.5rem; /* Space between form fields */
-  }
-  
-  /* Form label styling */
-  .manage-company-card .form-label {
-    font-weight: 600; /* Bold labels (matches the screenshot) */
-    color: #333; /* Dark text color */
-    margin-bottom: 0.5rem; /* Space below the label */
-  }
-  
-  /* Form input styling */
-  .manage-company-card .form-control {
-    border-radius: 0.375rem; /* Slightly rounded corners */
-    border: 1px solid #ced4da; /* Light gray border */
-    padding: 0.5rem 0.75rem; /* Comfortable padding */
-    font-size: 1rem; /* Standard font size */
-    color: #333; /* Dark text color */
-  }
-  
-  /* Readonly input styling */
-  .manage-company-card .form-control[readonly] {
-    background-color: #f8f9fa; /* Light gray background for readonly fields */
-    opacity: 1; /* Ensure the text is fully visible */
-  }
-  
-  /* Search bar styling (for the SearchBar component) */
-  .manage-company-card .search-bar-container {
-    width: 100%;
-  }
-  
-  /* Button styling */
-  .manage-company-card .btn-primary {
-    background-color: #007bff; /* Blue color (matches the "Manage User" button in the screenshot) */
-    border-color: #007bff; /* Matching border */
-    padding: 0.5rem 1.5rem; /* Padding for the button */
-    font-size: 1rem; /* Standard font size */
-    font-weight: 500; /* Medium font weight */
-    border-radius: 0.375rem; /* Rounded corners */
-    transition: background-color 0.15s ease-in-out; /* Smooth hover transition */
-  }
-  
-  /* Button hover state */
-  .manage-company-card .btn-primary:hover {
-    background-color: #0056b3; /* Darker blue on hover */
-    border-color: #004085; /* Matching border */
-  }
-  
-  /* Error message styling */
-  .manage-company-card .error-message {
-    color: #dc3545; /* Red color for errors */
-    margin-bottom: 1.5rem; /* Space below the error message */
-  }
-  
-  /* Attributes section styling */
-  .manage-company-card .attributes-section {
-    margin-top: 2rem; /* Space above the attributes section */
-  }
-  
-  .manage-company-card .attributes-section h3 {
-    font-size: 1.25rem; /* Slightly smaller than the main heading */
-    font-weight: 600; /* Bold heading */
-    margin-bottom: 1rem; /* Space below the heading */
-    color: #333; /* Dark text color */
-  }
-  
-  /* Required field indicator */
-  .manage-company-card .text-danger {
-    font-weight: 600; /* Bold asterisk */
-  }
+  background-color: var(--background-color);
+  padding: 2rem;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Form card styling */
+.manage-company-card {
+  background-color: var(--light-color);
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+}
+
+/* Heading styling */
+.manage-company-card h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--text-color);
+}
+
+/* Form group styling */
+.manage-company-card .form-group {
+  margin-bottom: 1.5rem;
+}
+
+/* Form label styling */
+.manage-company-card .form-label {
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+}
+
+/* Form input styling */
+.manage-company-card .form-control {
+  border-radius: 0.375rem;
+  border: 1px solid var(--secondary-color);
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+/* Readonly input styling */
+.manage-company-card .form-control[readonly] {
+  background-color: var(--light-color);
+  opacity: 1;
+}
+
+/* Search bar styling (for the SearchBar component) */
+.manage-company-card .search-bar-container {
+  width: 100%;
+}
+
+/* Button styling */
+.manage-company-card .btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  transition: background-color 0.15s ease-in-out;
+}
+
+/* Button hover state */
+.manage-company-card .btn-primary:hover {
+  background-color: darken(var(--primary-color), 10%);
+  border-color: darken(var(--primary-color), 15%);
+}
+
+/* Error message styling */
+.manage-company-card .error-message {
+  color: var(--danger-color);
+  margin-bottom: 1.5rem;
+}
+
+/* Attributes section styling */
+.manage-company-card .attributes-section {
+  margin-top: 2rem;
+}
+
+.manage-company-card .attributes-section h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
+/* Required field indicator */
+.manage-company-card .text-danger {
+  font-weight: 600;
+}

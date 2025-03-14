@@ -11,7 +11,7 @@ public static class Converter
         Role = userDbModel.Role,
         Tenant = userDbModel.TenantName ?? string.Empty,
         TenantId = userDbModel.TenantId,
-        Enabled = userDbModel.Enabled ?? false,
+        Enabled = userDbModel.Enabled,
         Email = userDbModel.Email,
         Name = userDbModel.Name,
         Attributes = userDbModel.Attributes
@@ -86,12 +86,13 @@ public static class Converter
         Attributes = model.Attributes
     };
     
-    public static TenantModel From(TenantDbModel tenantDbModel) => new()
+    public static TenantModel From(TenantDbModel dbModel) => new()
     {
-        Id = tenantDbModel.Id, 
-        Name = tenantDbModel.Name,
-        ShortId = tenantDbModel.ShortId,
-        Attributes = tenantDbModel.Attributes
+        Id = dbModel.Id, 
+        Name = dbModel.Name,
+        ShortId = dbModel.ShortId,
+        Theme = dbModel.Theme,
+        Attributes = dbModel.Attributes
     };
     
     public static TenantDbModel To(TenantModel model) => new()
@@ -99,6 +100,7 @@ public static class Converter
         Id = model.Id, 
         Name = model.Name,
         ShortId = model.ShortId,
+        Theme = model.Theme,
         Attributes = model.Attributes
     };
 }

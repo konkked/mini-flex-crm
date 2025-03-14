@@ -4,16 +4,18 @@ import api from '../../api';
 import { useParams } from 'react-router-dom';
 import './manage-tenant-page.css'; // Import the new CSS file
 import { TenantFormData } from 'models/tenant';
+import { toast } from 'react-toastify';
 
 const ManageTenantPage: React.FC = () => {
   const [tenantData, setTenantData] = useState<TenantFormData>({
     name: '',
     shortId: '',
-    theme: '',
+    theme: 'professional',
   });
   const { tenantId } = useParams<{ tenantId: string }>();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
+  const header = tenantId && "Manage Tenant" || "Create Tenant";
 
   useEffect(() => {
     if (tenantId && !Number.isNaN(Number(tenantId))) {
@@ -21,9 +23,9 @@ const ManageTenantPage: React.FC = () => {
         try {
           const data = await api.admin.tenant.get(tenantId);
           setTenantData({
-            name: data.name,
-            shortId: data.attributes?.shortId || data.shortId || '',
-            theme: data.attributes?.theme || '',
+            name: data.name || '',
+            shortId: data.shortId || '',
+            theme: data.theme || 'professional',
           });
         } catch (err) {
           setError('Error fetching tenant data');
@@ -38,20 +40,33 @@ const ManageTenantPage: React.FC = () => {
     setTenantData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCreateTenant = async (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
+    let resultTenantId = tenantId;
     e.preventDefault();
     try {
-      await api.admin.tenant.create({
-        name: tenantData.name,
-        shortId: tenantData.shortId,
-        attributes: { 
-          shortid: tenantData.shortId, 
+      if (!tenantId || Number.isNaN(Number(tenantId))) {
+        resultTenantId = await api.admin.tenant.create({
+          name: tenantData.name,
+          shortId: tenantData.shortId,
           theme: tenantData.theme 
-        }
-      });
+        });
+        toast.success(<div>Tenant created successfully! <a href={`/tenant/${resultTenantId}`}>View Tenant</a></div>);
+      } else {
+        await api.admin.tenant.edit(tenantId, {
+          name: tenantData.name,
+          shortId: tenantData.shortId,
+          theme: tenantData.theme 
+        })
+        toast.success(<div>Tenant successfully edited! <a href={`/tenant/${tenantId}`}>View Tenant</a></div>);
+      }
       setSuccess(true);
-      setError(null);
-      setTenantData({ name: '', shortId: '', theme: 'professional' });
+      setTimeout(() => {
+        if(!tenantId || Number.isNaN(Number(tenantId))) {
+          setTenantData({ name: '', shortId:'', theme:'professional' });
+        }
+        setSuccess(false);
+        setError(null);
+      }, 5000);
     } catch (err) {
       setError('Error creating tenant');
       setSuccess(false);
@@ -64,7 +79,7 @@ const ManageTenantPage: React.FC = () => {
         <h2>Create Tenant</h2>
         {error && <Alert variant="danger">{error}</Alert>}
         {success && <Alert variant="success">Tenant created successfully!</Alert>}
-        <Form onSubmit={handleCreateTenant}>
+        <Form onSubmit={submit}>
           <Form.Group controlId="formName" className="mb-3">
             <Form.Label>Name</Form.Label>
             <Form.Control
@@ -89,8 +104,7 @@ const ManageTenantPage: React.FC = () => {
             <Form.Label>Theme</Form.Label>
             <Form.Select name="theme" value={tenantData.theme} onChange={handleChange}>
               <option value="professional">Professional</option>
-              <option value="social_light">Social Light</option>
-              <option value="social_dark">Social Dark</option>
+              <option value="social">Social</option>
               <option value="enterprise">Enterprise</option>
             </Form.Select>
           </Form.Group>

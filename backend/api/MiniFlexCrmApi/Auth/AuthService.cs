@@ -46,16 +46,18 @@ public class AuthService : IAuthService
             user.Attributes = new ExpandoObject();
         }
 
-        if (user.Attributes.theme == null)
+        // Cast ExpandoObject to IDictionary<string, object> to add/set properties
+        var attributesDict = (IDictionary<string, object>)user.Attributes;
+
+        // Check and set the theme property
+        if (!attributesDict.ContainsKey("theme"))
         {
-            if (!string.IsNullOrEmpty(tenant.Theme))
-            {
-                user.Attributes.theme = tenant.Theme;
-            }
-            else
-            {
-                user.Attributes.theme = tenant.Attributes?.theme ?? "professional";
-            }
+            string defaultTheme = "professional"; // Default theme
+            string themeValue = tenant?.Theme ?? (tenant?.Attributes != null ? ((IDictionary<string, object>)tenant.Attributes).ContainsKey("theme") 
+                ? ((IDictionary<string, object>)tenant.Attributes)["theme"].ToString() 
+                : defaultTheme 
+                : defaultTheme);
+            attributesDict["theme"] = themeValue;
         }
 
         var token = _jwtService.GenerateToken(user);

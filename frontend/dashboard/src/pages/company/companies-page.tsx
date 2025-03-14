@@ -6,7 +6,7 @@ const CompaniesPage = () => {
   
   const fetch = async (offset?: number, limit?: number) => {
     const data = await api.std.company.list(offset, limit);
-    return { ...data };
+    return data;
   };
 
   return (

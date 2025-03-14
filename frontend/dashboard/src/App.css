@@ -1,5 +1,9 @@
+/* Import Poppins from Google Fonts (add this in the <head> of your index.html or use a CSS import) */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 .App {
   text-align: center;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
 .App-logo {
@@ -22,10 +26,12 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  font-weight: 600; /* Bold weight for headings */
 }
 
 .App-link {
   color: #61dafb;
+  font-weight: 500; /* Medium weight for links */
 }
 
 @keyframes App-logo-spin {

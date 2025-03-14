@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS "notes" (
+CREATE TABLE IF NOT EXISTS "note" (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL REFERENCES app_user(id),
     tenant_id INT NOT NULL REFERENCES tenant(id),

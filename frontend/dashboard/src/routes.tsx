@@ -13,7 +13,9 @@ import ViewTenantPage from './pages/tenant/view-tenant-page';
 import React from 'react';
 import { getCurrentRole, getCurrentTenantId } from './api'; // Corrected import path assuming './api'
 import ViewUserPage from './pages/user/view-user-page'; // Corrected import path
-import CustomersPage from '@pages/customer/customers-page';
+import CustomersPage from './pages/customer/customers-page';
+import ViewCompanyPage from './pages/company/view-company-page';
+import ViewCustomerPage from './pages/customer/view-customer-page';
 
 // PrivateRoute component to handle authentication and role-based access
 const PrivateRoute: React.FC<{ adminOnly?: boolean; superAdminOnly?: boolean; }> = ({ adminOnly = false, superAdminOnly = false }) => {
@@ -47,7 +49,9 @@ const AppRoutes = () => {
           <Route path="/users" element={<UsersPage />} />
           <Route path="/user/:userId" element={<ViewUserPage />} />
           <Route path="/companies" element={<CompaniesPage />} />
+          <Route path="/company/:companyId" element={<ViewCompanyPage/>} />
           <Route path="/customers" element={<CustomersPage />} />
+          <Route path="/customer/:customerId" element={<ViewCustomerPage />} />
           <Route path="/relationships" element={<RelationshipsPage />} />
           {isAuthenticated ? (
             <>

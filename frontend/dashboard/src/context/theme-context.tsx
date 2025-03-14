@@ -12,7 +12,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const currentTheme = getCurrentTheme();
-    const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const prefersDarkMode =  false; // window.matchMedia('(prefers-color-scheme: dark)').matches;
     const themeWithMode = prefersDarkMode ? `${currentTheme}-dark` : currentTheme;
     setTheme(themeWithMode);
   }, []);

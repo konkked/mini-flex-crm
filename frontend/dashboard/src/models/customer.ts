@@ -4,6 +4,7 @@ import { Attributable } from "./attributable";
 export interface Customer extends Attributable {
   id: number;
   tenantId: number;
+  tenantName: string;
   name: string;
 }
 

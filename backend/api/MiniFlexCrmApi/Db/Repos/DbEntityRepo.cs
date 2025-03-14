@@ -1,5 +1,6 @@
 using System.Collections;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Dynamic;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -13,6 +14,16 @@ namespace MiniFlexCrmApi.Db.Repos;
 
 public class DbEntityRepo<T> : IRepo<T> where T : DbEntity
 {
+    protected static void PrepAttributes(T value)
+    {
+        var property = typeof(T).GetProperty("Attributes");
+        if (property == null) return;
+        dynamic attributes = property.GetValue(value);
+        property.SetValue(value, attributes != null
+            ? System.Text.Json.JsonSerializer.Deserialize<ExpandoObject>(attributes)
+            : new ExpandoObject());
+    }
+
     protected (string? whereFilter, Dictionary<string, object> values)? GrokQuery(string? query, IDictionary<string, object>? parameters = null)
     {
         var queryObject = Base62JsonConverter.DeserializeAnonymous(query, null as Dictionary<string, string>);
@@ -183,9 +194,11 @@ public class DbEntityRepo<T> : IRepo<T> where T : DbEntity
     {
         await using var connection = ConnectionProvider.GetConnection();
         await connection.OpenAsync().ConfigureAwait(false);
-        return await connection.QueryFirstOrDefaultAsync<T>(
+        var result=  await connection.QueryFirstOrDefaultAsync<T>(
             $"SELECT * FROM {TableName} WHERE id = @id", new { id }
         ).ConfigureAwait(false);
+        PrepAttributes(result);
+        return result;
     }
 
     public virtual async Task<int> UpdateAsync(T entity)

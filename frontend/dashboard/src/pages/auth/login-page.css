@@ -1,6 +1,7 @@
 /* LoginPage.css */
 .login-container {
   background-color: var(--background-color); /* Use theme background color */
+  color: var(--text-color)
 }
 
 .login-form {

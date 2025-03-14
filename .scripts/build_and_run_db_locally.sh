@@ -1,11 +1,11 @@
 # !/bin/bash
 pushd db
 
-docker stop miniflexcrm-db || true
-docker rm miniflexcrm-db || true
+docker stop mfcrm-database || true
+docker rm mfcrm-database || true
 
-docker build -t miniflexcrm-db:latest .
+docker build -t konkked/mfcrm-database:latest .
 
-docker run -d --name miniflexcrm-db -p 5432:5432 miniflexcrm-db:latest
+docker run -d --name mfcrm-database -p 5432:5432 konkked/mfcrm-database:latest
 
 popd

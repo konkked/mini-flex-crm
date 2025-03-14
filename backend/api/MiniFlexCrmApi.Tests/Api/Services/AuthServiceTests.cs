@@ -19,11 +19,12 @@ public class AuthServiceTests
     public async Task SignUp_User()
     {
         var userRepo = Mock.Of<IUserRepo>();
+        var tenantRepo = Mock.Of<ITenantRepo>();
         var jwtService = Mock.Of<IJwtService>();
         var emailSender = Mock.Of<IEmailSender>();
         var endecryptor = Mock.Of<IEndecryptor>();
         var consoleLogger = Mock.Of<ILogger<AuthService>>();
-        var authService = new AuthService(consoleLogger, userRepo, jwtService, emailSender, endecryptor);
+        var authService = new AuthService(consoleLogger, userRepo, tenantRepo, jwtService, emailSender, endecryptor);
         Mock.Get(userRepo)
             .Setup(a=>a.ExistsByUsernameAsync(It.IsAny<string>()))
             .ReturnsAsync(false);

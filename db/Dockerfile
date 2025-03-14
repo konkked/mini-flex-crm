@@ -17,3 +17,8 @@ EXPOSE 5432
 
 # Set the custom entrypoint script
 ENTRYPOINT ["/docker-entrypoint-initdb.d/init-db.sh"]
+# Run the default PostgreSQL entrypoint script
+# ENTRYPOINT ["docker-entrypoint.sh"]
+
+# # Start PostgreSQL
+# CMD ["postgres"]

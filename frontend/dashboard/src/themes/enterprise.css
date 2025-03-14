@@ -9,4 +9,21 @@
   --info-color: #17a2b8;
   --light-color: #f8f9fa;
   --dark-color: #343a40;
+  --hero-background-gradient: linear-gradient(135deg, #343a40 0%, #212529 100%);
+  --hero-text-color: white;
+}
+
+[data-theme="enterprise-dark"] {
+  --background-color: #212529;
+  --text-color: #f8f9fa;
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --info-color: #17a2b8;
+  --light-color: #343a40;
+  --dark-color: #000000;
+  --hero-background-gradient: linear-gradient(135deg, #1c1e21 0%, #121416 100%);
+  --hero-text-color: white;
 }
