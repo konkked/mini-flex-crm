@@ -1,5 +1,14 @@
-export interface Tenant {
+import { Attributable } from "./attributable";
+
+export interface Tenant extends Attributable {
   id: number;
   name: string;
-  attributes: Map<string, number | string | boolean | Map<string, number | string | boolean> | any>;
+  shortId: string;
+  theme: string;
+}
+
+export interface TenantFormData extends Attributable {
+  name?: string;
+  shortId?: string;
+  theme?: string;
 }

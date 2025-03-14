@@ -20,8 +20,8 @@ const ViewTenantPage: React.FC = () => {
           const data = await api.admin.tenant.get(tenantId);
           setTenantData({
             name: data.name,
-            shortid: data.attributes.shortid || '',
-            theme: data.attributes.theme || '',
+            shortid: data.attributes?.shortid || data.shortId || '',
+            theme: data.attributes?.theme || '',
           });
         } catch (err) {
           setError('Error fetching tenant data');

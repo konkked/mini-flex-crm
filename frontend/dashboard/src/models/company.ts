@@ -1,6 +1,7 @@
-export interface Company {
+import { Attributable } from "./attributable";
+
+export interface Company extends Attributable {
     id: number;
     tenantId: number;
     name: string;
-    attributes: Map<string, number | string | boolean | Map<string, number | string | boolean> | any>;
 } 

@@ -2,15 +2,16 @@ import React, { useState, useEffect } from "react";
 import api, {hasAdminAccessToItem, getCurrentRole} from "../../api";
 import { useParams } from 'react-router-dom';
 import PaginatedList from "../../components/paginated-list/paginated-list-component";
-import EditAttributes from "../../components/shared/edit-attributes-component";
+import ManageAttributes from "../../components/attributes/manage-attributes-component";
 import { Relationship, PivotedRelationships } from "../../models/relationship";
 import { Customer } from "../../models/customer";
 import { Company } from "../../models/company";
-import SearchModal from "../../components/shared/search-modal";
+import SearchModal from "../../components/search-modal/search-modal";
 import { Button } from "react-bootstrap";
 import { Plus } from "react-bootstrap-icons"; // Bootstrap Icons
+import ViewAttributesComponent from "@components/attributes/view-attributes-component";
 
-const CustomerPage : React.FC =  () => {  
+const ViewCustomerPage : React.FC =  () => {  
   const [showCompanyModal, setShowCompanyAddModal] = useState(false);
   const [showUserModal, setShowUserAddModal] = useState(false);
   const { customerId } = useParams<{ customerId: string }>();
@@ -33,14 +34,14 @@ const CustomerPage : React.FC =  () => {
   }
 
   const handleSelectCompany = async (company: Company) => {
-    await api.std.relation.create({ customerId: customer.id, id: company.id, entityName: "company" });  
+    await api.std.relationship.create({ customerId: customer.id, id: company.id, entityName: "company" });  
     setShowCompanyAddModal(false);
     const updatedRelationships = await api.std.customer.get_with_relationships({ customerId: customer.id });
     setRelationships(updatedRelationships.data.relationships);
   };
 
   const handleSelectUser = async (user: {id:number}) => {
-    await api.std.relation.create({ customerId: customer.id, id: user.id, entityName: "user" });
+    await api.std.relationship.create({ customerId: customer.id, id: user.id, entityName: "user" });
     setShowCompanyAddModal(false);
     const updatedRelationships = await api.std.customer.get_with_relationships({ customerId: customer.id });
     setRelationships(updatedRelationships.data.relationships);
@@ -54,25 +55,16 @@ const CustomerPage : React.FC =  () => {
     return await api.std.user.search({username: criteria, tenant_id: customer.tenantId});
   }
 
-  const deleteRelation = async (item: Relationship) => {
+  const deleteRelationship = async (item: Relationship) => {
     await api.admin.relation.delete(item.id);
   }
-
-  const handleSave = async (attributes: Map<string, number | string | boolean | Map<string, number | string | boolean>>) => {
-    if (customer) {
-      const updatedUser = { ...customer, attributes };
-      await api.std.customer.update(customer.id, updatedUser);
-      setCustomer(updatedUser);
-    }
-  };
 
   return (
   <div>
     <div style={{ display: "flex", alignItems: "center" }}>
-      <h1>Company</h1>
-      <EditAttributes 
-        attributes={customer.attributes}
-        onSave={handleSave}
+      <h1>Customer</h1>
+      <ViewAttributesComponent 
+        target={customer}
       />
       <h2>Relationships</h2>
       {hasAdminAccessToItem(customer) && (
@@ -89,7 +81,7 @@ const CustomerPage : React.FC =  () => {
       <h3>Companies </h3>
       <PaginatedList
       fetch={async (_0, _1) => relationships.company}
-      deleteItem={getCurrentRole() === "admin" ? deleteRelation : undefined}
+      deleteItem={getCurrentRole() === "admin" ? deleteRelationship : undefined}
       columns={[
         { key: "id", label: "ID" },
         { key: "name", label: "Name", editable: true },
@@ -108,7 +100,7 @@ const CustomerPage : React.FC =  () => {
       <h3>Users </h3>
       <PaginatedList
       fetch={async (_0, _1) => relationships.user}
-        deleteItem={getCurrentRole() === "admin" ? deleteRelation : undefined}
+        deleteItem={getCurrentRole() === "admin" ? deleteRelationship : undefined}
         columns={[
           { key: "id", label: "ID" },
           { key: "username", label: "Username" },
@@ -136,4 +128,4 @@ const CustomerPage : React.FC =  () => {
 
 };
 
-export default CustomerPage;
+export default ViewCustomerPage;

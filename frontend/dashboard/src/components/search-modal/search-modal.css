@@ -1,0 +1,70 @@
+.search-modal .modal-content {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  border-radius: 0.375rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.search-modal .modal-header {
+  border-bottom: 1px solid var(--secondary-color);
+}
+
+.search-modal .modal-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.search-modal .modal-body {
+  padding: 1.5rem;
+}
+
+.search-modal .form-label {
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.search-modal .form-control {
+  border-radius: 0.375rem;
+  border: 1px solid var(--secondary-color);
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+.search-modal .list-group-item {
+  background-color: var(--light-color);
+  color: var(--text-color);
+  border: 1px solid var(--secondary-color);
+  border-radius: 0.375rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.search-modal .list-group-item:hover {
+  background-color: var(--secondary-color);
+  color: var(--light-color);
+}
+
+.search-modal .loading-indicator {
+  text-align: center;
+  font-size: 1rem;
+  color: var(--text-color);
+  margin-top: 1rem;
+}
+
+.search-modal .modal-footer {
+  border-top: 1px solid var(--secondary-color);
+}
+
+.search-modal .btn-secondary {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+  color: var(--light-color);
+  transition: background-color 0.15s ease-in-out;
+}
+
+.search-modal .btn-secondary:hover {
+  background-color: darken(var(--secondary-color), 10%);
+  border-color: darken(var(--secondary-color), 15%);
+}

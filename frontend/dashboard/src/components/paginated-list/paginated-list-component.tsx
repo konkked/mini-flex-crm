@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, Form } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { PencilSquare, ChevronLeft, ChevronRight, Trash, Floppy, X } from "react-bootstrap-icons"; // Bootstrap Icons
-import "./paginated-list.css"; // Custom styles for button positioning
+import "./paginated-list-component.css"; // Custom styles for button positioning
 import { useQueryState, useGenQueryState } from "hooks/useQueryState";
 
 interface PaginatedListProps {

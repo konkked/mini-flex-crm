@@ -1,10 +1,21 @@
-export interface User {
+import { Attributable } from "./attributable";
+
+export interface User extends Attributable {
   id: number;
   tenantId: number;
+  tenantName :string;
   username: string;
   email: string;
   name: string;
   role: string;
   enabled: boolean;
-  attributes: Map<string, number | string | boolean | Map<string, number | string | boolean> | any>;
+}
+
+export interface UserFormData extends Attributable {
+  tenantId?: number;
+  username?: string;
+  email?: string;
+  name?: string;
+  role?: string;
+  enabled?: boolean;
 }

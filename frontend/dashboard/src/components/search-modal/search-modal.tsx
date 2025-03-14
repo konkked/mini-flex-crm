@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, ListGroup } from 'react-bootstrap';
+import './search-modal.css';
 
 interface SearchModalProps<T> {
   show: boolean;

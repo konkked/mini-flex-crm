@@ -4,6 +4,7 @@ import { Relationship, PivotedRelationships } from "./models/relationship";
 import { Company } from "./models/company";
 import { User } from "./models/user";
 import { Customer } from "./models/customer";
+import { get } from "http";
 
 const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:5111/api";
 
@@ -30,6 +31,7 @@ interface JwtPayload {
     sub: string; // User ID
     unique_name: string; // Username
     tenant_id: string; // Tenant ID
+    theme?: string;
     role: string; // User role
     exp?: number; // Expiration timestamp (optional)
 }
@@ -52,12 +54,15 @@ export const getCurrentUser = () => {
     return extractClaims(token);
 };
 
+export const getCurrentTheme = () => getCurrentUser()?.theme || 'professional';
 export const getCurrentRole = () => getCurrentUser()?.role;
 export const getCurrentUserId = () => getCurrentUser()?.sub;
 export const hasAdminAccessToItem = (item: Customer | Company | User | Relationship) => {
     return getCurrentRole() === "admin" 
             && (item.tenantId == getCurrentTenantId() || getCurrentTenantId() == 0);
 }
+
+export const isSuperAdmin = () => getCurrentRole() == "admin" && getCurrentTenantId() == 0;
 
 
 // Function to set token in headers
@@ -144,6 +149,10 @@ entities.forEach((entity) => {
     list: async (tenantId?:number, offset?: number, limit?: number) => await fetch(tenantId, offset, limit),
     search: async (tenantId?:number, offset?: number, limit?: number, query?:any) => await fetch(tenantId, offset, limit, query),
     get: async (tenantId: string, id: number) => {
+      if(!id){
+        id = Number(tenantId);
+        tenantId = getCurrentTenantId().toString();
+      }
       const response = await apiClient.get(`/tenant/${tenantId}/${entity}/${id}`);
       return response.data;
     },
@@ -190,8 +199,8 @@ api.admin.tenant = {
         const response = await apiClient.get(`/tenant`, { params });
         return response.data;
     },
-    get: async (tenantId: string, id: number) => {
-        const response = await apiClient.get(`/tenant/${tenantId}/${id}`);
+    get: async (id: number) => {
+        const response = await apiClient.get(`/tenant/${id}`);
         return response.data;
     },
     create: async (data: any) => {

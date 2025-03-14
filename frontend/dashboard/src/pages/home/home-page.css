@@ -1,0 +1,41 @@
+.home-page {
+    padding-top: 20px;
+  }
+  
+  /* Hero Section */
+  .hero-section {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    border-radius: 10px;
+  }
+  
+  .social-dark .hero-section {
+    background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+  }
+  
+  .social-light .hero-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    color: #333;
+  }
+  
+  .enterprise .hero-section {
+    background: linear-gradient(135deg, #343a40 0%, #212529 100%);
+  }
+  
+  /* Metrics Cards */
+  .metric-card {
+    transition: transform 0.3s ease;
+  }
+  
+  .metric-card:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Quick Actions */
+  .quick-action-btn {
+    transition: transform 0.3s ease;
+  }
+  
+  .quick-action-btn:hover {
+    transform: scale(1.05);
+  }

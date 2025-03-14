@@ -2,40 +2,35 @@ import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import api from '../../api';
-import './add-user-page.css';
+import api, { getCurrentTenantId } from '../../api';
+import './manage-user-page.css';
 import { useParams } from 'react-router-dom';
 import SearchBar from '../../components/search-bar/search-bar-component';
 import { Tenant } from '../../models/tenant';
-import AttributesComponent from '../../components/attributes/manage-attributes-component'; // Import the component
+import ManageAttributesComponent from '../../components/attributes/manage-attributes-component';
+import { UserFormData } from 'models/user';
 
 const ManageUserPage: React.FC = () => {
-  const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-    email: '',
-    name: '',
+  const [user, setUser] = useState<UserFormData>({
+    name:'',
+    email:'',
+    role:'',
+    tenantId: 0
   });
-  const [selectedTenant, setSelectedTenant] = useState<{ id: number; name: string } | null>(null);
-  const [attributes, setAttributes] = useState<{ [key: string]: string }>({}); // Managed by AttributesComponent
+  const [selectedTenant, setSelectedTenant] = useState<Tenant | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const { tenantId: urlTenantId, userId: userId } = useParams<{ tenantId: string; userId: string }>();
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
+  const tenantId = Number(urlTenantId || getCurrentTenantId())
 
   useEffect(()=>{
     if(userId && !Number.isNaN(Number(userId))){
       const fetchUser = async () => {
         try {
-          const data = await api.std.user.get(Number(userId));
-          setFormData({
-            username: data.username,
-            password: '',
-            email: data.email || '',
-            name: data.name || '',
-          });
-          setSelectedTenant({ id: data.tenantId, name: data.tenantName });
-          setAttributes(data.attributes); // Set attributes
+          const data = await api.admin.user.get(tenantId, Number(userId));
+          setUser(data);
+          setSelectedTenant({ id: data.tenantId, name: data.tenantName, shortId:'', theme: ''});
         } catch (err) {
           setSubmitError('Error fetching user data');
         }
@@ -46,23 +41,21 @@ const ManageUserPage: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setUser((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
-    if (!formData.username.trim()) newErrors.username = 'Username is required';
-    if (!formData.password.trim()) newErrors.password = 'Password is required';
-    else if (formData.password.length < 6) newErrors.password = 'Password must be at least 6 characters';
-    if (!urlTenantId && !selectedTenant) newErrors.tenantId = 'Company selection is required';
-    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Invalid email format';
-    if (!formData.name.trim()) newErrors.name = 'Name is required';
+    if (!user?.username?.trim()) newErrors.username = 'Username is required';
+    if (!urlTenantId && !selectedTenant) newErrors.tenantId = 'Tenant selection is required';
+    if (user?.email && !/\S+@\S+\.\S+/.test(user.email)) newErrors.email = 'Invalid email format';
+    if (!user?.name?.trim()) newErrors.name = 'Name is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) return;
@@ -70,12 +63,11 @@ const ManageUserPage: React.FC = () => {
     try {
       let newUserId;
       const payload = {
-        username: formData.username,
-        password: formData.password,
-        tenantId: Number(urlTenantId || selectedTenant?.id),
-        email: formData.email || undefined,
-        name: formData.name || undefined,
-        attributes, // Include attributes in the payload
+        username: user?.username,
+        tenantId: Number(selectedTenant?.id || tenantId),
+        email: user?.email || undefined,
+        name: user?.name || undefined,
+        attributes : user?.attributes, // Include attributes in the payload
       };
       if (!userId || Number.isNaN(Number(userId))) {
         const response = await api.auth.signup(payload);
@@ -88,9 +80,8 @@ const ManageUserPage: React.FC = () => {
       setSuccess(true);
       setSubmitError(null);
       setTimeout(() => {
-        setFormData({ username: '', password: '', email: '', name: '' });
+        setUser({ username: '', email: '', name: '' });
         setSelectedTenant(null);
-        setAttributes({}); // Reset attributes
         setSuccess(false);
       }, 5000);
     } catch (err) {
@@ -108,31 +99,18 @@ const ManageUserPage: React.FC = () => {
           <h2 className="text-center mb-4">Sign Up</h2>
           {submitError && <Alert variant="danger">{submitError}</Alert>}
           {success && <Alert variant="success">User added successfully! Tell them to login.</Alert>}
-          <Form onSubmit={handleSignup}>
+          <Form onSubmit={handleSave}>
             <Form.Group controlId="formUsername" className="mb-3">
               <Form.Label>Username <span className="text-danger">*</span></Form.Label>
               <Form.Control
                 type="text"
                 name="username"
                 placeholder="Enter username"
-                value={formData.username}
+                value={user?.username}
                 onChange={handleChange}
                 isInvalid={!!errors.username}
               />
               <Form.Control.Feedback type="invalid">{errors.username}</Form.Control.Feedback>
-            </Form.Group>
-
-            <Form.Group controlId="formPassword" className="mb-3">
-              <Form.Label>Password <span className="text-danger">*</span></Form.Label>
-              <Form.Control
-                type="password"
-                name="password"
-                placeholder="Enter password"
-                value={formData.password}
-                onChange={handleChange}
-                isInvalid={!!errors.password}
-              />
-              <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group controlId="formName" className="mb-4">
@@ -141,16 +119,16 @@ const ManageUserPage: React.FC = () => {
                 type="text"
                 name="name"
                 placeholder="Enter name"
-                value={formData.name}
+                value={user?.name}
                 onChange={handleChange}
                 isInvalid={!!errors.name}
               />
               <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
             </Form.Group>
 
-            {!urlTenantId && (
+            {!tenantId && (
               <Form.Group controlId="formTenantId" className="mb-3">
-                <Form.Label>Company <span className="text-danger">*</span></Form.Label>
+                <Form.Label>Tenant <span className="text-danger">*</span></Form.Label>
                 <SearchBar<Tenant>
                   searchApi={api.admin.tenant.searchByName}
                   placeholder="Search..."
@@ -166,18 +144,20 @@ const ManageUserPage: React.FC = () => {
               <Form.Control
                 type="email"
                 name="email"
-                placeholder="Enter email (optional)"
-                value={formData.email}
+                placeholder="Enter email"
+                value={user?.email}
                 onChange={handleChange}
                 isInvalid={!!errors.email}
               />
               <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
             </Form.Group>
 
-            <AttributesComponent
-              initialAttributes={attributes}
-              onAttributesChange={setAttributes}
-            />
+            {tenantId || user?.attributes && (
+              <ManageAttributesComponent
+                target={user}
+                onAttributesChange={(c)=>setUser({...user, attributes:{...c.attributes}})}
+              />
+            )}
 
             <Button variant="primary" type="submit" className="w-100">
               Sign Up

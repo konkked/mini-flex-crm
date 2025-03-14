@@ -14,7 +14,7 @@ const TenantsPage : React.FC = () => {
       <PaginatedList
         fetch={fetch}
         columns={[
-          { key: "id", label: "ID" },
+          { key: "id", label: "ID", linkTo: (id: number) => `/tenant/${id}` },
           { key: "name", label: "Name", editable: true },
         ]}
       />

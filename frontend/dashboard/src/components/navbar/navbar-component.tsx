@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
 import { getCurrentUser, setAuthToken } from '../../api';
+import './navbar-component.css';
 
 const AppNavbar = () => {
   const user = getCurrentUser();
@@ -9,7 +10,7 @@ const AppNavbar = () => {
     <Navbar bg="dark" variant="dark" expand="lg">
       <Navbar.Brand href="/home">MiniFlexCRM</Navbar.Brand>
       <Nav className="me-auto">
-        {user  && (
+        {user && (
           <>
             <Nav.Link href="/home">Home</Nav.Link>
             {user?.role.includes('admin') && <Nav.Link href="/tenants">Tenants</Nav.Link>}

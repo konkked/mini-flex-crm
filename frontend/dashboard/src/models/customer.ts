@@ -1,12 +1,21 @@
 import { PivotedRelationships } from "./relationship";
+import { Attributable } from "./attributable";
 
-export interface Customer {
+export interface Customer extends Attributable {
   id: number;
   tenantId: number;
   name: string;
-  attributes: Map<string,number|string|boolean| Map<string, number | string | boolean>>;
 }
 
 export interface FullCustomer extends Customer {
+  relationships: PivotedRelationships;
+}
+
+export interface CustomerFormData extends Attributable {
+  tenantId?: number;
+  name?: string;
+}
+
+export interface FullCustomerFormData extends Customer {
   relationships: PivotedRelationships;
 }

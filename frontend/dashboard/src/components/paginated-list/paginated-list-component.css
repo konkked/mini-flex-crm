@@ -1,0 +1,121 @@
+.pagination-container {
+  position: relative;
+  width: 90%; /* Add some blank area on sides */
+  height: 7.27vh; /* 7.27% of the page height */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  margin: 0 auto; /* Center the container */
+}
+
+.pagination-button {
+  position: absolute;
+  bottom: 2vh; /* Slightly above the page bottom */
+  width: 5.27vw; /* 5.27% of page width */
+  height: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.pagination-button.left {
+  left: 2vw; /* Align to bottom-left */
+}
+
+.pagination-button.right {
+  right: 2vw; /* Align to bottom-right */
+}
+
+@media (max-width: 768px) {
+  .pagination-container {
+    height: 10vh; /* Adjust height for smaller screens */
+  }
+
+  .pagination-button {
+    width: 8vw; /* Adjust button width for smaller screens */
+    height: 4rem; /* Adjust button height for smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .pagination-container {
+    height: 12vh; /* Adjust height for very small screens */
+  }
+
+  .pagination-button {
+    width: 10vw; /* Adjust button width for very small screens */
+    height: 5rem; /* Adjust button height for very small screens */
+  }
+}
+
+/* Table styling */
+.table {
+  width: 100%;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+  background-color: var(--background-color);
+}
+
+.table th,
+.table td {
+  padding: 0.75rem;
+  vertical-align: top;
+  border-top: 1px solid var(--secondary-color);
+}
+
+.table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid var(--secondary-color);
+}
+
+.table tbody + tbody {
+  border-top: 2px solid var(--secondary-color);
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: var(--light-color);
+}
+
+.table-hover tbody tr:hover {
+  background-color: var(--secondary-color);
+}
+
+.table-bordered {
+  border: 1px solid var(--secondary-color);
+}
+
+.table-bordered th,
+.table-bordered td {
+  border: 1px solid var(--secondary-color);
+}
+
+.table-borderless th,
+.table-borderless td,
+.table-borderless thead th,
+.table-borderless tbody + tbody {
+  border: 0;
+}
+
+/* Action buttons styling */
+.table .btn-outline-primary {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.table .btn-outline-primary:hover {
+  background-color: var(--primary-color);
+  color: var(--light-color);
+}
+
+.table .btn-outline-secondary {
+  color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.table .btn-outline-secondary:hover {
+  background-color: var(--secondary-color);
+  color: var(--light-color);
+}

@@ -1,21 +1,24 @@
-import React from 'react';
+import { Attributable } from 'models/attributable';
+import React, { useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
+import './view-attributes-component.css';
 
 interface ViewAttributesComponentProps {
-  attributes: { [key: string]: string }; // Attributes to display
+  target: Attributable | null; // Attributes to display
 }
 
-const ViewAttributesComponent: React.FC<ViewAttributesComponentProps> = ({ attributes }) => {
+const ViewAttributesComponent: React.FC<ViewAttributesComponentProps> = ({target}) => {
+    target = target && target.attributes || { attributes: {}};
   return (
     <div>
       <h5>Attributes</h5>
-      {Object.keys(attributes).map((key, index) => (
+      {Object.keys({...target.attributes}).map((key, index) => (
         <Row key={index} className="mb-2 align-items-center">
           <Col>
             <strong>{key} :</strong>
           </Col>
           <Col>
-            {attributes[key]}
+            {target.attributes ? target.attributes[key] : 'N/A'}
           </Col>
         </Row>
       ))}

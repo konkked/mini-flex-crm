@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import api, {hasAdminAccessToItem, getCurrentRole} from "../../api";
 import { useParams } from 'react-router-dom';
 import PaginatedList from "../../components/paginated-list/paginated-list-component";
-import EditAttributes from "../../components/shared/edit-attributes-component";
+import EditAttributes from "../../components/search-modal/edit-attributes-component";
 import { Relationship, PivotedRelationships } from "../../models/relationship";
 import { Customer } from "../../models/customer";
 import { Company } from "../../models/company";
-import SearchModal from "../../components/shared/search-modal";
+import SearchModal from "../../components/search-modal/search-modal";
 import { Button } from "react-bootstrap";
 import { Plus } from "react-bootstrap-icons"; // Bootstrap Icons
 

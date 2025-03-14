@@ -11,7 +11,7 @@ interface SearchBarProps<T> {
   onSelect?: (item: T) => void;
 }
 
-const SearchBar = <T extends { id: number | string }>({
+const SearchBar = <T extends { id?: number | string }>({
   searchApi,
   placeholder = 'Search...',
   displayField = 'name' as keyof T,
