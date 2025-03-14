@@ -5,6 +5,7 @@ import { Company } from "./models/company";
 import { User } from "./models/user";
 import { Customer } from "./models/customer";
 import { get } from "http";
+import { Note } from "models/note";
 
 const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:5111/api";
 
@@ -250,6 +251,39 @@ api.auth = {
     return response.data;
   },
 };
+
+export const getNotes = async (route: string) : Promise<Note[]> => {
+  const response = await axios.get(`/api/tenant/${getCurrentTenantId()}/notes/${route}`);
+  response.data.forEach((e: { route?: string; }) => {
+    e.route=route;
+  });
+  return response.data;
+};
+
+export const createNote = async (note: Note) : Promise<Number> => {
+  const response = await axios.post(`/api/tenant/${getCurrentTenantId()}/notes/${note.route}`, note);
+  return response.data;
+};
+
+export const updateNote = async (note: Note) : Promise<Number> => {
+  const response = await axios.put(`/api/tenant/${getCurrentTenantId()}/notes/${note.id}`, note);
+  return response.data;
+};
+
+export const deleteNote = async (id: number) => {
+  await axios.delete(`/api/tenant/${getCurrentTenantId()}/notes/${id}`);
+};
+
+export const togglePinNote = async (id: number) => {
+  await axios.put(`/api/tenant/${getCurrentTenantId()}/notes/${id}/pin`);
+};
+
+api.std.notes = {
+  list: getNotes,
+  create: createNote,
+  delete: deleteNote,
+  togglePin: togglePinNote
+}
 
 // Export the dynamic API
 export default api;

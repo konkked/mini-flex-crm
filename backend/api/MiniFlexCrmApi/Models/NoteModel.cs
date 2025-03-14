@@ -9,4 +9,6 @@ public class NoteModel
     public int UserId { get; set; }
     public int TenantId { get; set; }
     public string Route { get; set; }
+    
+    public bool Pinned { get; set; }
 }
