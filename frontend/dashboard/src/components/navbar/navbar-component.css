@@ -1,0 +1,79 @@
+.navbar-wrapper {
+    position: relative;
+    width: 100%;
+  }
+  
+  .navbar {
+    background-color: var(--dark-color);
+    color: var(--text-color);
+    padding: 0.5rem 1rem;
+  }
+  
+  .navbar-brand, .nav-link {
+    color: var(--light-color) !important;
+    display: flex;
+    align-items: center;
+  }
+  
+  .nav-link:hover {
+    color: var(--primary-color) !important;
+  }
+  
+  /* Caret styling */
+  .caret {
+    display: inline-block;
+    transition: transform 0.3s ease;
+    margin-left: 0.5rem;
+    font-size: 1.2rem;
+  }
+  
+  /* Rotate caret when menu is open (❯ to ^-like) */
+  .caret.open {
+    transform: rotate(-90deg);
+  }
+  
+  /* Style the menu row */
+  .menu-row {
+    background-color: var(--dark-color);
+    width: 100%;
+    padding: 0 1rem; /* Match navbar padding for alignment */
+    position: absolute;
+    top: 100%; /* Directly below the navbar */
+    left: 0;
+    z-index: 1000; /* Ensure it appears above other content */
+    border-radius: 0 0 0.25rem 0.25rem; /* Rounded corners on the bottom */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  }
+  
+  /* Style the menu items container */
+  .menu-items {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    width: auto;
+    min-width: 200px; /* Minimum width for readability */
+  }
+  
+  /* Style individual menu items */
+  .menu-items .menu-item {
+    color: var(--light-color) !important;
+    padding: 0.5rem 1rem;
+    text-align: left;
+    display: block; /* Ensure full-width clickable area */
+  }
+  
+  /* Hover effect for menu items */
+  .menu-items .menu-item:hover {
+    color: var(--primary-color) !important;
+    background-color: var(--dark-color) !important;
+  }
+  
+  /* Ensure navbar brand is styled */
+  .custom-navbar .navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  /* Adjust spacing and alignment */
+  .custom-navbar .nav {
+    margin-left: auto;
+  }
