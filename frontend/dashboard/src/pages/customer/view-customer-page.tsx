@@ -56,7 +56,7 @@ const ViewCustomerPage : React.FC =  () => {
   }
 
   const deleteRelationship = async (item: Relationship) => {
-    await api.admin.relation.delete(item.id);
+    await api.admin.relationship.delete(item.id);
   }
 
   return (
@@ -99,7 +99,7 @@ const ViewCustomerPage : React.FC =  () => {
     {relationships.user && (<div>
       <h3>Users </h3>
       <PaginatedList
-      fetch={async (_0, _1) => relationships.user}
+        fetch={async (_0, _1) => relationships.user}
         deleteItem={getCurrentRole() === "admin" ? deleteRelationship : undefined}
         columns={[
           { key: "id", label: "ID" },
