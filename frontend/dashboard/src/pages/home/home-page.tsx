@@ -111,12 +111,12 @@ const HomePage: React.FC = () => {
       {/* Quick Actions */}
       <Row className="mb-4">
         <Col md={3}>
-          <Button variant="primary" href="/company/add" className="w-100 quick-action-btn">
+          <Button variant="primary" href="/company/new" className="w-100 quick-action-btn">
             <Building className="me-2" /> Add New Company
           </Button>
         </Col>
         <Col md={3}>
-          <Button variant="primary" href="/customer/add" className="w-100 quick-action-btn">
+          <Button variant="primary" href="/customer/new" className="w-100 quick-action-btn">
             <People className="me-2" /> Add New Customer
           </Button>
         </Col>

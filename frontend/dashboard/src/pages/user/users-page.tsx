@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import api, { hasAdminAccessToItem } from "../../api";
 import PaginatedList from "../../components/paginated-list/paginated-list-component";
 import './users-page.css'; // Import the CSS file
+import { Plus } from "react-bootstrap-icons";
 
 const UsersPage = () => {
   const fetch = async (offset?: number, limit?: number) => {
@@ -12,17 +13,11 @@ const UsersPage = () => {
   };
 
   return (
-    <Container fluid className="users-page-container">
-      <Row className="justify-content-between align-items-center mb-4">
-        <Col>
-          <h2>Users</h2>
-        </Col>
-        <Col className="text-end">
-          <Link to="/user/add">
-            <Button variant="primary">Add New User</Button>
-          </Link>
-        </Col>
-      </Row>
+    <div>
+      <h2>Users {" "} <Button className='add-btn' 
+                                        variant="outline-secondary" onClick={()=>window.location.href='/user/new'}> 
+                                        <Plus />
+                                </Button> </h2>
       <PaginatedList
         fetch={fetch}
         columns={[
@@ -41,7 +36,7 @@ const UsersPage = () => {
           { key: "enabled", label: "Enabled", editable: hasAdminAccessToItem, visible: hasAdminAccessToItem },
         ]}
       />
-    </Container>
+    </div>
   );
 };
 

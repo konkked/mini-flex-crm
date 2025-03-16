@@ -1,6 +1,8 @@
 import React from "react";
 import api from "../../api";
 import PaginatedList from "../../components/paginated-list/paginated-list-component";
+import { Button } from "react-bootstrap";
+import { Plus } from "react-bootstrap-icons";
 
 const CompaniesPage = () => {
   
@@ -11,7 +13,10 @@ const CompaniesPage = () => {
 
   return (
     <div>
-      <h2>Companies</h2>
+      <h2>Companies {" "} <Button className='add-btn' 
+                                  variant="outline-secondary" onClick={()=>window.location.href='/company/new'}> 
+                                  <Plus />
+                          </Button> </h2>
       <PaginatedList
         fetch={fetch}
         columns={[

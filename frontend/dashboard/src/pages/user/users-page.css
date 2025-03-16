@@ -21,3 +21,13 @@
   border-radius: 0.375rem; /* Bootstrap's rounded */
   color: var(--light-color); /* Use theme light color for text */
 }
+
+
+/* Quick Actions */
+.add-tenant-btn {
+    transition: transform 0.3s ease;
+}
+
+.add-tenant-btn:hover {
+    transform: scale(1.05);
+}

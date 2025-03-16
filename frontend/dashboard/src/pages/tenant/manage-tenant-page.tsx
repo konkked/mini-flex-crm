@@ -7,11 +7,7 @@ import { TenantFormData } from 'models/tenant';
 import { toast } from 'react-toastify';
 
 const ManageTenantPage: React.FC = () => {
-  const [tenantData, setTenantData] = useState<TenantFormData>({
-    name: '',
-    shortId: '',
-    theme: 'professional',
-  });
+  const [tenantData, setTenantData] = useState<TenantFormData | null>(null);
   const { tenantId } = useParams<{ tenantId: string }>();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
@@ -26,6 +22,10 @@ const ManageTenantPage: React.FC = () => {
             name: data.name || '',
             shortId: data.shortId || '',
             theme: data.theme || 'professional',
+
+    // name: 'Dog',
+    // shortId: 'Cat',
+    // theme: 'professional',
           });
         } catch (err) {
           setError('Error fetching tenant data');
@@ -46,16 +46,16 @@ const ManageTenantPage: React.FC = () => {
     try {
       if (!tenantId || Number.isNaN(Number(tenantId))) {
         resultTenantId = await api.admin.tenant.create({
-          name: tenantData.name,
-          shortId: tenantData.shortId,
-          theme: tenantData.theme 
+          name: tenantData?.name,
+          shortId: tenantData?.shortId,
+          theme: tenantData?.theme 
         });
         toast.success(<div>Tenant created successfully! <a href={`/tenant/${resultTenantId}`}>View Tenant</a></div>);
       } else {
         await api.admin.tenant.edit(tenantId, {
-          name: tenantData.name,
-          shortId: tenantData.shortId,
-          theme: tenantData.theme 
+          name: tenantData?.name,
+          shortId: tenantData?.shortId,
+          theme: tenantData?.theme 
         })
         toast.success(<div>Tenant successfully edited! <a href={`/tenant/${tenantId}`}>View Tenant</a></div>);
       }
@@ -86,7 +86,7 @@ const ManageTenantPage: React.FC = () => {
               type="text"
               placeholder="Enter name"
               name="name"
-              value={tenantData.name}
+              value={tenantData?.name}
               onChange={handleChange}
             />
           </Form.Group>
@@ -96,13 +96,13 @@ const ManageTenantPage: React.FC = () => {
               type="text"
               placeholder="Enter short ID (e.g., abc123)"
               name="shortid"
-              value={tenantData.shortId}
+              value={tenantData?.shortId}
               onChange={handleChange}
             />
           </Form.Group>
           <Form.Group controlId="formTheme" className="mb-3">
             <Form.Label>Theme</Form.Label>
-            <Form.Select name="theme" value={tenantData.theme} onChange={handleChange}>
+            <Form.Select name="theme" value={tenantData?.theme} onChange={handleChange}>
               <option value="professional">Professional</option>
               <option value="social">Social</option>
               <option value="enterprise">Enterprise</option>

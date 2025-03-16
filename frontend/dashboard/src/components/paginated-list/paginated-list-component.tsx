@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Form } from "react-bootstrap";
+import { Table, Button, Form, Container, Row, Col } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { PencilSquare, ChevronLeft, ChevronRight, Trash, Floppy, X } from "react-bootstrap-icons"; // Bootstrap Icons
 import "./paginated-list-component.css"; // Custom styles for button positioning
@@ -213,7 +213,9 @@ const PaginatedList = ({ defaultPageSize, fetch, editItem, columns }: PaginatedL
   };
 
   return (
-    <div>
+    <Container fluid>
+      <Row>
+      <Col md={{ span: 8, offset: 2 }}>  
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -239,7 +241,7 @@ const PaginatedList = ({ defaultPageSize, fetch, editItem, columns }: PaginatedL
           ))}
         </tbody>
       </Table>
-      <div className="pagination-container">
+      {((offset ?? 0) > 0 || items.length === count) && <div className="pagination-container">
         <div className="d-flex justify-content-center align-items-center w-100">
           <div className="col-2 text-center">
             {(offset ?? 0) > 0 && (
@@ -285,8 +287,10 @@ const PaginatedList = ({ defaultPageSize, fetch, editItem, columns }: PaginatedL
             )}
           </div>
         </div>
-      </div>
-    </div>
+      </div>}
+      </Col>
+      </Row>
+    </Container>
   );
 };
 

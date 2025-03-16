@@ -1,6 +1,9 @@
 import React from "react";
 import api from "../../api";
 import PaginatedList from "../../components/paginated-list/paginated-list-component";
+import { Button } from "react-bootstrap";
+import { Plus } from "react-bootstrap-icons";
+import './customers-page.tsx'
 
 const CustomersPage = () => {
   const next = async (offset?: number, limit?: number) => {
@@ -10,7 +13,10 @@ const CustomersPage = () => {
 
   return (
     <div>
-      <h2>Customers</h2>
+      <h2>Customers {" "} <Button className='add-btn' 
+                                  variant="outline-secondary" onClick={()=>window.location.href='/customer/new'}> 
+                                  <Plus />
+                          </Button>  </h2>
       <PaginatedList
         fetch={next}
         columns={[

@@ -64,15 +64,16 @@ const AppRoutes = () => {
         </Route>
         <Route element={<PrivateRoute adminOnly />}>
           <Route path="/user/:userId/manage" element={<ManageUserPage />} />
-          <Route path="/user/add" element={<ManageUserPage />} />
+          <Route path="/user/new" element={<ManageUserPage />} />
           <Route path="/company/:companyId/manage" element={<ManageCompanyPage />} />
-          <Route path="/company/add" element={<ManageCompanyPage />} />
+          <Route path="/company/new" element={<ManageCompanyPage />} />
         </Route>
         <Route element={<PrivateRoute superAdminOnly />}>
-          <Route path="/tenant/:tenantId/user/add" element={<ManageUserPage />} />
+          <Route path="/tenant/:tenantId/user/new" element={<ManageUserPage />} />
           <Route path="/tenants" element={<TenantsPage />} />
-          <Route path="/tenant/add" element={<ManageTenantPage />} />
+          <Route path="/tenant/new" element={<ManageTenantPage />} />
           <Route path="/tenant/:tenantId/manage" element={<ManageTenantPage />} />
+          <Route path="/tenant/new" element={<ManageTenantPage />} />
           <Route path="/tenant/:tenantId" element={<ViewTenantPage />} />
         </Route>
       </Routes>

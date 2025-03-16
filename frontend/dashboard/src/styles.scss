@@ -1,0 +1,27 @@
+.centered-row {
+    /* Target all Col elements inside this Row */
+    [class*="col-"] {
+      text-align: center; /* Center text horizontally inside each Col */
+
+      /* Ensure all nested text elements are centered */
+      * {
+        text-align: center;
+      }
+
+      /* Optional: Add some padding and styling for visibility */
+      padding: 15px;
+      border: 1px solid #ccc;
+      background-color: #f0f0f0;
+    }
+  }
+  
+  .center-flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Optional: Style the Container for better visibility */
+  .container {
+    padding: 20px;
+  }
