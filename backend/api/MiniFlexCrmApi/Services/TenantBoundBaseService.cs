@@ -9,9 +9,9 @@ public abstract class TenantBoundBaseService<TDbModel, TApiModel>(ITenantBoundDb
     : BaseService<TDbModel, TApiModel>(repo), ITenantBoundBaseService<TApiModel> where TDbModel : TenantBoundDbEntity
     where TApiModel : TenantBoundBaseModel
 {
-    public override async Task<bool> UpdateItemAsync(TApiModel model)
+    public override async Task<bool> UpdateAsync(TApiModel model)
     {
-        var dbModel = ConvertToDbModel(model);
+        var dbModel = ApiModelToDbModel(model);
         var current = await repo.FindInTenantById(model.TenantId, model.Id).ConfigureAwait(false);
         if (current == null) return false;
         Transpose.Pull(dbModel, current);
@@ -19,7 +19,7 @@ public abstract class TenantBoundBaseService<TDbModel, TApiModel>(ITenantBoundDb
     }
 
     public async Task<TApiModel> GetItemAsync(int tenantId, int id) 
-        => ConvertToApiModel(await repo.FindInTenantById(tenantId, id).ConfigureAwait(false));
+        => DbModelToApiModel(await repo.FindInTenantById(tenantId, id).ConfigureAwait(false));
 
     public Task<bool> DeleteItemAsync(int tenantId, int id) 
         => repo.DeleteAsync(tenantId, id);

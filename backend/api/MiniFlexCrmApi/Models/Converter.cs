@@ -4,6 +4,30 @@ namespace MiniFlexCrmApi.Models;
 
 public static class Converter
 {
+    public static Attachment From(AttachmentDbModel attachment) => new()
+    {
+        Id = attachment.Id,
+        TenantId = attachment.TenantId,
+        Ext = attachment.Ext,
+        Notes = attachment.Notes,
+        Path = attachment.Path,
+        CreatedTs = attachment.CreatedTs,
+        UpdatedTs = attachment.UpdatedTs,
+        FileContent = attachment.FileContent,
+    };
+    
+    public static AttachmentDbModel To(Attachment attachment) => new()
+    {
+        Id = attachment.Id,
+        TenantId = attachment.TenantId,
+        Ext = attachment.Ext,
+        Notes = attachment.Notes,
+        Path = attachment.Path,
+        CreatedTs = attachment.CreatedTs,
+        UpdatedTs = attachment.UpdatedTs,
+        FileContent = attachment.FileContent,
+    };
+    
     public static UserModel From(UserDbModel userDbModel) => new()
     {
         Id = userDbModel.Id,

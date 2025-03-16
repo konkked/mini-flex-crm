@@ -16,7 +16,7 @@ public class CompanyController(ICompanyService companyService) : ControllerBase
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CompanyModel>>> ListCompanies([FromRoute] int tenantId, [FromQuery] int limit = 50, [FromQuery] int offset = 0) 
-        => Ok(await companyService.ListItemsAsync(limit, offset, 
+        => Ok(await companyService.ListAsync(limit, offset, 
             query: null, parameters: new Dictionary<string, object> { ["tenant_id"] = tenantId }));
 
     [HttpPost]
@@ -30,7 +30,7 @@ public class CompanyController(ICompanyService companyService) : ControllerBase
         }
         else if(requestContext.TenantId != 0)
                 return Forbid();
-        await companyService.CreateItemAsync(model);
+        await companyService.CreateAsync(model);
         return Ok();
     }
 
@@ -48,10 +48,10 @@ public class CompanyController(ICompanyService companyService) : ControllerBase
             return Forbid();
         model.Id = id;
         model.TenantId = tenantId;
-        return await companyService.UpdateItemAsync(model) ? Ok() : NotFound();
+        return await companyService.UpdateAsync(model) ? Ok() : NotFound();
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCompany(int id) =>
-        await companyService.DeleteItemAsync(id) ? Ok() : NotFound();
+        await companyService.DeleteAsync(id) ? Ok() : NotFound();
 }

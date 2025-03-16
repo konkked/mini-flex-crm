@@ -8,9 +8,9 @@ namespace MiniFlexCrmApi.Services;
 
 public class TenantService(ITenantRepo repo) : BaseService<TenantDbModel, TenantModel>(repo), ITenantService
 {
-    protected override TenantModel ConvertToApiModel(TenantDbModel model) 
+    protected override TenantModel DbModelToApiModel(TenantDbModel model) 
         => Converter.From(model);
     
-    protected override TenantDbModel ConvertToDbModel(TenantModel model) 
+    protected override TenantDbModel ApiModelToDbModel(TenantModel model) 
         => Converter.To(model);
 }

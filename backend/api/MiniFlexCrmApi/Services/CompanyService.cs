@@ -6,6 +6,6 @@ namespace MiniFlexCrmApi.Services;
 
 public class CompanyService(ICompanyRepo repo) : TenantBoundBaseService<CompanyDbModel, CompanyModel>(repo), ICompanyService
 {
-    protected override CompanyModel ConvertToApiModel(CompanyDbModel model) => Converter.From(model);
-    protected override CompanyDbModel ConvertToDbModel(CompanyModel model) => Converter.To(model);
+    protected override CompanyModel DbModelToApiModel(CompanyDbModel model) => Converter.From(model);
+    protected override CompanyDbModel ApiModelToDbModel(CompanyModel model) => Converter.To(model);
 }

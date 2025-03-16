@@ -6,13 +6,13 @@ namespace MiniFlexCrmApi.Services;
 
 public class UserService(IUserRepo repo) : TenantBoundBaseService<UserDbModel, UserModel>(repo), IUserService
 {
-    protected override UserModel ConvertToApiModel(UserDbModel model) 
+    protected override UserModel DbModelToApiModel(UserDbModel model) 
         => Converter.From(model);
     
-    protected override UserDbModel ConvertToDbModel(UserModel model) 
+    protected override UserDbModel ApiModelToDbModel(UserModel model) 
         => Converter.To(model);
     
-    public async Task<bool> TryEnableUserAsync(int callerTenant, int userId)
+    public async Task<bool> TryEnableAsync(int callerTenant, int userId)
     {
         var user = await repo.FindAsync(userId).ConfigureAwait(false);
         if (user == null || (callerTenant != user.TenantId && callerTenant != 0) || user.Enabled == true)
@@ -22,7 +22,7 @@ public class UserService(IUserRepo repo) : TenantBoundBaseService<UserDbModel, U
         return true;
     }
     
-    public async Task<bool> TryDisableUserAsync(int callerTenant, int userId)
+    public async Task<bool> TryDisableAsync(int callerTenant, int userId)
     {
         var user = await repo.FindAsync(userId).ConfigureAwait(false);
         if (user == null || (callerTenant != user.TenantId && callerTenant != 0) || user.Enabled == false)

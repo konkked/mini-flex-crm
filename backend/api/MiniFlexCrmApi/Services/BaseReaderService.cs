@@ -6,32 +6,32 @@ namespace MiniFlexCrmApi.Services;
 public abstract class BaseReaderService<TDbModel, TApiModel>(IRepo<TDbModel> repo) : IBaseReaderService<TApiModel>
     where TDbModel : DbEntity
 {
-    protected abstract TApiModel? ConvertToApiModel(TDbModel model);
+    protected abstract TApiModel? DbModelToApiModel(TDbModel model);
 
-    public virtual async Task<TApiModel?> GetItemAsync(int id)
+    public virtual async Task<TApiModel?> GetAsync(int id)
     {
         var result = await repo.FindAsync(id).ConfigureAwait(false);
         return result is null 
             ? default 
-            : ConvertToApiModel(result);
+            : DbModelToApiModel(result);
     }
 
-    public Task<IEnumerable<TApiModel>> ListItemsAsync() 
-        => ListItemsAsync(ServiceContants.PageSize);
-    public Task<IEnumerable<TApiModel>> ListItemsAsync(int limit) 
-        => ListItemsAsync(limit, 0);
-    public Task<IEnumerable<TApiModel>> ListItemsAsync(int limit, int offset) 
-        => ListItemsAsync(limit, offset, null);
+    public Task<IEnumerable<TApiModel>> ListAsync() 
+        => ListAsync(ServiceContants.PageSize);
+    public Task<IEnumerable<TApiModel>> ListAsync(int limit) 
+        => ListAsync(limit, 0);
+    public Task<IEnumerable<TApiModel>> ListAsync(int limit, int offset) 
+        => ListAsync(limit, offset, null);
 
-    public Task<IEnumerable<TApiModel>> ListItemsAsync(int limit, int offset, string? query)
-        => ListItemsAsync(limit, offset, query, default);
+    public Task<IEnumerable<TApiModel>> ListAsync(int limit, int offset, string? query)
+        => ListAsync(limit, offset, query, default);
 
-    public async Task<IEnumerable<TApiModel>> ListItemsAsync(int limit, int offset, string? query, 
+    public async Task<IEnumerable<TApiModel>> ListAsync(int limit, int offset, string? query, 
         IDictionary<string, object>? parameters)
     {
         var returning = new List<TApiModel>();
         await foreach (var val in repo.GetSomeAsync(limit, offset, query, parameters).ConfigureAwait(false))
-            returning.Add(ConvertToApiModel(val));
+            returning.Add(DbModelToApiModel(val));
         return returning;
     }
 }

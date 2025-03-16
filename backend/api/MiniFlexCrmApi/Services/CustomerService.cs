@@ -7,13 +7,13 @@ namespace MiniFlexCrmApi.Services;
 public class CustomerService(ICustomerRepo repo, IRelationshipRepo relationshipRepo) : 
     TenantBoundBaseService<CustomerDbModel, CustomerModel>(repo), ICustomerService
 {
-    protected override CustomerModel ConvertToApiModel(CustomerDbModel model) 
+    protected override CustomerModel DbModelToApiModel(CustomerDbModel model) 
         => Converter.From(model, null);
 
-    protected override CustomerDbModel ConvertToDbModel(CustomerModel model) 
+    protected override CustomerDbModel ApiModelToDbModel(CustomerModel model) 
         => Converter.To(model);
 
-    public override async Task<CustomerModel?> GetItemAsync(int id)
+    public override async Task<CustomerModel?> GetAsync(int id)
     {
         var customer = await repo.FindAsync(id).ConfigureAwait(false);
         if (customer is null) 

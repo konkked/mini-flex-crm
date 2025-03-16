@@ -24,7 +24,7 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
         [FromQuery] int limit = 50,
         [FromQuery] int offset = 0,
         [FromQuery] string? search = null)
-        => Ok(await customerService.ListItemsAsync(limit, offset, search,
+        => Ok(await customerService.ListAsync(limit, offset, search,
             parameters: new Dictionary<string, object> { ["tenant_id"] = tenantId }));
 
     [HttpPost]
@@ -39,7 +39,7 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
         }
         else if(context.TenantId != 0)
             return Forbid();
-        return Ok(await customerService.CreateItemAsync(model).ConfigureAwait(false));
+        return Ok(await customerService.CreateAsync(model).ConfigureAwait(false));
     }
 
     [HttpPut("{id}")]
@@ -56,7 +56,7 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
         }
         else if(context.TenantId != 0)
             return Forbid();
-        return await customerService.UpdateItemAsync(model) ? Ok() : NotFound();
+        return await customerService.UpdateAsync(model) ? Ok() : NotFound();
     }
 
     [HttpDelete("{id}")]

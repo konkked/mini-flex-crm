@@ -32,7 +32,7 @@ public class UserServiceTests
             .ReturnsAsync(1);
 
         // Act
-        var result = await _userService.CreateItemAsync(userModel);
+        var result = await _userService.CreateAsync(userModel);
 
         // Assert
         Assert.That(result, Is.True);
@@ -47,7 +47,7 @@ public class UserServiceTests
         _mockUserRepo.Setup(repo => repo.DeleteAsync(1)).ReturnsAsync(1);
 
         // Act
-        var result = await _userService.DeleteItemAsync(1);
+        var result = await _userService.DeleteAsync(1);
 
         // Assert
         Assert.That(result,Is.True);
@@ -66,7 +66,7 @@ public class UserServiceTests
         _mockUserRepo.Setup(repo => repo.UpdateAsync(It.IsAny<UserDbModel>())).ReturnsAsync(1);
 
         // Act
-        var result = await _userService.UpdateItemAsync(userModel);
+        var result = await _userService.UpdateAsync(userModel);
 
         // Assert
         Assert.That(result, Is.True);
@@ -83,7 +83,7 @@ public class UserServiceTests
         _mockUserRepo.Setup(repo => repo.UpdateAsync(It.IsAny<UserDbModel>())).ReturnsAsync(1);
 
         // Act
-        var result = await _userService.TryEnableUserAsync(1, 1);
+        var result = await _userService.TryEnableAsync(1, 1);
 
         // Assert
         Assert.That(result,Is.True);
@@ -102,7 +102,7 @@ public class UserServiceTests
         _mockUserRepo.Setup(repo => repo.UpdateAsync(It.IsAny<UserDbModel>())).ReturnsAsync(1);
 
         // Act
-        var result = await _userService.TryDisableUserAsync(1, 1);
+        var result = await _userService.TryDisableAsync(1, 1);
 
         // Assert
         Assert.That(result,Is.True);
@@ -120,7 +120,7 @@ public class UserServiceTests
         _mockUserRepo.Setup(repo => repo.FindAsync(1)).ReturnsAsync(user);
 
         // Act
-        var result = await _userService.TryEnableUserAsync(1, 1); // Caller is tenant 1, but user belongs to tenant 2
+        var result = await _userService.TryEnableAsync(1, 1); // Caller is tenant 1, but user belongs to tenant 2
 
         // Assert
         Assert.That(result, Is.False);
@@ -136,7 +136,7 @@ public class UserServiceTests
         _mockUserRepo.Setup(repo => repo.FindAsync(1)).ReturnsAsync(user);
 
         // Act
-        var result = await _userService.TryDisableUserAsync(1, 1); // Caller is tenant 1, but user belongs to tenant 2
+        var result = await _userService.TryDisableAsync(1, 1); // Caller is tenant 1, but user belongs to tenant 2
 
         // Assert
         Assert.That(result, Is.False);
@@ -151,7 +151,7 @@ public class UserServiceTests
         _mockUserRepo.Setup(repo => repo.FindAsync(1)).ReturnsAsync((UserDbModel)null);
 
         // Act
-        var result = await _userService.TryEnableUserAsync(1, 1);
+        var result = await _userService.TryEnableAsync(1, 1);
 
         // Assert
         Assert.That(result, Is.False);

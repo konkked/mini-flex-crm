@@ -6,31 +6,31 @@ namespace MiniFlexCrmApi.Controllers;
 
 [ApiController]
 [Route("api/tenant/{tenantId}/relation")]
-public class RelationshipController(IRelationService relationService) : ControllerBase
+public class RelationshipController(IRelationshipService relationshipService) : ControllerBase
 {
     [HttpGet("{id}")]
     public async Task<ActionResult<IActionResult>> GetRelationship(int id) =>
-        Ok(await relationService.GetItemAsync(id));
+        Ok(await relationshipService.GetAsync(id));
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<RelationshipModel>>> ListRelationships(
         [FromQuery] int limit = 50,
         [FromQuery] int offset = 0,
         [FromQuery] string? search = null) =>
-        Ok(await relationService.ListItemsAsync(limit, offset, search));
+        Ok(await relationshipService.ListAsync(limit, offset, search));
 
     [HttpPost]
     public async Task<ActionResult<bool>> CreateRelationship([FromBody] RelationshipModel model)
-        => Ok(await relationService.CreateItemAsync(model).ConfigureAwait(false));
+        => Ok(await relationshipService.CreateAsync(model).ConfigureAwait(false));
 
     [HttpPut("{id}")]
     public async Task<ActionResult<bool>> UpdateRelationship(int id, [FromBody] RelationshipModel model)
     {
         model.Id = id;
-        return await relationService.UpdateItemAsync(model) ? Ok() : NotFound();
+        return await relationshipService.UpdateAsync(model) ? Ok() : NotFound();
     }
 
     [HttpDelete("{id}")]
     public async Task<ActionResult<bool>> DeleteRelationship(int id) =>
-        await relationService.DeleteItemAsync(id) ? Ok() : NotFound();
+        await relationshipService.DeleteAsync(id) ? Ok() : NotFound();
 }

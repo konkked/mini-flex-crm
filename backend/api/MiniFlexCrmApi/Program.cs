@@ -71,7 +71,6 @@ builder.Services.AddSingleton<IEmailSender, EmailSender>(_
 builder.Services.AddSingleton<IConnectionProvider, ConnectionProvider>(services => 
     new (GetConnectionString(services)));
 builder.Services.AddSingleton<IEncryptionSecretProvider, EncryptionSecretProvider>();
-builder.Services.AddSingleton<INotesService, NotesService>();
 builder.Services.AddRepositories();
 builder.Services.AddSwaggerGen();
 builder.Services.AddApiServices();

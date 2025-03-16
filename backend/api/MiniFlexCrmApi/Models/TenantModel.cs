@@ -14,4 +14,8 @@ public record TenantModel : BaseApiModel
     
     [JsonConverter(typeof(AttributesJsonConverter))]
     public dynamic Attributes { get; set; }
+    
+    public string Base64Logo { get; set; }
+    
+    public string Base64Banner { get; set; }
 }

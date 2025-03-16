@@ -8,15 +8,15 @@ public abstract class BaseService<TDbModel,TApiModel>(IRepo<TDbModel> repo)
         : BaseReaderService<TDbModel,TApiModel>(repo), IBaseService<TApiModel> where TDbModel : DbEntity
     where TApiModel: BaseApiModel
 {
-    protected abstract TDbModel ConvertToDbModel(TApiModel model);
+    protected abstract TDbModel ApiModelToDbModel(TApiModel model);
 
-    public virtual async Task<bool> DeleteItemAsync(int id) => await repo.DeleteAsync(id).ConfigureAwait(false) > 0;
+    public virtual async Task<bool> DeleteAsync(int id) => await repo.DeleteAsync(id).ConfigureAwait(false) > 0;
     
-    public Task<int> CreateItemAsync(TApiModel model) => repo.CreateAsync(ConvertToDbModel(model));
+    public Task<int> CreateAsync(TApiModel model) => repo.CreateAsync(ApiModelToDbModel(model));
 
-    public virtual async Task<bool> UpdateItemAsync(TApiModel model)
+    public virtual async Task<bool> UpdateAsync(TApiModel model)
     {
-        var updating = ConvertToDbModel(model);
+        var updating = ApiModelToDbModel(model);
         var current = await repo.FindAsync(model.Id).ConfigureAwait(false);
         if (current == null) 
             return false;

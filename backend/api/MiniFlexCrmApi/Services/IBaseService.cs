@@ -2,7 +2,7 @@ namespace MiniFlexCrmApi.Services;
 
 public interface IBaseService<TApiModel> : IBaseReaderService<TApiModel> where TApiModel : BaseApiModel
 {
-    Task<bool> DeleteItemAsync(int id);
-    Task<int> CreateItemAsync(TApiModel model);
-    Task<bool> UpdateItemAsync(TApiModel model);
+    Task<bool> DeleteAsync(int id);
+    Task<int> CreateAsync(TApiModel model);
+    Task<bool> UpdateAsync(TApiModel model);
 }

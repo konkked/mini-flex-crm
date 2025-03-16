@@ -23,7 +23,7 @@ public class UserController(IUserService userService) : ControllerBase
         [FromQuery] int limit = 50,
         [FromQuery] int offset = 0,
         [FromQuery] string? search = null) => 
-        Ok(await userService.ListItemsAsync(limit, offset, search, new Dictionary<string,object>{ ["tenant_id"] = tenantId }).ConfigureAwait(false));
+        Ok(await userService.ListAsync(limit, offset, search, new Dictionary<string,object>{ ["tenant_id"] = tenantId }).ConfigureAwait(false));
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateUser([FromRequestContext] RequestContext context, [FromRoute] int tenantId, [FromRoute]int id, [FromBody] UserModel model)
@@ -39,7 +39,7 @@ public class UserController(IUserService userService) : ControllerBase
         
         model.TenantId = tenantId;
         model.Id = id;
-        return await userService.UpdateItemAsync(model).ConfigureAwait(false) 
+        return await userService.UpdateAsync(model).ConfigureAwait(false) 
             ? Ok() 
             : NotFound();
     }
@@ -55,7 +55,7 @@ public class UserController(IUserService userService) : ControllerBase
     public async Task<IActionResult> Enable(
         [FromRequestContext] RequestContext requestContext,
         [FromRoute] int id) => 
-        Ok(await userService.TryEnableUserAsync(requestContext.TenantId ?? -1, id)
+        Ok(await userService.TryEnableAsync(requestContext.TenantId ?? -1, id)
             .ConfigureAwait(false));
     
     [HttpPost("{id}/disable")]
@@ -63,7 +63,7 @@ public class UserController(IUserService userService) : ControllerBase
     public async Task<IActionResult> Disable(
         [FromRequestContext] RequestContext requestContext,
         [FromRoute] int id) => 
-        Ok(await userService.TryDisableUserAsync(requestContext.TenantId ?? -1, id)
+        Ok(await userService.TryDisableAsync(requestContext.TenantId ?? -1, id)
             .ConfigureAwait(false));
 
 }
