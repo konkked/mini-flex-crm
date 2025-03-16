@@ -1,0 +1,142 @@
+erDiagram
+    TENANT ||--o{ APP_USER : has
+    TENANT ||--o{ COMPANY : has
+    TENANT ||--o{ CUSTOMER : has
+    TENANT ||--o{ NOTE : has
+    APP_USER ||--o{ NOTE : creates
+    APP_USER ||--o{ TENANT : updates
+    APP_USER ||--o{ COMPANY : updates
+    APP_USER ||--o{ CUSTOMER : updates
+    CUSTOMER ||--o{ COMPANY : oversees
+    CUSTOMER ||--o{ INTERACTION : has
+    CUSTOMER ||--o{ SALES_OPPORTUNITY : has
+    CUSTOMER ||--o{ SUPPORT_TICKET : has
+    CUSTOMER ||--o{ RELATIONSHIPS : links
+    COMPANY ||--o{ CONTACT : employs
+    COMPANY ||--o{ LOCATION : has
+    CONTACT ||--o{ INTERACTION : has
+    LEAD ||--o{ INTERACTION : has
+    LEAD ||--o{ SALES_OPPORTUNITY : has
+    PRODUCT ||--o{ SALES_OPPORTUNITY : includes
+
+    TENANT {
+        id int PK
+        short_id string UNIQUE
+        name string UNIQUE
+        theme string
+        attributes json
+        logo bytea
+        banner bytea
+        created_ts bigint "Metadata: All entities"
+        updated_ts bigint "Metadata: All entities"
+        updated_by_id int FK "Metadata: All entities"
+    }
+
+    APP_USER {
+        id int PK
+        username string UNIQUE
+        name string
+        email string UNIQUE
+        attributes json
+        password_hash text
+        salt text
+        role user_role "ENUM: admin, standard, guest"
+        enabled boolean
+        tenant_id int FK
+    }
+
+    NOTE {
+        id int PK
+        user_id int FK
+        tenant_id int FK
+        route string
+        title string
+        content string
+        pinned boolean
+    }
+
+    CUSTOMER {
+        id int PK
+        name string
+        attributes json
+        tenant_id int FK
+    }
+
+    COMPANY {
+        id int PK
+        name string
+        attributes json
+        tenant_id int FK
+    }
+
+    CONTACT {
+        contact_id int PK
+        name string
+        email string
+        phone string
+        attributes json
+        company_id int FK
+    }
+
+    LOCATION {
+        location_id int PK
+        address string
+        city string
+        state string
+        postal_code string
+        attributes json
+        company_id int FK
+    }
+
+    LEAD {
+        lead_id int PK
+        name string
+        email string
+        phone string
+        status string
+        attributes json
+    }
+
+    INTERACTION {
+        interaction_id int PK
+        type string
+        interaction_date date
+        notes string
+        attributes json
+        customer_id int FK "nullable"
+        contact_id int FK "nullable"
+        lead_id int FK "nullable"
+    }
+
+    SALES_OPPORTUNITY {
+        opportunity_id int PK
+        title string
+        status string
+        value decimal
+        attributes json
+        customer_id int FK "nullable"
+        lead_id int FK "nullable"
+        product_id int FK
+    }
+
+    PRODUCT {
+        product_id int PK
+        name string
+        price decimal
+        attributes json
+    }
+
+    SUPPORT_TICKET {
+        ticket_id int PK
+        issue string
+        status string
+        attributes json
+        customer_id int FK
+    }
+
+    RELATIONSHIPS {
+        id int PK
+        customer_id int FK
+        entity string
+        entity_id int
+    }
