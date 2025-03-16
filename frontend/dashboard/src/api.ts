@@ -218,18 +218,27 @@ api.admin.tenant = {
     }
 };
 
-// enable and disable users need to be added.
-api.admin.user.enable = async (userId: number) => {
-  return apiClient.post(`/tenant/0/user/${userId}/enable`);
-};
-
-api.admin.user.disable = async (userId: number) => {
-  return apiClient.post(`/tenant/0/user/${userId}/disable`);
-};
-
-api.admin.user.edit = async (userId: number, data: any) => {
-  return apiClient.put(`/tenant/${data.tenantId}/user/${userId}`, data);
+const getCurrentTenant = async () => {
+  if(!localStorage.getItem('current_tenant')) { 
+    const response = await apiClient.get(`/tenant/${getCurrentTenantId}/mine`);
+    localStorage.setItem('current_tenant', response.data)
+    return response.data;
+  }
+  return localStorage.getItem('current_tenant');
 }
+
+api.std.tenant.mine = getCurrentTenant;
+
+// enable and disable users need to be added.
+api.admin.user.enable 
+      = async (userId: number) => await apiClient.post(`/tenant/0/user/${userId}/enable`);
+
+api.admin.user.disable 
+      = async (userId: number) => await apiClient.post(`/tenant/0/user/${userId}/disable`);
+
+api.admin.user.edit 
+      = async (userId: number, data: any) => await apiClient.put(`/tenant/${data.tenantId}/user/${userId}`, data);
+
 
 // Authentication API Calls
 api.auth = {

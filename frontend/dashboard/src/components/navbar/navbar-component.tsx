@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
-import { getCurrentUser, setAuthToken } from '../../api';
+import { getCurrentUser, setAuthToken, getCurrentTenantId } from '../../api';
 import './navbar-component.css';
 
 const AppNavbar = () => {
   const user = getCurrentUser();
+  const tenant = getCurrentTenantId();
   const [isOpen, setIsOpen] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768); // Breakpoint at 768px
   const [brandWidth, setBrandWidth] = useState(0);
@@ -46,7 +47,8 @@ const AppNavbar = () => {
       <Navbar bg="dark" variant="dark" expand="lg" className="custom-navbar">
         <Navbar.Brand href="#home" className="navbar-brand" ref={brandRef}>
           <span style={{ cursor: 'pointer' }}>
-            MiniFlexCRM{' '}
+            {tenant?.logo && <img src={`data:image/png;base64,${tenant.logo}`} alt="Logo" className="navbar-logo" />}
+            {tenant?.name || ( tenant?.name == 'root' ? 'MiniFlexCRM' : tenant?.name)}{' '}
             {isSmallScreen && (
               <span onClick={handleToggle} className={`caret ${isOpen ? 'open' : ''}`}>
                 ❯

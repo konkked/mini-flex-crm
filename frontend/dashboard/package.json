@@ -6,6 +6,7 @@
     "@reduxjs/toolkit": "^2.6.0",
     "axios": "^1.7.9",
     "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
     "cra-template-typescript": "1.2.0",
     "jwt-decode": "^4.0.0",
     "react": "^19.0.0",

@@ -22,12 +22,11 @@
   color: var(--light-color); /* Use theme light color for text */
 }
 
-
 /* Quick Actions */
-.add-tenant-btn {
+.add-btn {
     transition: transform 0.3s ease;
 }
 
-.add-tenant-btn:hover {
+.add-btn:hover {
     transform: scale(1.05);
 }
