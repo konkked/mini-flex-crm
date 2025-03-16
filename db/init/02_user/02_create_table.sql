@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS "app_user" (
     attributes JSON NULL,
     password_hash TEXT NOT NULL,
     salt TEXT NOT NULL,
-    role user_role NOT NULL DEFAULT 'standard',
+    role app_user_role NOT NULL DEFAULT 'standard',
     enabled boolean default false,
     tenant_id INT NOT NULL REFERENCES tenant(id)
 );
