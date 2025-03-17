@@ -1,142 +1,319 @@
 erDiagram
-    TENANT ||--o{ APP_USER : has
-    TENANT ||--o{ COMPANY : has
-    TENANT ||--o{ CUSTOMER : has
-    TENANT ||--o{ NOTE : has
-    APP_USER ||--o{ NOTE : creates
-    APP_USER ||--o{ TENANT : updates
-    APP_USER ||--o{ COMPANY : updates
-    APP_USER ||--o{ CUSTOMER : updates
-    CUSTOMER ||--o{ COMPANY : oversees
-    CUSTOMER ||--o{ INTERACTION : has
-    CUSTOMER ||--o{ SALES_OPPORTUNITY : has
-    CUSTOMER ||--o{ SUPPORT_TICKET : has
-    CUSTOMER ||--o{ RELATIONSHIPS : links
-    COMPANY ||--o{ CONTACT : employs
-    COMPANY ||--o{ LOCATION : has
-    CONTACT ||--o{ INTERACTION : has
-    LEAD ||--o{ INTERACTION : has
-    LEAD ||--o{ SALES_OPPORTUNITY : has
-    PRODUCT ||--o{ SALES_OPPORTUNITY : includes
-
-    TENANT {
-        id int PK
-        short_id string UNIQUE
-        name string UNIQUE
-        theme string
-        attributes json
-        logo bytea
-        banner bytea
-        created_ts bigint "Metadata: All entities"
-        updated_ts bigint "Metadata: All entities"
-        updated_by_id int FK "Metadata: All entities"
+    %% Entities
+    tenant {
+        int id PK
+        varchar short_id "UNIQUE, NOT NULL"
+        varchar name "UNIQUE, NOT NULL"
+        varchar theme "NOT NULL"
+        json attributes "NULL"
+        bytea logo "NULL"
+        bytea banner "NULL"
+        bigint created_ts "NOT NULL"
+        bigint updated_ts "NOT NULL"
+        int updated_by_id "NOT NULL, FK"
     }
 
-    APP_USER {
-        id int PK
-        username string UNIQUE
-        name string
-        email string UNIQUE
-        attributes json
-        password_hash text
-        salt text
-        role user_role "ENUM: admin, standard, guest"
-        enabled boolean
-        tenant_id int FK
+    app_user {
+        int id PK
+        varchar username "UNIQUE, NOT NULL"
+        varchar name "NOT NULL"
+        varchar email "UNIQUE, NOT NULL"
+        json attributes "NULL"
+        text password_hash "NOT NULL"
+        text salt "NOT NULL"
+        enum role "NOT NULL, DEFAULT 'standard'"
+        boolean enabled "DEFAULT FALSE"
+        int tenant_id "NOT NULL, FK"
+        bigint created_ts "NOT NULL"
+        bigint updated_ts "NOT NULL"
+        int updated_by_id "NOT NULL, FK"
     }
 
-    NOTE {
-        id int PK
-        user_id int FK
-        tenant_id int FK
-        route string
-        title string
-        content string
-        pinned boolean
+    company {
+        int id PK
+        varchar name "NOT NULL"
+        json attributes "NULL"
+        int tenant_id "NOT NULL, FK"
+        bigint created_ts "NOT NULL"
+        bigint updated_ts "NOT NULL"
+        int updated_by_id "NOT NULL, FK"
     }
 
-    CUSTOMER {
-        id int PK
-        name string
-        attributes json
-        tenant_id int FK
+    contact {
+        int id PK
+        varchar name "NOT NULL"
+        varchar title "NULL"
+        varchar email "NULL"
+        boolean email_verified "NULL"
+        varchar phone "NULL"
+        boolean phone_verified "NULL"
+        boolean can_text "NULL"
+        boolean can_call "NULL"
+        boolean can_email "NULL"
+        json attributes "NULL"
+        bigint created_ts "NOT NULL"
+        bigint updated_ts "NOT NULL"
+        int updated_by_id "NOT NULL, FK"
     }
 
-    COMPANY {
-        id int PK
-        name string
-        attributes json
-        tenant_id int FK
+    entity_contact {
+        int id PK
+        int significance_ordinal "NOT NULL, UNIQUE per entity"
+        varchar entity_name "NOT NULL"
+        int entity_id "NOT NULL"
+        int contact_id "NOT NULL, FK"
+        bigint created_ts "NOT NULL"
+        bigint updated_ts "NOT NULL"
+        int updated_by_id "NOT NULL, FK"
     }
 
-    CONTACT {
-        contact_id int PK
-        name string
-        email string
-        phone string
-        attributes json
-        company_id int FK
+    address {
+        int id PK
+        varchar content "NOT NULL"
+        double lat "NULL"
+        double lng "NULL"
+        json attributes "NULL"
+        bigint created_ts "NOT NULL"
+        bigint updated_ts "NOT NULL"
+        int updated_by_id "NOT NULL, FK"
     }
 
-    LOCATION {
-        location_id int PK
-        address string
-        city string
-        state string
-        postal_code string
-        attributes json
-        company_id int FK
+    entity_address {
+        int id PK
+        int significance_ordinal "NOT NULL, UNIQUE per entity"
+        varchar entity_name "NOT NULL"
+        int entity_id "NOT NULL"
+        int address_id "NOT NULL, FK"
+        bigint created_ts "NOT NULL"
+        bigint updated_ts "NOT NULL"
+        int updated_by_id "NOT NULL, FK"
     }
 
-    LEAD {
-        lead_id int PK
-        name string
-        email string
-        phone string
-        status string
-        attributes json
+    customer {
+        int id PK
+        varchar name "NOT NULL, UNIQUE per tenant"
+        json attributes "NULL"
+        int tenant_id "NOT NULL, FK"
+        bigint created_ts "NOT NULL"
+        bigint updated_ts "NOT NULL"
+        int updated_by_id "NOT NULL, FK"
     }
 
-    INTERACTION {
-        interaction_id int PK
-        type string
-        interaction_date date
-        notes string
-        attributes json
-        customer_id int FK "nullable"
-        contact_id int FK "nullable"
-        lead_id int FK "nullable"
+    relationships {
+        int id PK
+        int customer_id "NOT NULL, FK"
+        varchar entity "NOT NULL"
+        int entity_id "NOT NULL"
+        bigint created_ts "NOT NULL"
+        bigint updated_ts "NOT NULL"
+        int updated_by_id "NOT NULL, FK"
     }
 
-    SALES_OPPORTUNITY {
-        opportunity_id int PK
-        title string
-        status string
-        value decimal
-        attributes json
-        customer_id int FK "nullable"
-        lead_id int FK "nullable"
-        product_id int FK
+    lead {
+        int id PK
+        enum status "NOT NULL, DEFAULT 'Raw'"
+        enum lead_data_origin "NOT NULL, DEFAULT 'Manual'"
+        varchar name "NOT NULL"
+        varchar company_name "NULL"
+        varchar industry "NULL"
+        int approximate_company_size "NULL"
+        int approximate_revenue "NULL"
+        varchar email "NULL"
+        varchar phone "NULL"
+        json attributes "NULL"
+        int tenant_id "NOT NULL, FK"
+        bigint created_ts "NOT NULL"
+        bigint updated_ts "NOT NULL"
+        int updated_by_id "NOT NULL, FK"
     }
 
-    PRODUCT {
-        product_id int PK
-        name string
-        price decimal
-        attributes json
+    product {
+        int id PK
+        varchar name "NOT NULL"
+        decimal suggested_price "NOT NULL"
+        int term_months "NULL"
+        json attributes "NULL"
+        int tenant_id "NOT NULL, FK"
+        bigint created_ts "NOT NULL"
+        bigint updated_ts "NOT NULL"
+        int updated_by_id "NOT NULL, FK"
     }
 
-    SUPPORT_TICKET {
-        ticket_id int PK
-        issue string
-        status string
-        attributes json
-        customer_id int FK
+    sales_opportunity {
+        int id PK
+        varchar title "NOT NULL"
+        varchar status "NOT NULL"
+        decimal value "NOT NULL"
+        json attributes "NULL"
+        int customer_id "FK, NULL"
+        int lead_id "FK, NULL"
+        int tenant_id "NOT NULL, FK"
+        bigint created_ts "NOT NULL"
+        bigint updated_ts "NOT NULL"
+        int updated_by_id "NOT NULL, FK"
     }
 
-    RELATIONSHIPS {
-        id int PK
-        customer_id int FK
-        entity string
-        entity_id int
+    sales_opportunity_users {
+        int id PK
+        int sales_opportunity_id "FK"
+        int user_id "FK"
+        bigint created_ts "NOT NULL"
+        bigint updated_ts "NOT NULL"
+        int updated_by_id "NOT NULL, FK"
     }
+
+    sales_opportunity_products {
+        int id PK
+        int sales_opportunity_id "FK"
+        int product_id "FK"
+        bigint created_ts "NOT NULL"
+        bigint updated_ts "NOT NULL"
+        int updated_by_id "NOT NULL, FK"
+    }
+
+    sale {
+        int id PK
+        varchar title "NOT NULL"
+        text description "NULL"
+        decimal value "NOT NULL"
+        int term_months "NULL"
+        json attributes "NULL"
+        int sales_opportunity_id "NULL, FK"
+        bigint created_ts "NOT NULL"
+        bigint updated_ts "NOT NULL"
+        int updated_by_id "NOT NULL, FK"
+    }
+
+    payment {
+        int id PK
+        enum type "NOT NULL, DEFAULT 'Cash'"
+        varchar title "NOT NULL"
+        decimal value "NOT NULL"
+        int sale_id "NOT NULL, FK"
+        json attributes "NULL"
+        bigint created_ts "NOT NULL"
+        bigint updated_ts "NOT NULL"
+        int updated_by_id "NOT NULL, FK"
+    }
+
+    interaction {
+        int interaction_id PK
+        varchar type "NOT NULL"
+        date interaction_date "NOT NULL"
+        text notes "NULL"
+        json attributes "NULL"
+        int customer_id "FK, NULL"
+        int contact_id "FK, NULL"
+        int lead_id "FK, NULL"
+        int tenant_id "NOT NULL, FK"
+        bigint created_ts "NOT NULL"
+        bigint updated_ts "NOT NULL"
+        int updated_by_id "NOT NULL, FK"
+    }
+
+    support_ticket {
+        int id PK
+        text issue "NOT NULL"
+        enum status "NOT NULL"
+        json attributes "NULL"
+        int user_id "NOT NULL, FK"
+        int tenant_id "NOT NULL, FK"
+        bigint created_ts "NOT NULL"
+        bigint updated_ts "NOT NULL"
+        int updated_by_id "NOT NULL, FK"
+    }
+
+    attachment {
+        int id PK
+        varchar path "NOT NULL"
+        bytea file_content "NOT NULL"
+        text notes "NULL"
+        int tenant_id "NOT NULL, FK"
+        bigint created_ts "NOT NULL"
+        bigint updated_ts "NOT NULL"
+        int updated_by_id "NOT NULL, FK"
+    }
+
+    personal_app_note {
+        int id PK
+        int user_id "NOT NULL, FK"
+        int tenant_id "NOT NULL, FK"
+        varchar route "NOT NULL"
+        varchar title "NOT NULL"
+        text content "NOT NULL"
+        boolean pinned "DEFAULT FALSE"
+        bigint created_ts "NOT NULL"
+        bigint updated_ts "NOT NULL"
+        int updated_by_id "NOT NULL, FK"
+    }
+
+    entity_note {
+        int id PK
+        varchar title "NOT NULL"
+        text content "NOT NULL"
+        varchar entity_name "NOT NULL"
+        int entity_id "NOT NULL"
+        int ordinal "NOT NULL, UNIQUE per entity"
+        bigint created_ts "NOT NULL"
+        bigint updated_ts "NOT NULL"
+        int updated_by_id "NOT NULL, FK"
+    }
+
+    %% Relationships (Direct Foreign Keys)
+    tenant ||--o{ app_user : tenant_id
+    tenant ||--o{ company : tenant_id
+    tenant ||--o{ customer : tenant_id
+    tenant ||--o{ lead : tenant_id
+    tenant ||--o{ product : tenant_id
+    tenant ||--o{ sales_opportunity : tenant_id
+    tenant ||--o{ interaction : tenant_id
+    tenant ||--o{ support_ticket : tenant_id
+    tenant ||--o{ attachment : tenant_id
+    tenant ||--o{ personal_app_note : tenant_id
+
+    app_user ||--o{ support_ticket : user_id
+    app_user ||--o{ personal_app_note : user_id
+    app_user ||--o{ sales_opportunity_users : user_id
+
+    contact ||--o{ entity_contact : contact_id
+    contact ||--o{ interaction : contact_id
+
+    address ||--o{ entity_address : address_id
+
+    customer ||--o{ relationships : customer_id
+    customer ||--o{ sales_opportunity : customer_id
+    customer ||--o{ interaction : customer_id
+
+    lead ||--o{ sales_opportunity : lead_id
+    lead ||--o{ interaction : lead_id
+
+    product ||--o{ sales_opportunity_products : product_id
+
+    sales_opportunity ||--o{ sales_opportunity_users : sales_opportunity_id
+    sales_opportunity ||--o{ sales_opportunity_products : sales_opportunity_id
+    sales_opportunity ||--o{ sale : sales_opportunity_id
+
+    sale ||--o{ payment : sale_id
+
+    %% Generic Relationships via entity_name/entity_id
+    company ||--o{ entity_contact : entity_id "entity_name='company'"
+    customer ||--o{ entity_contact : entity_id "entity_name='customer'"
+    lead ||--o{ entity_contact : entity_id "entity_name='lead'"
+    sales_opportunity ||--o{ entity_contact : entity_id "entity_name='sales_opportunity'"
+    support_ticket ||--o{ entity_contact : entity_id "entity_name='support_ticket'"
+
+    company ||--o{ entity_address : entity_id "entity_name='company'"
+    customer ||--o{ entity_address : entity_id "entity_name='customer'"
+    lead ||--o{ entity_address : entity_id "entity_name='lead'"
+    sales_opportunity ||--o{ entity_address : entity_id "entity_name='sales_opportunity'"
+    support_ticket ||--o{ entity_address : entity_id "entity_name='support_ticket'"
+
+    company ||--o{ relationships : entity_id "entity='company'"
+    lead ||--o{ relationships : entity_id "entity='lead'"
+    sales_opportunity ||--o{ relationships : entity_id "entity='sales_opportunity'"
+
+    company ||--o{ entity_note : entity_id "entity_name='company'"
+    customer ||--o{ entity_note : entity_id "entity_name='customer'"
+    lead ||--o{ entity_note : entity_id "entity_name='lead'"
+    sales_opportunity ||--o{ entity_note : entity_id "entity_name='sales_opportunity'"
+    support_ticket ||--o{ entity_note : entity_id "entity_name='support_ticket'"
