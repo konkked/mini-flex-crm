@@ -219,12 +219,8 @@ api.admin.tenant = {
 };
 
 const getCurrentTenant = async () => {
-  if(!localStorage.getItem('current_tenant')) { 
     const response = await apiClient.get(`/tenant/${getCurrentTenantId}/mine`);
-    localStorage.setItem('current_tenant', response.data)
     return response.data;
-  }
-  return localStorage.getItem('current_tenant');
 }
 
 api.std.tenant.mine = getCurrentTenant;
