@@ -12,7 +12,7 @@ public class CompanyController(ICompanyService companyService) : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetCompany([FromRoute] int tenantId, 
         [FromRoute] int id) =>
-        Ok(await companyService.GetItemAsync(id, tenantId));
+        Ok(await companyService.GetAsync(id, tenantId));
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CompanyModel>>> ListCompanies([FromRoute] int tenantId, [FromQuery] int limit = 50, [FromQuery] int offset = 0) 

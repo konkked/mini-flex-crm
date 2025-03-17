@@ -14,3 +14,12 @@ public record TenantBoundBaseModel : BaseApiModel
     public dynamic Attributes { get; set; }
     
 }
+
+public record LinkedTenantBoundBaseModel : TenantBoundBaseModel
+{
+    public string? EntityName { get; set; } // Single entity to link to
+    
+    public int? EntityId { get; set; } // Single entity ID to link to
+    
+    public int? SignificanceOrdinal { get; set; } // Order the contact will appear in contact list
+}

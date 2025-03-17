@@ -1,3 +1,4 @@
+using MiniFlexCrmApi.Models;
 using MiniFlexCrmApi.Services;
 
 namespace MiniFlexCrmApi.Tests.Api.Services;

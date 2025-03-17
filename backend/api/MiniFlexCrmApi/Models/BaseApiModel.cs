@@ -1,4 +1,4 @@
-namespace MiniFlexCrmApi.Services;
+namespace MiniFlexCrmApi.Models;
 
 public abstract record BaseApiModel
 {

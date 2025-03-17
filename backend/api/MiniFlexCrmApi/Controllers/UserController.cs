@@ -13,7 +13,7 @@ public class UserController(IUserService userService) : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUser([FromRoute] int tenantId, [FromRoute]int id)
     {
-        var user =  await userService.GetItemAsync(tenantId, id).ConfigureAwait(false);
+        var user =  await userService.GetAsync(tenantId, id).ConfigureAwait(false);
         return Ok(user);
     }
 
@@ -46,7 +46,7 @@ public class UserController(IUserService userService) : ControllerBase
 
     [HttpDelete("{id}")]
     public async Task<ActionResult<bool>> DeleteUser([FromRoute] int tenantId, [FromRoute] int id) =>
-        await userService.DeleteItemAsync(tenantId, id).ConfigureAwait(false) 
+        await userService.DeleteAsync(tenantId, id).ConfigureAwait(false) 
             ? Ok() 
             : NotFound();
     

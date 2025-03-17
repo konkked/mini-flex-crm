@@ -6,6 +6,7 @@ public interface IRepo<T> where T : class
     IAsyncEnumerable<T> GetSomeAsync();
     IAsyncEnumerable<T> GetSomeAsync(int limit);
     IAsyncEnumerable<T> GetSomeAsync(int limit, int offset);
+    IAsyncEnumerable<T> GetSomeAsync(int limit, int offset, IDictionary<string, object>? parameters);
     IAsyncEnumerable<T> GetSomeAsync(int limit, int offset, string? query);
     IAsyncEnumerable<T> GetSomeAsync(int limit, int offset, string? query, IDictionary<string, object>? parameters);
     Task<T?> FindAsync(int id);

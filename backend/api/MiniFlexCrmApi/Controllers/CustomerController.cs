@@ -16,7 +16,7 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
     [HttpGet("{id}")]
     public async Task<ActionResult<CustomerModel>> GetCustomer(
         [FromRoute] int tenantId, [FromRoute] int id) =>
-        Ok(await customerService.GetItemAsync(tenantId, id));
+        Ok(await customerService.GetAsync(tenantId, id));
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CustomerModel>>> ListCustomers(
@@ -61,5 +61,5 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
 
     [HttpDelete("{id}")]
     public async Task<ActionResult<bool>> DeleteCustomer([FromRoute] int tenantId, [FromRoute] int id) =>
-        await customerService.DeleteItemAsync(tenantId, id) ? Ok() : NotFound();
+        await customerService.DeleteAsync(tenantId, id) ? Ok() : NotFound();
 }

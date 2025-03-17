@@ -1,4 +1,5 @@
 namespace MiniFlexCrmApi.Db.Models;
+
 public class AttachmentDbModel
 {
     public int Id { get; set; }
