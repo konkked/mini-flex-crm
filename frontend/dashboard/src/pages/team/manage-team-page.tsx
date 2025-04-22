@@ -71,7 +71,7 @@ const ManageCustomerPage: React.FC = () => {
   };
 
   const searchUsers = async (criteria: string) : Promise<{id: number, name:string, role:string, user:TeamMemberUser}[]> => {
-    return (await api.std.team.searchPotentialMembers({ name: criteria }))
+    return (await api.std.team.searchPotentialMembers({ teamId: team.id,  name: criteria }))
       .map((member: TeamMember) => { return { id: member.user.id, name: member.user.name, role: member.role, user: member.user };});
   };
 
@@ -166,21 +166,16 @@ const ManageCustomerPage: React.FC = () => {
                 setTeam({ ...team, attributes: { ...c.attributes } });
               }}
             />
-            <Button variant="primary" type="submit" className="w-100">
-              Save Changes
-            </Button>
-          <h2 className="mt-4">Accounts
+          <h2 className="mt-4">Members
           {hasAccessToEditTeam(team) && (
             <Button
               variant="primary"
-              onClick={() => setShowAccountAddModal(true)}
+              onClick={() => setShowUserAddModal(true)}
               style={{ marginLeft: "10px" }}>
               <Plus />
             </Button>
           )}</h2>
-          </Form>
           <div>
-
           <SearchModal
               show={showUserModal}
               onHide={() => setShowUserAddModal(false)}
@@ -190,7 +185,6 @@ const ManageCustomerPage: React.FC = () => {
             />
             {team.members && (
               <div>
-                <h3>Members</h3>
                 <PaginatedList
                   fetch={async (_0, _1) => team.members?.map(a=>{a.role, a.user.name, a.user.name, a.user.id}) ?? []}
                   deleteItem={hasAccessToEditTeam(team) ? removeMember : undefined}
@@ -202,7 +196,15 @@ const ManageCustomerPage: React.FC = () => {
                 />
               </div>
             )}
-
+          <h2 className="mt-4">Accounts
+          {hasAccessToEditTeam(team) && (
+            <Button
+              variant="primary"
+              onClick={() => setShowAccountAddModal(true)}
+              style={{ marginLeft: "10px" }}>
+              <Plus />
+            </Button>
+          )}</h2>
           <SearchModal
               show={showAccountAddModal}
               onHide={() => setShowAccountAddModal(false)}
@@ -212,7 +214,6 @@ const ManageCustomerPage: React.FC = () => {
             />
             {team.accounts && (
               <div>
-                <h3>Accounts</h3>
                 <PaginatedList
                   fetch={async (_0, _1) => team.accounts ?? []}
                   deleteItem={hasAccessToEditTeam(team) ? removeAccount : undefined}
@@ -232,6 +233,10 @@ const ManageCustomerPage: React.FC = () => {
               </div>
             )}
           </div>
+            <Button variant="primary" type="submit" className="w-100">
+              Save Changes
+            </Button>
+          </Form>
         </Col>
       </Row>
     </Container>
