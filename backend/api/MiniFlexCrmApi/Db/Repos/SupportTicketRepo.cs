@@ -1,6 +1,7 @@
 using MiniFlexCrmApi.Db.Models;
+using MiniFlexCrmApi.Models;
 
 namespace MiniFlexCrmApi.Db.Repos;
 
-public class SupportTicketRepo(IConnectionProvider connectionProvider)
-    : TenantBoundDbEntityRepo<SupportTicketDbModel>(connectionProvider), ISupportTicketRepo;
+public class SupportTicketRepo(IConnectionProvider connectionProvider, RequestContext context)
+    : TenantBoundDbEntityRepo<SupportTicketDbModel>(connectionProvider, context), ISupportTicketRepo;

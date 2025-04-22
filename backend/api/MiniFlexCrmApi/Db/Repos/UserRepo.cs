@@ -1,9 +1,11 @@
 using Dapper;
 using MiniFlexCrmApi.Db.Models;
+using MiniFlexCrmApi.Models;
 
 namespace MiniFlexCrmApi.Db.Repos;
 
-public class UserRepo(IConnectionProvider connectionProvider) : TenantBoundDbEntityRepo<UserDbModel>(connectionProvider), IUserRepo
+public class UserRepo(IConnectionProvider connectionProvider, RequestContext context) 
+    : TenantBoundDbEntityRepo<UserDbModel>(connectionProvider, context), IUserRepo
 {
     public async Task<UserDbModel?> FindByUsernameAsync(string username)
     {

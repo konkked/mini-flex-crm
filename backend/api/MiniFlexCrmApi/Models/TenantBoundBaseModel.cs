@@ -17,7 +17,7 @@ public record TenantBoundBaseModel : BaseApiModel
 
 public record LinkedTenantBoundBaseModel : TenantBoundBaseModel
 {
-    public string? EntityName { get; set; } // Single entity to link to
+    public EntityNameType EntityName { get; set; } // Single entity to link to
     
     public int? EntityId { get; set; } // Single entity ID to link to
     

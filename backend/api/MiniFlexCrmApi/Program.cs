@@ -4,6 +4,7 @@ using MiniFlexCrmApi.Cache;
 using MiniFlexCrmApi.Context;
 using MiniFlexCrmApi.Db;
 using MiniFlexCrmApi.Db.Repos;
+using MiniFlexCrmApi.Models;
 using MiniFlexCrmApi.Serialization;
 using MiniFlexCrmApi.Services;
 
@@ -21,6 +22,9 @@ string GetConnectionString(IServiceProvider services)
 }
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddScoped<RequestContext>();
 
 // Define CORS policy
 builder.Services.AddCors(options =>
@@ -113,6 +117,8 @@ app.UseWhen(context => !(context.Request.Path.StartsWithSegments("/api/auth")
     {
         appBuilder.UseMiddleware<JwtAuthorizationMiddleware>();
     });
+
+app.UseMiddleware<RequestContextMiddleware>();
 
 // app.UseMiddleware<RateLimitMiddleware>();
 

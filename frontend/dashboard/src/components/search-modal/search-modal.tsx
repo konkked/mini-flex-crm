@@ -8,6 +8,7 @@ interface SearchModalProps<T> {
   onSelect: (item: T) => void;
   searchApi: (searchTerm: string) => Promise<T[]>;
   placeholder: string;
+  display?: (item: T) => string;
 }
 
 const SearchModal = <T extends { id: number; name: string }>({
@@ -16,11 +17,12 @@ const SearchModal = <T extends { id: number; name: string }>({
   onSelect,
   searchApi,
   placeholder,
+  display
 }: SearchModalProps<T>) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState<T[]>([]);
   const [loading, setLoading] = useState(false);
-
+  display ??= (item: T) => item.name;
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
       if (searchTerm) {
@@ -53,7 +55,7 @@ const SearchModal = <T extends { id: number; name: string }>({
         <ListGroup>
           {results.map((item) => (
             <ListGroup.Item key={item.id} action onClick={() => onSelect(item)}>
-              {item.name}
+              {display(item)}
             </ListGroup.Item>
           ))}
         </ListGroup>

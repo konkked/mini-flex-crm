@@ -3,7 +3,7 @@ import api, { hasAdminAccessToItem, getCurrentRole } from "../../api";
 import { useParams } from 'react-router-dom';
 import PaginatedList from "../../components/paginated-list/paginated-list-component";
 import { Relationship, PivotedRelationships } from "../../models/relationship";
-import { Customer } from "../../models/customer";
+import { Account } from "../../models/account";
 import { Company } from "../../models/company";
 import SearchModal from "../../components/search-modal/search-modal";
 import { Button, Row, Col } from "react-bootstrap";
@@ -15,7 +15,7 @@ const ViewCustomerPage: React.FC = () => {
   const [showCompanyModal, setShowCompanyAddModal] = useState(false);
   const [showUserModal, setShowUserAddModal] = useState(false);
   const { customerId } = useParams<{ customerId: string }>();
-  const [customer, setCustomer] = useState<Customer | null>(null);
+  const [customer, setCustomer] = useState<Account | null>(null);
   const [relationships, setRelationships] = useState<PivotedRelationships | null>(null);
 
   useEffect(() => {

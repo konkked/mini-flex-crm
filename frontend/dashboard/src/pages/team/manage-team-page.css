@@ -1,0 +1,43 @@
+/* Container styling */
+.manage-customer-container {
+  background-color: var(--background-color);
+  padding: 2rem; /* Add padding around the container */
+}
+
+/* Form styling */
+.manage-customer-form {
+  background-color: var(--light-color);
+  padding: 2rem; /* Add padding inside the form */
+  border: 1px solid var(--secondary-color);
+  border-radius: 0.375rem; /* Bootstrap's rounded */
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); /* Bootstrap's shadow-sm */
+}
+
+/* Heading styling */
+.manage-customer-form h2 {
+  font-size: 1.75rem; /* Increase font size */
+  font-weight: 500; /* Medium font weight */
+  margin-bottom: 1.5rem; /* Add margin below the heading */
+  color: var(--text-color);
+}
+
+/* Button styling */
+.manage-customer-form .btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  padding: 0.5rem 1rem; /* Add padding inside the button */
+  font-size: 1rem; /* Set font size */
+  border-radius: 0.375rem; /* Bootstrap's rounded */
+}
+
+/* Relationships section styling */
+.manage-customer-form h2.mt-4 {
+  margin-top: 2rem; /* Add margin above the heading */
+}
+
+.manage-customer-form h3 {
+  font-size: 1.5rem; /* Increase font size */
+  font-weight: 500; /* Medium font weight */
+  margin-bottom: 1rem; /* Add margin below the heading */
+  color: var(--text-color);
+}

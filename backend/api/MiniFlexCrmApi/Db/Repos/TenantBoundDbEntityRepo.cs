@@ -2,6 +2,7 @@ using System.Dynamic;
 using Dapper;
 using Microsoft.Extensions.Logging.Abstractions;
 using MiniFlexCrmApi.Db.Models;
+using MiniFlexCrmApi.Models;
 
 namespace MiniFlexCrmApi.Db.Repos;
 
@@ -9,10 +10,10 @@ public interface ITenantBoundDbEntityRepo<T> : IRepo<T> where T: TenantBoundDbEn
 {
     public Task<bool> DeleteAsync(int tenantId, int id);
 
-    public Task<T?> FindInTenantById(int id, int tenantId);
+    public Task<T?> FindBound(int id);
 }
 
-public class TenantBoundDbEntityRepo<T>(IConnectionProvider connectionProvider)
+public class TenantBoundDbEntityRepo<T>(IConnectionProvider connectionProvider, RequestContext context)
     : DbEntityRepo<T>(connectionProvider), ITenantBoundDbEntityRepo<T>
     where T : TenantBoundDbEntity
 {
@@ -31,9 +32,17 @@ public class TenantBoundDbEntityRepo<T>(IConnectionProvider connectionProvider)
     public override async IAsyncEnumerable<T> GetSomeAsync(int limit, int offset, string? query,
         IDictionary<string, object>? parameters)
     {
+        var parametersClone = new Dictionary<string, object>(parameters);
+        parameters = parametersClone;
         if (parameters?.TryGetValue("tenant_id", out var tenantId) == true && tenantId is 0)
             parameters.Remove("tenant_id");
-        
+
+        if (!parameters.ContainsKey("tenant_id") && context.TenantId != 0 && context.TenantId.HasValue)
+        {
+            parameters.Add("tenant_id", context.TenantId.Value);
+        }
+
+
         var queryObj = !string.IsNullOrEmpty(query) ? GrokQuery(query, parameters) : null;
         var whereFilter = queryObj?.whereFilter ?? "";
         var values = queryObj?.values ?? new Dictionary<string, object>();
@@ -67,7 +76,7 @@ public class TenantBoundDbEntityRepo<T>(IConnectionProvider connectionProvider)
                 FROM {TableName} t1 
                     JOIN tenant t2 on t1.tenant_id = t2.id
                 WHERE t1.id = @id",
-            new { id }
+            new { id, tenantId = context.TenantId }
         ).ConfigureAwait(false);
         PrepAttributes(result);
         return result;
@@ -82,9 +91,9 @@ public class TenantBoundDbEntityRepo<T>(IConnectionProvider connectionProvider)
             new { id, tenantId }).ConfigureAwait(false)) == 1;
     }
 
-    public async Task<T?> FindInTenantById(int id, int tenantId)
+    public async Task<T?> FindBound(int id)
     {
-        if (tenantId == 0) return await FindAsync(id).ConfigureAwait(false);
+        if (context.TenantId == 0) return await FindAsync(id).ConfigureAwait(false);
 
         await using var connection = ConnectionProvider.GetConnection();
         await connection.OpenAsync().ConfigureAwait(false);
@@ -92,7 +101,7 @@ public class TenantBoundDbEntityRepo<T>(IConnectionProvider connectionProvider)
         // Use Dapper to fetch the raw data, then map Attributes manually
         var result = await connection.QueryFirstOrDefaultAsync<T>(
             $"SELECT * FROM {TableName} WHERE tenant_id = @tenant_id AND id = @id",
-            new { id, tenantId }
+            new { id, tenantId = context.TenantId }
         ).ConfigureAwait(false);
         PrepAttributes(result);
         return result;

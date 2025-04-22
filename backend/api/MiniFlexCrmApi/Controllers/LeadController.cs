@@ -18,7 +18,7 @@ public class LeadController(ILeadService service) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> List(int tenantId, [FromQuery] int limit = ServiceContants.PageSize, [FromQuery] int offset = 0)
     {
-        var result = await service.ListAsync(limit, offset, null, new Dictionary<string, object> { { "tenant_id", tenantId } });
+        var result = await service.ListAsync(limit, offset, new Dictionary<string, object> { { "tenant_id", tenantId } });
         return Ok(result);
     }
 

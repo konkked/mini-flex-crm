@@ -201,6 +201,19 @@ public class DbEntityRepo<T> : IRepo<T> where T : DbEntity
         return result;
     }
 
+    public virtual async Task<T?> QueryOneAsync(Dictionary<string, object> parameters)
+    {
+        var columns = parameters.Keys.Select(a => a.TrimStart('@'));
+        var statement = string.Join(" AND ", columns.Select(a=>a+"= @"+a));
+        await using var connection = ConnectionProvider.GetConnection();
+        await connection.OpenAsync().ConfigureAwait(false);
+        var result=  await connection.QueryFirstOrDefaultAsync<T>(
+            $"SELECT * FROM {TableName} WHERE {statement}", parameters
+        ).ConfigureAwait(false);
+        PrepAttributes(result);
+        return result;
+    }
+
     public virtual async Task<int> UpdateAsync(T entity)
     {
         await using var connection = ConnectionProvider.GetConnection();

@@ -2,5 +2,9 @@ namespace MiniFlexCrmApi.Models;
 
 public enum LeadDataOriginType
 {
-    Scraped, Manual, BulkEntry, Import
+    Scraped, 
+    Manual, 
+    BulkEntry, 
+    Import,
+    Unknown
 }

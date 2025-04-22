@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS "app_user" (
     username VARCHAR(255) UNIQUE NOT NULL,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(512) UNIQUE NOT NULL,
+    profile_image TEXT NULL,
     attributes JSON NULL,
     password_hash TEXT NOT NULL,
     salt TEXT NOT NULL,

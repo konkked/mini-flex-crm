@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
-import { getCurrentUser, setAuthToken, getCurrentTenantId } from '../../api';
+import { getCurrentUser, setAuthToken, getCurrentTenantFromToken } from '../../api';
 import './navbar-component.css';
+import { FaHome, FaBuilding, FaUsers, FaUser, FaSignOutAlt, FaStream, FaHandshake } from 'react-icons/fa'; // Add icons for pipelines
 
 const AppNavbar = () => {
   const user = getCurrentUser();
-  const tenant = getCurrentTenantId();
+  const tenant = getCurrentTenantFromToken();
   const [isOpen, setIsOpen] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768); // Breakpoint at 768px
   const [brandWidth, setBrandWidth] = useState(0);
@@ -60,18 +61,47 @@ const AppNavbar = () => {
           {user && !isSmallScreen && (
             // Horizontal layout for large screens
             <>
-              <Nav.Link href="/home">Home</Nav.Link>
-              {user?.role.includes('admin') && <Nav.Link href="/tenants">Tenants</Nav.Link>}
-              {user?.role.includes('admin') && <Nav.Link href="/users">Users</Nav.Link>}
-              <Nav.Link href="/companies">Companies</Nav.Link>
-              <Nav.Link href="/customers">Customers</Nav.Link>
+              <Nav.Link href="/home" className="nav-link">
+                <FaHome className="nav-icon" />
+                <span className="tooltip">Home</span>
+              </Nav.Link>
+              {user?.role.includes('admin') && (
+                <Nav.Link href="/tenants" className="nav-link">
+                  <FaBuilding className="nav-icon" />
+                  <span className="tooltip">Tenants</span>
+                </Nav.Link>
+              )}
+              {user?.role.includes('admin') && (
+                <Nav.Link href="/users" className="nav-link">
+                  <FaUsers className="nav-icon" />
+                  <span className="tooltip">Users</span>
+                </Nav.Link>
+              )}
+              <Nav.Link href="/companies" className="nav-link">
+                <FaBuilding className="nav-icon" />
+                <span className="tooltip">Companies</span>
+              </Nav.Link>
+              <Nav.Link href="/customers" className="nav-link">
+                <FaUser className="nav-icon" />
+                <span className="tooltip">Customers</span>
+              </Nav.Link>
+              <Nav.Link href="/lead-pipeline" className="nav-link">
+                <FaStream className="nav-icon" />
+                <span className="tooltip">Lead Pipeline</span>
+              </Nav.Link>
+              <Nav.Link href="/deal-pipeline" className="nav-link">
+                <FaHandshake className="nav-icon" />
+                <span className="tooltip">Deal Pipeline</span>
+              </Nav.Link>
               <Nav.Link
                 onClick={() => {
                   setAuthToken(null);
                   window.location.href = '/login';
                 }}
+                className="nav-link"
               >
-                Logout
+                <FaSignOutAlt className="nav-icon" />
+                <span className="tooltip">Logout</span>
               </Nav.Link>
             </>
           )}
@@ -81,15 +111,38 @@ const AppNavbar = () => {
         // Vertical dropdown for small screens
         <div className="menu-row" style={{ width: `${brandWidth}px` }}>
           <div className="menu-items">
-            <Nav.Link href="/home" className="menu-item">Home</Nav.Link>
+            <Nav.Link href="/home" className="menu-item">
+              <FaHome className="nav-icon" />
+              <span className="tooltip">Home</span>
+            </Nav.Link>
             {user?.role.includes('admin') && (
-              <Nav.Link href="/tenants" className="menu-item">Tenants</Nav.Link>
+              <Nav.Link href="/tenants" className="menu-item">
+                <FaBuilding className="nav-icon" />
+                <span className="tooltip">Tenants</span>
+              </Nav.Link>
             )}
             {user?.role.includes('admin') && (
-              <Nav.Link href="/users" className="menu-item">Users</Nav.Link>
+              <Nav.Link href="/users" className="menu-item">
+                <FaUsers className="nav-icon" />
+                <span className="tooltip">Users</span>
+              </Nav.Link>
             )}
-            <Nav.Link href="/companies" className="menu-item">Companies</Nav.Link>
-            <Nav.Link href="/customers" className="menu-item">Customers</Nav.Link>
+            <Nav.Link href="/companies" className="menu-item">
+              <FaBuilding className="nav-icon" />
+              <span className="tooltip">Companies</span>
+            </Nav.Link>
+            <Nav.Link href="/customers" className="menu-item">
+              <FaUser className="nav-icon" />
+              <span className="tooltip">Customers</span>
+            </Nav.Link>
+            <Nav.Link href="/lead-pipeline" className="menu-item">
+              <FaStream className="nav-icon" />
+              <span className="tooltip">Lead Pipeline</span>
+            </Nav.Link>
+            <Nav.Link href="/deal-pipeline" className="menu-item">
+              <FaHandshake className="nav-icon" />
+              <span className="tooltip">Deal Pipeline</span>
+            </Nav.Link>
             <Nav.Link
               onClick={() => {
                 setAuthToken(null);
@@ -97,7 +150,8 @@ const AppNavbar = () => {
               }}
               className="menu-item"
             >
-              Logout
+              <FaSignOutAlt className="nav-icon" />
+              <span className="tooltip">Logout</span>
             </Nav.Link>
           </div>
         </div>

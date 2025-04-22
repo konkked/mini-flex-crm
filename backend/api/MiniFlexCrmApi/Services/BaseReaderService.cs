@@ -21,10 +21,13 @@ public abstract class BaseReaderService<TDbModel, TApiModel>(IRepo<TDbModel> rep
     public Task<IEnumerable<TApiModel>> ListAsync(int limit) 
         => ListAsync(limit, 0);
     public Task<IEnumerable<TApiModel>> ListAsync(int limit, int offset) 
-        => ListAsync(limit, offset, null);
+        => ListAsync(limit, offset, null, null);
 
     public Task<IEnumerable<TApiModel>> ListAsync(int limit, int offset, string? query)
-        => ListAsync(limit, offset, query, default);
+        => ListAsync(limit, offset, query, null);
+
+    public Task<IEnumerable<TApiModel>> ListAsync(int limit, int offset, IDictionary<string, object>? parameters)
+        => ListAsync(limit, offset, null, parameters);
 
     public async Task<IEnumerable<TApiModel>> ListAsync(int limit, int offset, string? query, 
         IDictionary<string, object>? parameters)

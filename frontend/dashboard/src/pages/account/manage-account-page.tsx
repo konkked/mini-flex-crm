@@ -5,7 +5,7 @@ import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
 import PaginatedList from "../../components/paginated-list/paginated-list-component";
 import ManageAttributes from "../../components/attributes/manage-attributes-component";
 import { Relationship, PivotedRelationships } from "../../models/relationship";
-import { Customer } from "../../models/customer";
+import { Account, AccountFormData } from "../../models/account";
 import { Company } from "../../models/company";
 import SearchModal from "../../components/search-modal/search-modal";
 import { Plus } from "react-bootstrap-icons"; // Bootstrap Icons
@@ -19,7 +19,8 @@ const ManageCustomerPage: React.FC = () => {
   const [showCompanyModal, setShowCompanyAddModal] = useState(false);
   const [showUserModal, setShowUserAddModal] = useState(false);
   const { customerId, urlTenantId } = useParams<{ customerId: string, urlTenantId: string }>();
-  const [customer, setCustomer] = useState<Customer | null>(null);
+  const [accountFormData, setAccountFormData] = useState<AccountFormData | null>(null);
+  const [account, setAccount] =  useState<Account>();
   const [relationships, setRelationships] = useState<PivotedRelationships | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
@@ -33,35 +34,36 @@ const ManageCustomerPage: React.FC = () => {
       if (data.relationships) {
         setRelationships(data.relationships);
       }
-      setCustomer(data);
+      setAccount(data);
+      setAccountFormData(data);
     };
     fetchData();
   }, [customerId]);
 
-  if (!relationships || !customer) {
+  if (!relationships || !accountFormData) {
     return <div>Loading...</div>;
   }
 
   const handleSelectCompany = async (company: Company) => {
-    await api.std.relationship.create({ customerId: customer.id, id: company.id, entityName: "company" });
+    await api.std.relationship.create({ customerId: accountFormData.id, id: company.id, entityName: "company" });
     setShowCompanyAddModal(false);
     const updatedRelationships = await api.std.customer.get_with_relationships(parseInt(customerId || "0"));
     setRelationships(updatedRelationships.relationships);
   };
 
   const handleSelectUser = async (user: { id: number }) => {
-    await api.std.relationship.create({ customerId: customer.id, id: user.id, entityName: "user" });
+    await api.std.relationship.create({ customerId: accountFormData.id, id: user.id, entityName: "user" });
     setShowUserAddModal(false);
     const updatedRelationships = await api.std.customer.get_with_relationships(parseInt(customerId || "0"));
     setRelationships(updatedRelationships.relationships);
   };
 
   const searchCompanies = async (criteria: string) => {
-    return await api.std.company.search({ name: criteria, tenant_id: customer.tenantId });
+    return await api.std.company.search({ name: criteria, tenant_id: accountFormData.tenantId });
   };
 
   const searchUsers = async (criteria: string) => {
-    return await api.std.user.search({ username: criteria, tenant_id: customer.tenantId });
+    return await api.std.user.search({ username: criteria, tenant_id: accountFormData.tenantId });
   };
 
   const deleteRelationship = async (item: Relationship) => {
@@ -70,13 +72,13 @@ const ManageCustomerPage: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setCustomer((prev) => prev ? { ...prev, [name]: value } : null);
+    setAccountFormData((prev) => prev ? { ...prev, [name]: value } : null);
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
-    if (!customer?.name.trim()) newErrors.name = 'Name is required';
+    if (!accountFormData?.name?.trim()) newErrors.name = 'Name is required';
     if (!tenantId && !tenant) newErrors.tenantId = 'Tenant selection is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -88,30 +90,21 @@ const ManageCustomerPage: React.FC = () => {
     if (!validateForm()) return;
 
     try {
-      customer.tenantId =  tenant?.id || tenantId;
+      accountFormData.tenantId =  tenant?.id || tenantId;
       if(customerId){
-        await api.std.customer.edit(customerId, customer);
-        customer.id = Number(customerId);
+        await api.std.customer.edit(customerId, accountFormData);
+        accountFormData.id = Number(customerId);
       } else {
-        var id = await api.std.customer.create(customer);
-        customer.id = id;
+        var id = await api.std.customer.create(accountFormData);
+        accountFormData.id = id;
       }
       toast.success(
         <div>
-          Customer updated successfully! <a href={`/customer/${customer.id}`}>View Customer</a>
+          Customer updated successfully! <a href={`/account/${accountFormData.id}`}>View Customer</a>
         </div>,
         {
           onClose: () => {
-            setCustomer(null);
             setTimeout(() => {
-              setCustomer({
-                id: 0,
-                name: '',
-                tenantId: tenantId,
-                tenantName: '',
-                attributes: {}
-              });
-              setTenant(null);
               setErrors({});
             }, 3000);
           }
@@ -138,7 +131,7 @@ const ManageCustomerPage: React.FC = () => {
               <Form.Control
                 type="text"
                 name="name"
-                value={customer.name}
+                value={accountFormData.name}
                 onChange={handleChange}
                 isInvalid={!!errors.name}
                 required
@@ -158,15 +151,15 @@ const ManageCustomerPage: React.FC = () => {
               </Form.Group>
             )}
             <ManageAttributes
-              target={customer}
-              onAttributesChange={(c) => setCustomer({ ...customer, attributes: { ...c.attributes } })}
+              target={accountFormData}
+              onAttributesChange={(c) => setAccountFormData({ ...accountFormData, attributes: { ...c.attributes } })}
             />
             <Button variant="primary" type="submit" className="w-100">
               Save Changes
             </Button>
           </Form>
           <h2 className="mt-4">Relationships</h2>
-          {hasAdminAccessToItem(customer) && (
+          {hasAdminAccessToItem(account!) && (
             <Button
               variant="primary"
               onClick={() => setShowCompanyAddModal(true)}
@@ -180,7 +173,7 @@ const ManageCustomerPage: React.FC = () => {
               <div>
                 <h3>Companies</h3>
                 <PaginatedList
-                  fetch={async (_0, _1) => relationships.company}
+                  fetch={async (_0, _1) => relationships.company ?? []}
                   deleteItem={getCurrentRole() === "admin" ? deleteRelationship : undefined}
                   columns={[
                     { key: "id", label: "ID" },
@@ -200,7 +193,7 @@ const ManageCustomerPage: React.FC = () => {
               <div>
                 <h3>Users</h3>
                 <PaginatedList
-                  fetch={async (_0, _1) => relationships.user}
+                  fetch={async (_0, _1) => relationships.user ?? []}
                   deleteItem={getCurrentRole() === "admin" ? deleteRelationship : undefined}
                   columns={[
                     { key: "id", label: "ID" },

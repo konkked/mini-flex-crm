@@ -7,5 +7,6 @@ public interface IBaseReaderService<TApiModel>
     Task<IEnumerable<TApiModel>> ListAsync(int limit);
     Task<IEnumerable<TApiModel>> ListAsync(int limit, int offset);
     Task<IEnumerable<TApiModel>> ListAsync(int limit, int offset, string? query);
+    Task<IEnumerable<TApiModel>> ListAsync(int limit, int offset, IDictionary<string, object>? parameters);
     Task<IEnumerable<TApiModel>> ListAsync(int limit, int offset, string? query, IDictionary<string, object>? parameters);
 }

@@ -1,5 +1,8 @@
 import { Company } from "./company";
 import { User } from "./user";
+import { Deal } from "./deal";
+import { Interaction } from "./interaction";
+import { Sale } from "./sale";
 
 export interface Relationship {
   id: number;
@@ -12,5 +15,8 @@ export interface Relationship {
 
 export interface PivotedRelationships {
   company?: Company[];
+  interaction?: Interaction[];
+  sale: Sale[];
+  deal?: Deal[];
   user?: User[];
 }

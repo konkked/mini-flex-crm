@@ -9,6 +9,7 @@ interface SearchBarProps<T> {
   placeholder?: string;
   displayField?: keyof T;
   onSelect?: (item: T) => void;
+  initialSelected?: T | null;
 }
 
 const SearchBar = <T extends { id?: number | string }>({
@@ -16,10 +17,11 @@ const SearchBar = <T extends { id?: number | string }>({
   placeholder = 'Search...',
   displayField = 'name' as keyof T,
   onSelect,
+  initialSelected,
 }: SearchBarProps<T>) => {
   const [searchText, setSearchText] = useState('');
   const [results, setResults] = useState<T[]>([]);
-  const [selected, setSelected] = useState<T | null>(null);
+  const [selected, setSelected] = useState<T | null>(initialSelected || null);
   const [loading, setLoading] = useState(false);
   const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null);
 

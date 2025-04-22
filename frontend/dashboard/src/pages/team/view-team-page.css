@@ -1,0 +1,123 @@
+.view-customer-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: var(--background-color); /* Use theme background color */
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--text-color); /* Use theme text color */
+  margin-bottom: 15px;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-color); /* Use theme text color */
+  margin: 0;
+}
+
+h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-color); /* Use theme text color */
+  margin-bottom: 15px;
+}
+
+.relationship-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.mb-3 {
+  margin-bottom: 1.5rem !important;
+}
+
+.align-items-center {
+  align-items: center !important;
+}
+
+.text-end {
+  text-align: end !important;
+}
+
+.small-button {
+  padding: 4px 8px;
+  font-size: 0.875rem; /* Smaller font size */
+  height: 7.2vh; /* Allow height to adjust with content */
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.small-button .bi-plus {
+  width: 14px;
+  height: 14px;
+}
+
+/* Table Styling (assumed to be handled by PaginatedList) */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.table thead {
+  background-color: var(--table-header-background-color); /* Use theme table header background color */
+  border-bottom: 2px solid var(--table-border-color); /* Use theme table border color */
+}
+
+.table th {
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-color); /* Use theme text color */
+  font-size: 0.95rem;
+  text-transform: uppercase;
+}
+
+.table td {
+  padding: 12px 15px;
+  font-size: 0.95rem;
+  color: var(--text-color); /* Use theme text color */
+}
+
+.table tbody tr {
+  border-bottom: 1px solid var(--table-border-color); /* Use theme table border color */
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: var(--table-row-background-color); /* Use theme table row background color */
+}
+
+.table tbody tr:hover {
+  background-color: var(--table-row-hover-background-color); /* Use theme table row hover background color */
+}
+
+/* Pagination Styling */
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
+}
+
+.pagination select {
+  padding: 5px 10px;
+  border: 1px solid var(--pagination-border-color); /* Use theme pagination border color */
+  border-radius: 4px;
+  font-size: 0.95rem;
+  color: var(--text-color); /* Use theme text color */
+  background-color: var(--background-color); /* Use theme background color */
+  cursor: pointer;
+}
+
+.pagination select:focus {
+  outline: none;
+  border-color: var(--primary-color); /* Use theme primary color */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}

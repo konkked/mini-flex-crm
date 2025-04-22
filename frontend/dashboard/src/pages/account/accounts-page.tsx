@@ -3,7 +3,7 @@ import api from "../../api";
 import PaginatedList from "../../components/paginated-list/paginated-list-component";
 import { Button } from "react-bootstrap";
 import { Plus } from "react-bootstrap-icons";
-import './customers-page.tsx'
+import './accounts-page'
 
 const CustomersPage = () => {
   const next = async (offset?: number, limit?: number) => {

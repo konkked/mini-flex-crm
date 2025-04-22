@@ -4,5 +4,5 @@ namespace MiniFlexCrmApi.Db.Repos;
 
 public interface IRelationshipRepo : IRepo<RelationshipDbModel>
 {
-    Task<Dictionary<string, dynamic[]>> GetCustomerRelationshipsAsync(int customerId);
+    Task<Dictionary<string, dynamic[]>> GetAccountRelationshipsAsync(int accountId);
 }

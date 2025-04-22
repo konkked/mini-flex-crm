@@ -4,7 +4,7 @@ using MiniFlexCrmApi.Services;
 
 namespace MiniFlexCrmApi.Controllers;
 
-[Route("api/tenant/{tenantId}/sales-opportunity")]
+[Route("api/tenant/{tenantId}/sales_opportunity")]
 [ApiController]
 public class SalesOpportunityController(ISalesOpportunityService service) : ControllerBase
 {

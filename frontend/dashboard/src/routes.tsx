@@ -13,9 +13,13 @@ import ViewTenantPage from './pages/tenant/view-tenant-page';
 import React from 'react';
 import { getCurrentRole, getCurrentTenantId } from './api'; // Corrected import path assuming './api'
 import ViewUserPage from './pages/user/view-user-page'; // Corrected import path
-import CustomersPage from './pages/customer/customers-page';
+import UserProfilePage from './pages/user/user-profile-page'; // Import the user profile page
+import AccountsPage from './pages/account/accounts-page';
+import ManageAccountPage from './pages/account/manage-account-page';
 import ViewCompanyPage from './pages/company/view-company-page';
-import ViewCustomerPage from './pages/customer/view-customer-page';
+import ViewAccountPage from './pages/account/view-account-page';
+import DealPipelinePage from './pages/deal-pipeline/deal-pipeline-page'; // Import Deal Pipeline Page
+import LeadPipelinePage from './pages/lead-pipeline/lead-pipeline-page'; // Import Lead Pipeline Page
 
 // PrivateRoute component to handle authentication and role-based access
 const PrivateRoute: React.FC<{ adminOnly?: boolean; superAdminOnly?: boolean; }> = ({ adminOnly = false, superAdminOnly = false }) => {
@@ -48,11 +52,16 @@ const AppRoutes = () => {
         <Route element={<PrivateRoute />}>
           <Route path="/users" element={<UsersPage />} />
           <Route path="/user/:userId" element={<ViewUserPage />} />
+          <Route path="/user/:userId/profile" element={<UserProfilePage />} />
           <Route path="/companies" element={<CompaniesPage />} />
           <Route path="/company/:companyId" element={<ViewCompanyPage/>} />
-          <Route path="/customers" element={<CustomersPage />} />
-          <Route path="/customer/:customerId" element={<ViewCustomerPage />} />
+          <Route path="/accounts" element={<AccountsPage />} />
+          <Route path="/account/:customerId" element={<ViewAccountPage />} />
+          <Route path="/account/:customerId/manage" element={<ManageAccountPage />} />
+          <Route path="/account/new" element={<ManageAccountPage />} />
           <Route path="/relationships" element={<RelationshipsPage />} />
+          <Route path="/lead-pipeline" element={<LeadPipelinePage />} /> 
+          <Route path="/deal-pipeline" element={<DealPipelinePage />} /> 
           {isAuthenticated ? (
             <>
               <Route path="/home" element={<HomePage />} />

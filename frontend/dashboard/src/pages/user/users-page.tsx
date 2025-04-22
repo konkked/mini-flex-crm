@@ -12,6 +12,33 @@ const UsersPage = () => {
     return data;
   };
 
+  const getInitials = (name: string) => {
+    const parts = name.split(' ');
+    if (parts.length >= 2) {
+      return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+
+  const renderProfileImage = (item: any) => {
+    if (item.profileImage) {
+      return (
+        <div className="user-list-profile-image">
+          <img 
+            src={`data:image/png;base64,${item.profileImage}`} 
+            alt={`${item.name}'s profile`} 
+          />
+        </div>
+      );
+    } else {
+      return (
+        <div className="user-list-profile-image-placeholder">
+          {getInitials(item.name)}
+        </div>
+      );
+    }
+  };
+
   return (
     <div>
       <h2>Users {" "} <Button className='add-btn' 
@@ -21,6 +48,12 @@ const UsersPage = () => {
       <PaginatedList
         fetch={fetch}
         columns={[
+          { 
+            key: "profileImage", 
+            label: "", 
+            render: renderProfileImage,
+            width: "60px"
+          },
           { key: "id", label: "ID", editable: false, linkTo: (id: number) => `/user/${id}` },
           { key: "username", label: "Username" },
           { key: "name", label: "Name" },

@@ -10,5 +10,6 @@ CREATE TABLE IF NOT EXISTS "lead" (
     email VARCHAR(255),
     phone VARCHAR(255),
     attributes JSON,
-    tenant_id INT NOT NULL REFERENCES tenant(id)
+    tenant_id INT NOT NULL REFERENCES tenant(id),
+    owner_id NULL REFERENCES app_user(id)
 );

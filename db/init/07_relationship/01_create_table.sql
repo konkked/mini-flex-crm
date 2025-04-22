@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS "relationships" (
     id SERIAL PRIMARY KEY,
-    customer_id INT NOT NULL REFERENCES customer(id),
+    account_id INT NOT NULL REFERENCES account(id),
     entity VARCHAR(255) NOT NULL,
     entity_id INT NOT NULL
 );

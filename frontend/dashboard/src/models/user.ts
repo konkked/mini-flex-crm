@@ -9,13 +9,16 @@ export interface User extends Attributable {
   name: string;
   role: string;
   enabled: boolean;
+  profileImage?: string;
 }
 
 export interface UserFormData extends Attributable {
   tenantId?: number;
   username?: string;
+  password?: string;
   email?: string;
   name?: string;
   role?: string;
   enabled?: boolean;
+  profileImage?: string;
 }

@@ -6,8 +6,8 @@ namespace MiniFlexCrmApi.Db.Models;
 public class RelationshipDbModel: DbEntity
 {
     [IgnoreForUpdate]
-    public string? CustomerName { get; set; }
-    public int CustomerId { get; set; }
+    public string? AccountName { get; set; }
+    public int AccountId { get; set; }
     
     [JsonConverter(typeof(AttributesJsonConverter))]
     public dynamic Attributes { get; set; }

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using MiniFlexCrmApi.Models;
 using MiniFlexCrmApi.Services;
+using System.Linq;
+
 
 namespace MiniFlexCrmApi.Controllers;
 
@@ -16,9 +18,11 @@ public class ContactController(IContactService service) : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> List(int tenantId, [FromQuery] int limit = ServiceContants.PageSize, [FromQuery] int offset = 0)
+    [Route("{entityName}/{entityId}")]
+    public async Task<IActionResult> List(int tenantId, [FromRoute] string entityName, [FromRoute] int entityId)
     {
-        var result = await service.ListAsync(limit, offset, null, new Dictionary<string, object> { { "tenant_id", tenantId } });
+        var result = await service.GetForAsync(entityName, entityId)
+            .OrderBy(x => x.SignificanceOrdinal).ToListAsync();
         return Ok(result);
     }
 
@@ -26,7 +30,7 @@ public class ContactController(IContactService service) : ControllerBase
     public async Task<IActionResult> Create(int tenantId, [FromBody] ContactModel model)
     {
         model.TenantId = tenantId;
-        var id = await service.UpsertWithLinks(model);
+        var id = await service.UpsertWithLinksAsync(model);
         return CreatedAtAction(nameof(Get), new { tenantId, id }, model);
     }
 
@@ -35,7 +39,7 @@ public class ContactController(IContactService service) : ControllerBase
     {
         model.Id = id;
         model.TenantId = tenantId;
-        var result = await service.UpsertWithLinks(model);
+        var result = await service.UpsertWithLinksAsync(model);
         return result != -1 ? Ok() : NotFound();
     }
 

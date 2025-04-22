@@ -4,5 +4,6 @@ namespace MiniFlexCrmApi.Services;
 
 public interface IContactService : ITenantBoundBaseService<ContactModel>
 {
-    Task<int> UpsertWithLinks(ContactModel contact);
+    Task<int> UpsertWithLinksAsync(ContactModel contact);
+    IAsyncEnumerable<ContactModel> GetForAsync(string entity, int entityId);
 }

@@ -18,6 +18,8 @@ public class UserDbModel : TenantBoundDbEntity
     
     public string Role { get; set; }
     
+    public string? ProfileImage { get; set; }
+    
     [JsonConverter(typeof(AttributesJsonConverter))]
     public dynamic? Attributes { get; set; }
 }

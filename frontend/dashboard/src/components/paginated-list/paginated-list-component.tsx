@@ -5,20 +5,24 @@ import { PencilSquare, ChevronLeft, ChevronRight, Trash, Floppy, X } from "react
 import "./paginated-list-component.css"; // Custom styles for button positioning
 import { useGenQueryState } from "hooks/useQueryState";
 
+export interface ColumnDefinition {
+  key: string;
+  label: string;
+  editable?: boolean | ((item: any) => boolean);
+  linkTo?: (id: number) => string;
+  convert?: (value: any) => string;
+  visible?: boolean | ((item: any) => boolean);
+  options?: { value: string; label: string }[];
+  render?: (item: any) => React.ReactNode;
+  width?: string;
+}
+
 interface PaginatedListProps {
   fetch: (offset?: number, limit?: number) => Promise<any[]>;
   defaultPageSize?: number;
   editItem?: (item: any) => Promise<void>;
   deleteItem?: (item: any) => Promise<void>;
-  columns: {
-    key: string;
-    label: string;
-    editable?: boolean | ((item: any) => boolean);
-    linkTo?: (id: number) => string;
-    convert?: (value: any) => string;
-    visible?: boolean | ((item: any) => boolean);
-    options?: { label: string; value: string }[];
-  }[];
+  columns: ColumnDefinition[];
 }
 
 const PaginatedList = ({ defaultPageSize, fetch, editItem, columns }: PaginatedListProps) => {
@@ -68,7 +72,9 @@ const PaginatedList = ({ defaultPageSize, fetch, editItem, columns }: PaginatedL
     if (editingIndex === null || editingIndex !== index) {
       return columns.map((col) => (
         <td key={col.key}>
-          {col.convert ? (
+          {col.render ? (
+            col.render(item)
+          ) : col.convert ? (
             col.convert(item[col.key])
           ) : col.linkTo ? (
             <a href={col.linkTo(item.id)}>{item[col.key]}</a>
@@ -99,9 +105,11 @@ const PaginatedList = ({ defaultPageSize, fetch, editItem, columns }: PaginatedL
     return columns.map((col) =>
       editingIndex !== index || !isColumnEditable(col, item) ? (
         <td key={col.key}>
-          {col.convert
-            ? col.convert(editingItem[col.key])
-            :  editingItem[col.key]}
+          {col.render ? (
+            col.render(item)
+          ) : col.convert ? (
+            col.convert(editingItem[col.key])
+          ) : editingItem[col.key]}
         </td>
       ) : (
         <td key={col.key}>
@@ -212,6 +220,18 @@ const PaginatedList = ({ defaultPageSize, fetch, editItem, columns }: PaginatedL
     );
   };
 
+  const renderCell = (item: any, column: ColumnDefinition) => {
+    if (column.render) {
+      return column.render(item);
+    }
+    
+    const value = item[column.key];
+    if (column.convert) {
+      return column.convert(value);
+    }
+    return value;
+  };
+
   return (
     <Container fluid>
       <Row>
@@ -219,23 +239,31 @@ const PaginatedList = ({ defaultPageSize, fetch, editItem, columns }: PaginatedL
       <Table striped bordered hover>
         <thead>
           <tr>
-            {columns.map((col) => (
-              <th key={col.key}>{col.label}</th>
-            ))}
+            {columns
+              .filter((column) => column.visible === undefined || column.visible === true || (typeof column.visible === 'function' && column.visible(items[0])))
+              .map((column) => (
+                <th key={column.key} style={column.width ? { width: column.width } : undefined}>{column.label}</th>
+              ))}
             {columns.some((col) => col.editable === true || typeof col.editable === "function") 
               && typeof editItem == "function" 
               && <th>Actions</th>}
           </tr>
         </thead>
         <tbody>
-          {items.map((item, index) => (
-            <tr key={index}>
-              <RowItem editingIndex={editingIndex} index={index} item={item} />
+          {items.map((item) => (
+            <tr key={item.id}>
+              {columns
+                .filter((column) => column.visible === undefined || column.visible === true || (typeof column.visible === 'function' && column.visible(item)))
+                .map((column) => (
+                  <td key={`${item.id}-${column.key}`} style={column.width ? { width: column.width } : undefined}>
+                    {renderCell(item, column)}
+                  </td>
+                ))}
               {columns.some((col) => col.editable === true || typeof col.editable === "function")
                 && typeof editItem == "function" 
                 && <EditingOptionsRowPart 
                     editingIndex={editingIndex} 
-                    index={index} 
+                    index={items.indexOf(item)} 
                     item={item} />}
             </tr>
           ))}

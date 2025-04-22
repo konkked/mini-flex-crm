@@ -15,8 +15,8 @@ public record RelationshipModel : BaseApiModel
     [JsonConverter(typeof(AttributesJsonConverter))]
     public dynamic Attributes { get; set; }
     
-    public int CustomerId { get; set; }
-    public string? CustomerName { get; set; }
+    public int AccountId { get; set; }
+    public string? AccountName { get; set; }
     
     [IgnoreForUpdate]
     public int? TenantId { get; set; }
@@ -24,7 +24,13 @@ public record RelationshipModel : BaseApiModel
 
 public enum EntityNameType
 {
-    customer,
+    account,
     company,
-    user
+    user,
+    lead,
+    sale,
+    sales_opportunity,
+    interaction,
+    note,
+    unknown
 }

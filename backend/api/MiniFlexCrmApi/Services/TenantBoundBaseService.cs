@@ -5,37 +5,57 @@ using MiniFlexCrmApi.Util;
 
 namespace MiniFlexCrmApi.Services;
 
-public abstract class TenantBoundBaseService<TDbModel, TApiModel>(ITenantBoundDbEntityRepo<TDbModel> repo)
-    : BaseService<TDbModel, TApiModel>(repo), ITenantBoundBaseService<TApiModel> where TDbModel : TenantBoundDbEntity
+public abstract class TenantBoundBaseService<TDbModel, TApiModel> : BaseService<TDbModel, TApiModel>
+    where TDbModel : TenantBoundDbEntity
     where TApiModel : TenantBoundBaseModel
 {
-    public override async Task<int> UpsertAsync(TApiModel model)
+    private readonly ITenantBoundDbEntityRepo<TDbModel> _repo;
+
+    protected TenantBoundBaseService(ITenantBoundDbEntityRepo<TDbModel> repo) : base(repo)
     {
-        var current = await repo.FindInTenantById(model.TenantId, model.Id).ConfigureAwait(false);
+        _repo = repo;
+    }
+
+    public virtual async Task<TApiModel?> GetAsync(int tenantId, int id)
+    {
+        var model = await _repo.FindBound(id).ConfigureAwait(false);
+        return model == null ? null : DbModelToApiModel(model);
+    }
+
+    public virtual async Task<bool> UpdateAsync(TApiModel model)
+    {
+        var dbModel = ApiModelToDbModel(model);
+        var current = await _repo.FindBound(model.Id).ConfigureAwait(false);
+        if (current == null) return false;
+        
+        return await _repo.UpdateAsync(dbModel).ConfigureAwait(false) > 0;
+    }
+
+    public virtual async Task<bool> DeleteAsync(int tenantId, int id)
+    {
+        return await _repo.DeleteAsync(tenantId, id);
+    }
+
+    public virtual async Task<int> CreateAsync(TApiModel model)
+    {
+        var dbModel = ApiModelToDbModel(model);
+        return await _repo.CreateAsync(dbModel).ConfigureAwait(false);
+    }
+
+    public virtual async Task<int> UpsertAsync(TApiModel model)
+    {
+        var current = await _repo.FindBound(model.Id).ConfigureAwait(false);
         if (current == null)
         {
-            var result = await CreateAsync(model).ConfigureAwait(false);
-            return result;
+            return await CreateAsync(model).ConfigureAwait(false);
         }
+
         var dbModel = ApiModelToDbModel(model);
-        Transpose.Pull(dbModel, current);
-        if (await repo.UpdateAsync(dbModel).ConfigureAwait(false) > 0)
+        if (await _repo.UpdateAsync(dbModel).ConfigureAwait(false) > 0)
             return dbModel.Id;
         return -1;
     }
 
-    public override async Task<bool> UpdateAsync(TApiModel model)
-    {
-        var dbModel = ApiModelToDbModel(model);
-        var current = await repo.FindInTenantById(model.TenantId, model.Id).ConfigureAwait(false);
-        if (current == null) return false;
-        Transpose.Pull(dbModel, current);
-        return await repo.UpdateAsync(dbModel).ConfigureAwait(false) > 0;
-    }
-
-    public async Task<TApiModel> GetAsync(int tenantId, int id) 
-        => DbModelToApiModel(await repo.FindInTenantById(tenantId, id).ConfigureAwait(false));
-
-    public Task<bool> DeleteAsync(int tenantId, int id) 
-        => repo.DeleteAsync(tenantId, id);
+    protected abstract override TApiModel DbModelToApiModel(TDbModel model);
+    protected abstract override TDbModel ApiModelToDbModel(TApiModel model);
 }

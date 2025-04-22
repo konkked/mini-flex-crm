@@ -2,5 +2,10 @@ namespace MiniFlexCrmApi.Models;
 
 public enum SupportTicketStatusType
 {
-    Open, Review, Rejected, Fixed, Closed
+    Unknown,
+    Open, 
+    Review, 
+    Rejected, 
+    Fixed, 
+    Closed,
 }

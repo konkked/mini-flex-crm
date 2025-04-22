@@ -3,6 +3,9 @@ using MiniFlexCrmApi.Context;
 using MiniFlexCrmApi.Models;
 using MiniFlexCrmApi.Security;
 using MiniFlexCrmApi.Services;
+using System.Text;
+using MiniFlexCrmApi.Util;
+using SkiaSharp;
 
 namespace MiniFlexCrmApi.Controllers;
 
@@ -66,4 +69,38 @@ public class UserController(IUserService userService) : ControllerBase
         Ok(await userService.TryDisableAsync(requestContext.TenantId ?? -1, id)
             .ConfigureAwait(false));
 
+    [HttpGet("{id}/profile-image")]
+    public async Task<IActionResult> GetProfileImage([FromRoute] int tenantId, [FromRoute] int id)
+    {
+        var user = await userService.GetAsync(tenantId, id).ConfigureAwait(false);
+        if (user == null)
+            return NotFound();
+
+        // If user has a profile image, return it
+        if (!string.IsNullOrEmpty(user.ProfileImage))
+            return Ok(new { image = user.ProfileImage });
+
+        var defaultImage = DefaultProfileImageGenerator.Create(user.Name, id);
+        return Ok(new { image = defaultImage });
+    }
+
+    [HttpPost("{id}/profile-image")]
+    public async Task<IActionResult> UploadProfileImage([FromRoute] int tenantId, [FromRoute] int id, [FromBody] ProfileImageRequest request)
+    {
+        var user = await userService.GetAsync(tenantId, id).ConfigureAwait(false);
+        if (user == null)
+            return NotFound();
+
+        // Update user with new profile image
+        user.ProfileImage = request.Image;
+        var success = await userService.UpdateAsync(user).ConfigureAwait(false);
+        
+        return success ? Ok() : NotFound();
+    }
+
+}
+
+public class ProfileImageRequest
+{
+    public string Image { get; set; } = string.Empty;
 }

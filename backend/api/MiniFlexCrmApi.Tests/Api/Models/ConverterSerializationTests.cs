@@ -84,25 +84,27 @@ public class ConverterSerializationTests
         Assert.That(model.TenantId, Is.EqualTo(200));
     }
 
-    //  Test: CustomerModel JSON Serialization
+    //  Test: AccountModel JSON Serialization
     [Test]
-    public void Serialize_CustomerModel_ToJson()
+    public void Serialize_AccountModel_ToJson()
     {
-        var model = new CustomerModel
+        var model = new AccountModel
         {
             Id = 3,
-            Name = "TestCustomer",
-            Tenant = "CustomerTenant",
+            Name = "TestAccount",
+            Tenant = "AccountTenant",
             TenantId = 300,
             Attributes = new { key = "value" },
             Relationships = new Dictionary<string, dynamic[]>
             {
-                { "company", new dynamic[] { new { id = 101, name = "Company A" } } }
+                { "company", [new { id = 101, name = "Company A" }] },
+                { "lead", [new { id = 101, name = "Company A" }] },
+                { "contact", [new { id = 101, name = "Company A", title="Director of Sales" }] }
             }
         };
         var json = JsonSerializer.Serialize(model, JsonOptions);
 
-        var deserialized = JsonSerializer.Deserialize<CustomerModel>(
+        var deserialized = JsonSerializer.Deserialize<AccountModel>(
             json, JsonOptions);
 
         Assert.That(new{model.Name,model.TenantId,model.Id}, 
@@ -113,17 +115,17 @@ public class ConverterSerializationTests
         Assert.That(deserialized.Relationships["company"][0].name, Is.EqualTo(model.Relationships["company"][0].name));
     }
 
-    //  Test: CustomerModel JSON Deserialization
+    //  Test: AccountModel JSON Deserialization
     [Test]
-    public void Deserialize_CustomerModel_FromJson()
+    public void Deserialize_AccountModel_FromJson()
     {
-        var json = @"{""id"":3,""name"":""TestCustomer"",""tenant"":""CustomerTenant"",""tenantId"":300,""attributes"":{""key"":""value""},""relationships"":{""company"":[{""id"":101,""name"":""Company A""}]}}";
-        var model = JsonSerializer.Deserialize<CustomerModel>(json, JsonOptions);
+        var json = @"{""id"":3,""name"":""TestAccount"",""tenant"":""AccountTenant"",""tenantId"":300,""attributes"":{""key"":""value""},""relationships"":{""company"":[{""id"":101,""name"":""Company A""}]}}";
+        var model = JsonSerializer.Deserialize<AccountModel>(json, JsonOptions);
 
         Assert.That(model, Is.Not.Null);
         Assert.That(model!.Id, Is.EqualTo(3));
-        Assert.That(model.Name, Is.EqualTo("TestCustomer"));
-        Assert.That(model.Tenant, Is.EqualTo("CustomerTenant"));
+        Assert.That(model.Name, Is.EqualTo("TestAccount"));
+        Assert.That(model.Tenant, Is.EqualTo("AccountTenant"));
         Assert.That(model.TenantId, Is.EqualTo(300));
         Assert.That(model.Attributes, Is.Not.Null);
         Assert.That(model.Attributes?.key, Is.EqualTo("value"));
@@ -143,8 +145,8 @@ public class ConverterSerializationTests
             Id = 4,
             EntityId = 500,
             EntityName = EntityNameType.company,
-            CustomerId = 600,
-            CustomerName = "Customer X"
+            AccountId = 600,
+            AccountName = "Account X"
         };
         
         var deserialized = JsonSerializer.Deserialize<RelationshipModel>(
@@ -157,14 +159,14 @@ public class ConverterSerializationTests
     [Test]
     public void Deserialize_RelationModel_FromJson()
     {
-        var json = @"{""id"":4,""entityId"":500,""entityName"":""company"",""customerId"":600,""customerName"":""Customer X""}";
+        var json = @"{""id"":4,""entityId"":500,""entityName"":""company"",""accountId"":600,""accountName"":""Account X""}";
         var model = JsonSerializer.Deserialize<RelationshipModel>(json, JsonOptions);
 
         Assert.That(model, Is.Not.Null);
         Assert.That(model!.Id, Is.EqualTo(4));
         Assert.That(model.EntityId, Is.EqualTo(500));
         Assert.That(model.EntityName, Is.EqualTo(EntityNameType.company));
-        Assert.That(model.CustomerId, Is.EqualTo(600));
-        Assert.That(model.CustomerName, Is.EqualTo("Customer X"));
+        Assert.That(model.AccountId, Is.EqualTo(600));
+        Assert.That(model.AccountName, Is.EqualTo("Account X"));
     }
 }

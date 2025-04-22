@@ -11,17 +11,17 @@ public class RelationshipRepo : DbEntityRepo<RelationshipDbModel>, IRelationship
     }
 
     /// <summary>
-    /// Retrieves aggregated relationships for a given customer.
-    /// Calls PostgreSQL function get_customer_entities(customer_id) and returns parsed data.
+    /// Retrieves aggregated relationships for a given account.
+    /// Calls PostgreSQL function get_account_entities(account_id) and returns parsed data.
     /// </summary>
-    public async Task<Dictionary<string,dynamic[]>> GetCustomerRelationshipsAsync(int customerId)
+    public async Task<Dictionary<string,dynamic[]>> GetAccountRelationshipsAsync(int accountId)
     {
         await using var connection = ConnectionProvider.GetConnection();
         await connection.OpenAsync().ConfigureAwait(false);
         var result = await connection
             .ExecuteScalarAsync<string>(
-                "SELECT get_customer_relationships(@customerId);", 
-                new { customerId })
+                "SELECT get_account_relationships(@accountId);", 
+                new { accountId })
             .ConfigureAwait(false);
 
         // Convert JSON result into a Dictionary<string, dynamic[]>
@@ -36,10 +36,10 @@ public class RelationshipRepo : DbEntityRepo<RelationshipDbModel>, IRelationship
         await using var connection = ConnectionProvider.GetConnection();
         await connection.OpenAsync().ConfigureAwait(false);
         var results = await connection.QueryAsync<RelationshipDbModel>(
-            @$"SELECT t1.*, t2.name as customer_name
+            @$"SELECT t1.*, t2.name as account_name
                    FROM {TableName} t1
-                   JOIN customer t2 
-                       on t1.customer_id = t2.id   
+                   JOIN account t2 
+                       on t1.account_id = t2.id   
                    ORDER BY t1.id ASC 
                    LIMIT @count
                    OFFSET @offset",
@@ -55,10 +55,10 @@ public class RelationshipRepo : DbEntityRepo<RelationshipDbModel>, IRelationship
         await using var connection = ConnectionProvider.GetConnection();
         await connection.OpenAsync().ConfigureAwait(false);
         return await connection.QueryFirstOrDefaultAsync<RelationshipDbModel>(
-            @$"SELECT t1.*, t2.name as customer_name
+            @$"SELECT t1.*, t2.name as account_name
                    FROM {TableName} t1
-                   JOIN customer t2 
-                       on t1.customer_id = t2.id  
+                   JOIN account t2 
+                       on t1.account_id = t2.id  
                 WHERE id = @id", new { id }
         ).ConfigureAwait(false);
     }

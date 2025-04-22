@@ -7,7 +7,7 @@ public static class ServicesBootstrapper
         services.AddSingleton<IRelationshipService, RelationshipService>();
         services.AddSingleton<IUserService, UserService>();
         services.AddSingleton<ICompanyService, CompanyService>();
-        services.AddSingleton<ICustomerService, CustomerService>();
+        services.AddSingleton<IAccountService, AccountService>();
         services.AddSingleton<ITenantService, TenantService>();
         services.AddSingleton<INotesService, NotesService>();
         services.AddSingleton<IAttachmentService, AttachmentService>();

@@ -94,14 +94,14 @@ public class ConverterTests
         Assert.That(result.TenantId, Is.EqualTo(model.TenantId));
     }
 
-    //  Test: Convert CustomerDbModel to CustomerModel
+    //  Test: Convert AccountDbModel to AccountModel
     [Test]
-    public void Convert_CustomerDbModel_To_CustomerModel()
+    public void Convert_AccountDbModel_To_AccountModel()
     {
-        var dbModel = new CustomerDbModel
+        var dbModel = new AccountDbModel
         {
             Id = 1,
-            Name = "TestCustomer",
+            Name = "TestAccount",
             TenantName = "TestTenant",
             TenantId = 100,
             Attributes = new { Age = 30, Location = "NY" }
@@ -122,14 +122,14 @@ public class ConverterTests
         Assert.That(result.Relationships, Is.EqualTo(relations));
     }
 
-    //  Test: Convert CustomerModel to CustomerDbModel
+    //  Test: Convert AccountModel to AccountDbModel
     [Test]
-    public void Convert_CustomerModel_To_CustomerDbModel()
+    public void Convert_AccountModel_To_AccountDbModel()
     {
-        var model = new CustomerModel
+        var model = new AccountModel
         {
             Id = 1,
-            Name = "TestCustomer",
+            Name = "TestAccount",
             Tenant = "TestTenant",
             TenantId = 100,
             Attributes = new { Age = 30, Location = "NY" }
@@ -152,8 +152,8 @@ public class ConverterTests
             Id = 1,
             EntityId = 42,
             Entity = "company",
-            CustomerId = 2,
-            CustomerName = "John Doe"
+            AccountId = 2,
+            AccountName = "John Doe"
         };
 
         var result = Converter.From(dbModel);
@@ -161,8 +161,8 @@ public class ConverterTests
         Assert.That(result.Id, Is.EqualTo(dbModel.Id));
         Assert.That(result.EntityId, Is.EqualTo(dbModel.EntityId));
         Assert.That(result.EntityName.ToString().ToLower(), Is.EqualTo(dbModel.Entity));
-        Assert.That(result.CustomerId, Is.EqualTo(dbModel.CustomerId));
-        Assert.That(result.CustomerName, Is.EqualTo(dbModel.CustomerName));
+        Assert.That(result.AccountId, Is.EqualTo(dbModel.AccountId));
+        Assert.That(result.AccountName, Is.EqualTo(dbModel.AccountName));
     }
 
     //  Test: Convert RelationModel to RelationDbModel
@@ -174,8 +174,8 @@ public class ConverterTests
             Id = 1,
             EntityId = 42,
             EntityName = EntityNameType.company,
-            CustomerId = 2,
-            CustomerName = "John Doe"
+            AccountId = 2,
+            AccountName = "John Doe"
         };
 
         var result = Converter.To(model);
@@ -183,8 +183,8 @@ public class ConverterTests
         Assert.That(result.Id, Is.EqualTo(model.Id));
         Assert.That(result.EntityId, Is.EqualTo(model.EntityId));
         Assert.That(result.Entity, Is.EqualTo(model.EntityName.ToString().ToLower()));
-        Assert.That(result.CustomerId, Is.EqualTo(model.CustomerId));
-        Assert.That(result.CustomerName, Is.EqualTo(model.CustomerName));
+        Assert.That(result.AccountId, Is.EqualTo(model.AccountId));
+        Assert.That(result.AccountName, Is.EqualTo(model.AccountName));
     }
 
     //  Test: Convert TenantDbModel to TenantModel
