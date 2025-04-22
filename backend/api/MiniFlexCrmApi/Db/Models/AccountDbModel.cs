@@ -24,11 +24,18 @@ public class AccountDbModel: TenantBoundDbEntity
 
 public class TeamDbModel: TenantBoundDbEntity
 {
+    public int OwnerId { get; set; }
+    
+    [IgnoreForUpdate]
     public UserDbModel? Owner { get; set; }
+    
     public string? Name { get; set; }
     public string? Description { get; set; }
+    
+    [IgnoreForUpdate]
     public TeamMemberDbModel[] Members { get; set; }
     
+    [IgnoreForUpdate]
     public AccountDbModel[] Accounts { get; set; }
     
     // Map JSON attributes as a dictionary or a specific type

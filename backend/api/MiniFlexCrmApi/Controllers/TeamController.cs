@@ -25,8 +25,20 @@ public class TeamController(ITeamService teamService) : ControllerBase
 
     [HttpGet]
     [Route("{id}/potential_members")]
-    public async Task<ActionResult<IEnumerable<UserModel>>> SearchPotentialMembers([FromRoute] int id, [FromQuery] string name)
+    public async Task<ActionResult<IEnumerable<TeamMemberModel>>> SearchPotentialMembers([FromRoute] int id, [FromQuery] string name)
         => Ok(await teamService.NewMemberSearchAsync(id, name));
+    
+    [HttpGet]
+    [Route("{id}/potential_owners")]
+    public async Task<ActionResult<IEnumerable<UserModel>>> SearchPotentialOwners([FromRoute] int id, [FromQuery] string? name)
+        => Ok(await teamService.NewOwnerSearchAsync(id, name));
+    
+    
+    
+    [HttpGet]
+    [Route("mine")]
+    public async Task<ActionResult<IEnumerable<UserModel>>> GetMyTeams()
+        => Ok(await teamService.GetMyTeamsAsync());
     
     [HttpPut]
     [Route("{id}/member")]

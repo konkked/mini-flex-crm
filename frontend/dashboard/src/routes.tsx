@@ -20,9 +20,13 @@ import ViewCompanyPage from './pages/company/view-company-page';
 import ViewAccountPage from './pages/account/view-account-page';
 import DealPipelinePage from './pages/deal-pipeline/deal-pipeline-page'; // Import Deal Pipeline Page
 import LeadPipelinePage from './pages/lead-pipeline/lead-pipeline-page'; // Import Lead Pipeline Page
+import ManageTeamPage from './pages/team/manage-team-page';
+import TeamsPage from './pages/team/teams-page';
+import ViewTeamPage from './pages/team/view-team-page';
+import MyTeamsPage from './pages/team/my-teams-page';
 
 // PrivateRoute component to handle authentication and role-based access
-const PrivateRoute: React.FC<{ adminOnly?: boolean; superAdminOnly?: boolean; }> = ({ adminOnly = false, superAdminOnly = false }) => {
+const PrivateRoute: React.FC<{ managerOrAdminOnly?: boolean; adminOnly?: boolean; superAdminOnly?: boolean; }> = ({ managerOrAdminOnly = false, adminOnly = false, superAdminOnly = false }) => {
   const { isAuthenticated } = useAuth();
   const role = getCurrentRole();
   const tenantId = getCurrentTenantId();
@@ -33,6 +37,10 @@ const PrivateRoute: React.FC<{ adminOnly?: boolean; superAdminOnly?: boolean; }>
 
   if (adminOnly && role !== 'admin') {
     return <Navigate to="/home" replace />;
+  }
+
+  if(managerOrAdminOnly && role !== 'manager' && role !== 'admin'){
+    return <Navigate to="/home" replace />
   }
 
   if(superAdminOnly && (role !== "admin" || tenantId !=0)){
@@ -71,6 +79,12 @@ const AppRoutes = () => {
             <Route path="*" element={<Navigate to="/login" replace />} />
           )}
         </Route>
+        <Route element={<PrivateRoute managerOrAdminOnly />}>
+          <Route path="/team/:teamId/manage" element={<ManageTeamPage />} />
+        </Route>
+        <Route path="/teams/mine" element={ <MyTeamsPage /> } />
+        <Route path="/teams" element={<TeamsPage />} />
+        <Route path="/team/:teamId" element={<ViewTeamPage />} />
         <Route element={<PrivateRoute adminOnly />}>
           <Route path="/user/:userId/manage" element={<ManageUserPage />} />
           <Route path="/user/new" element={<ManageUserPage />} />

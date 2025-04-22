@@ -7,6 +7,7 @@ namespace MiniFlexCrmApi.Services;
 public interface ITeamService : ITenantBoundBaseService<TeamModel>
 {
     Task<IEnumerable<TeamMemberModel>> NewMemberSearchAsync(int id, string name);
+    Task<IEnumerable<UserModel>> NewOwnerSearchAsync(int id, string name);
     Task<bool> AddMemberAsync(int teamId, int userId, string role);
     Task<bool> RemoveMemberAsync(int teamId, int memberId);
     Task<bool> AddAccountAsync(int teamId, int accountId);
@@ -14,6 +15,7 @@ public interface ITeamService : ITenantBoundBaseService<TeamModel>
     Task<bool> UpdateOwnerAsync(int teamId, int ownerId);
     Task<bool> UpdateNameAsync(int id, string name);
     Task<bool> UpdateInfoAsync(int id, BaseTeamModel model);
+   Task<IEnumerable<TeamModel>> GetMyTeamsAsync();
 }
 
 public class TeamService(ITeamRepo repo, IUserRepo userRepo)
@@ -27,6 +29,18 @@ public class TeamService(ITeamRepo repo, IUserRepo userRepo)
     {
         var result = await repo.GetPossibleMembersAsync(id, name);
         return result.SelectMany(Converter.ToTeamMemberModels);
+    }
+
+    public async Task<IEnumerable<UserModel>> NewOwnerSearchAsync(int id, string name)
+    {
+        var result = await repo.GetPossibleOwnersAsync(id, name);
+        return result.Select(Converter.From);
+    }
+
+    public async Task<IEnumerable<TeamModel>> GetMyTeamsAsync()
+    {
+        var result = await repo.GetMyTeams();
+        return result.Select(Converter.From);
     }
 
     public async Task<bool> AddMemberAsync(int teamId, int memberId, string role)

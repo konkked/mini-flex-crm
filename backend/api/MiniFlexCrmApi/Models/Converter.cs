@@ -481,6 +481,7 @@ public static class Converter
         Id = model.Id,
         TenantId = model.TenantId,
         Name = model.Name,
+        OwnerId = model.Owner.Id,
         Owner = To(model.Owner),
         Accounts = model.Accounts.Select(To).ToArray(),
         Members = model.Members.Select(To).ToArray(),

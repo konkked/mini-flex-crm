@@ -200,6 +200,16 @@ api.std.team.getPotentialMembers = async (data: { teamId: number, name: string }
   return response.data;
 }
 
+api.std.team.getPotentialOwners = async (data: { teamId: number, name: string }) => {
+  const response = await apiClient.get(`/tenant/${getCurrentTenantId()}/team/${data.teamId}/potential_owners`, { params: { name: data.name } });
+  return response.data;
+}
+
+api.std.team.mine = async () => {
+  const response = await apiClient.get(`/tenant/${getCurrentTenantId()}/team/mine`);
+  return response.data;
+}
+
 api.std.lead.pipeline = api.std.lead.get;
 api.std.deal.pipeline = api.std.deal.get;
 

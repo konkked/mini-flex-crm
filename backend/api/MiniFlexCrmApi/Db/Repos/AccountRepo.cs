@@ -323,6 +323,35 @@ public class TeamRepo(IConnectionProvider connectionProvider, RequestContext con
                 WHERE t.member_id IS NULL AND u.tenant_id = @tenantId "
             + (!string.IsNullOrWhiteSpace(name) ? " AND u.name LIKE CONCAT('%',@name,'%')" : ""), parameters);
     }
+    
+    public async Task<IEnumerable<UserDbModel>> GetPossibleOwnersAsync(int id, string name)
+    {
+        await ConnectionProvider.GetConnection().OpenAsync();
+        var parameters = new Dictionary<string, object>
+        {
+            ["@tenantId"] = _context.TenantId,
+            ["@id"] = id
+        };
+        
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            parameters.Add("@name", name);
+        }
+
+        return await ConnectionProvider.GetConnection().QueryAsync<UserDbModel>(
+            @"SELECT u.* FROM users u 
+                LEFT JOIN team_member t 
+                    ON t.member_id = u.id AND t.team_id = @id
+                WHERE t.member_id IS NULL AND u.tenant_id = @tenantId AND u.role IN ('manager','admin','group_manager') "
+            + (!string.IsNullOrWhiteSpace(name) ? " AND u.name LIKE CONCAT('%',@name,'%')" : ""), parameters);
+    }
+
+    public async Task<IEnumerable<TeamDbModel>> GetMyTeams()
+    {
+        return await ConnectionProvider.GetConnection().QueryAsync<TeamDbModel>(
+            @"SELECT t.id, t.name FROM teams t JOIN team_member tm ON tm.team_id = t.id AND tm.member_id=@id",
+            new { id = int.Parse(_context.UserId) });
+    }
 
     public async Task AddMemberAsync(int teamId, int memberId, string role)
     {
